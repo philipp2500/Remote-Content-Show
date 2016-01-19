@@ -11,6 +11,7 @@ namespace Remote_Content_Show_Protocol
         public Remote_Content_Show_Message(IRemote_Content_Show_MessageContent content)
         {
             this.Content = content;
+            this.Id = Guid.NewGuid();
         }
 
         public Guid Id

@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A3B6ED0B-9F6A-4D2E-88CB-F223F3B92C5A}</ProjectGuid>
+    <ProjectGuid>{9A835B04-3EEB-46F2-B3AC-58F2F3D563E3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Remote_Content_Show_Protocols</RootNamespace>
-    <AssemblyName>Remote Content Show Protocols</AssemblyName>
+    <RootNamespace>Remote_Content_Show_Container</RootNamespace>
+    <AssemblyName>Remote Content Show Container</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -39,29 +39,12 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IRemote_Content_Show_MessageContent.cs" />
-    <Compile Include="Interfaces\IRemote_Content_Show_MessageContentDisplay.cs" />
-    <Compile Include="Interfaces\IRemote_Content_Show_MessageContentProtocol.cs" />
+    <Compile Include="Agent.cs" />
+    <Compile Include="Job.cs" />
+    <Compile Include="Job_Configuration.cs" />
+    <Compile Include="Process_List.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RCS_Alive.cs" />
-    <Compile Include="RCS_Cancel.cs" />
-    <Compile Include="RCS_Event_List_Request.cs" />
-    <Compile Include="RCS_Event_List_Response.cs" />
-    <Compile Include="RCS_Job.cs" />
-    <Compile Include="RCS_Process_List_Request.cs" />
-    <Compile Include="RCS_Process_List_Response.cs" />
-    <Compile Include="RCS_Render_Job.cs" />
-    <Compile Include="RCS_Render_Job_Cancel.cs" />
-    <Compile Include="RCS_Render_Job_Error.cs" />
-    <Compile Include="RCS_Render_Job_Result.cs" />
-    <Compile Include="Remote_Content_Show_Message.cs" />
-    <Compile Include="RSC_Configuration_Image.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Remote Content Show Container\Remote Content Show Container.csproj">
-      <Project>{9a835b04-3eeb-46f2-b3ac-58f2f3d563e3}</Project>
-      <Name>Remote Content Show Container</Name>
-    </ProjectReference>
+    <Compile Include="WindowLayout.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
