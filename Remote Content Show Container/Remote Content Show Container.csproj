@@ -40,10 +40,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agent.cs" />
+    <Compile Include="Interfaces\IResource.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="Job_Configuration.cs" />
+    <Compile Include="ProcessWindows.cs" />
     <Compile Include="Process_List.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resouces\FileResource.cs" />
+    <Compile Include="Resouces\ProcessResource.cs" />
+    <Compile Include="TypeOfTarget.cs" />
     <Compile Include="WindowLayout.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

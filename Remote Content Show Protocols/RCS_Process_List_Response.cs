@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Remote_Content_Show_Container;
 
 namespace Remote_Content_Show_Protocol
 {
@@ -12,6 +13,12 @@ namespace Remote_Content_Show_Protocol
         public string TypeToString()
         {
             return this.GetType().ToString();
+        }
+
+        public Process_List ProcesseList
+        {
+            get;
+            set;
         }
     }
 }

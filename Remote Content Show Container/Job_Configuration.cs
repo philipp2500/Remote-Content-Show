@@ -10,6 +10,7 @@ namespace Remote_Content_Show_Container
         public Job_Configuration()
         {
             this.Jobs = new Dictionary<int, List<Job>>();
+            this.Agents = new List<Agent>();
         }
 
         public Dictionary<int, List<Job>> Jobs

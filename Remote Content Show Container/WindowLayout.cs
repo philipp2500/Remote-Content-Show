@@ -9,6 +9,7 @@ namespace Remote_Content_Show_Container
     public enum WindowLayout
     {
         SingleWindow,
-        DoubleWindowVertikalSplitted
+        DoubleWindowVertikalSplitted = 3,
+        DoubleWindowHSplitted = 3
     }
 }

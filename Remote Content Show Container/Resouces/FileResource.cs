@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Remote_Content_Show_Container
+namespace Remote_Content_Show_Container.Resouces
 {
-    public class Process_List
+    public class FileResource : IResource
     {
-        public List<ProcessWindows> Processes
+        public string Path
         {
             get;
             set;

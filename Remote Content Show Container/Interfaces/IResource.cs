@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public class Process_List
+    public interface IResource
     {
-        public List<ProcessWindows> Processes
-        {
-            get;
-            set;
-        }
     }
 }
