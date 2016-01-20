@@ -13,6 +13,12 @@ namespace Remote_Content_Show_Container
             this.Jobs = new List<Job>();
         }
 
+        public int WindowLayoutNumber
+        {
+            get;
+            set;
+        }
+
         public bool Looping
         {
             get;

@@ -14,6 +14,12 @@ namespace Remote_Content_Show_Container
             set;
         }
 
+        public int Duration
+        {
+            get;
+            set;
+        }
+
         public IResource Resource
         {
             get;
