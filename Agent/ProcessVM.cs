@@ -7,6 +7,7 @@ namespace Agent
     public class ProcessVM
     {
         private ProcessDescription process = null;
+        private BitmapImage windowPicture = null;
 
         public ProcessVM(ProcessDescription process)
         {
@@ -41,18 +42,20 @@ namespace Agent
         {
             get
             {
-                //TODO
-                using (var memory = new MemoryStream(this.process.WindowPicture))
+                if (this.windowPicture == null)
                 {
-                    memory.Position = 0;
-                    BitmapImage bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.StreamSource = memory;
-                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapImage.EndInit();
-
-                    return bitmapImage;
+                    using (var memory = new MemoryStream(this.process.WindowPicture))
+                    {
+                        memory.Position = 0;
+                        this.windowPicture = new BitmapImage();
+                        this.windowPicture.BeginInit();
+                        this.windowPicture.StreamSource = memory;
+                        this.windowPicture.CacheOption = BitmapCacheOption.OnLoad;
+                        this.windowPicture.EndInit();
+                    }
                 }
+
+                return this.windowPicture;
             }
         }
     }
