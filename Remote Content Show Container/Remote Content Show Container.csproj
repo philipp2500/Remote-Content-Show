@@ -49,6 +49,7 @@
     <Compile Include="Event_List.cs" />
     <Compile Include="Interfaces\IResource.cs" />
     <Compile Include="Job.cs" />
+    <Compile Include="JobWindowList.cs" />
     <Compile Include="Job_Configuration.cs" />
     <Compile Include="ProcessDescription.cs" />
     <Compile Include="Process_List.cs" />

@@ -14,18 +14,6 @@ namespace Remote_Content_Show_Container
             set;
         }
 
-        public int WindowLayoutNumber
-        {
-            get;
-            set;
-        }
-
-        public bool Looping
-        {
-            get;
-            set;
-        }
-
         public IResource Resource
         {
             get;

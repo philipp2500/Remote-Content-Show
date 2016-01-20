@@ -9,7 +9,7 @@ namespace Remote_Content_Show_Container
     {
         public Job_Configuration()
         {
-            this.Jobs = new Dictionary<int, List<Job>>();
+            this.Jobs = new Dictionary<int, JobWindowList>();
             this.Agents = new List<Agent>();
         }
 
@@ -25,7 +25,7 @@ namespace Remote_Content_Show_Container
         /// <summary>
         /// int = WindowLayoutNumber vom Job
         /// </summary>
-        public Dictionary<int, List<Job>> Jobs
+        public Dictionary<int, JobWindowList> JobLists
         {
             get;
             private set;

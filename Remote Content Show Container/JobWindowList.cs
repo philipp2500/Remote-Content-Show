@@ -4,20 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Remote_Content_Show_Container.Resouces
+namespace Remote_Content_Show_Container
 {
-    public class ProcessResource : IResource
+    public class JobWindowList
     {
-        public int ProcessID
+        public JobWindowList()
+        {
+            this.Jobs = new List<Job>();
+        }
+
+        public bool Looping
         {
             get;
             set;
         }
 
-        public Agent ProcessAgent
+        public List<Job> Jobs
         {
             get;
             set;
         }
+
     }
 }
