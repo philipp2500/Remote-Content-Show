@@ -8,9 +8,8 @@ namespace Remote_Content_Show_Protocol
 {
     public class Remote_Content_Show_Message
     {
-        public Remote_Content_Show_Message(IRemote_Content_Show_MessageContent content)
+        public Remote_Content_Show_Message()
         {
-            this.Content = content;
             this.Id = Guid.NewGuid();
         }
 
@@ -20,12 +19,6 @@ namespace Remote_Content_Show_Protocol
             private set;
         }
 
-        public const double Version = 1.0;
-
-        public IRemote_Content_Show_MessageContent Content
-        {
-            get;
-            private set;
-        }
+        public double Version = 1.0;
     }
 }

@@ -54,7 +54,9 @@
     <Compile Include="RCS_Render_Job_Cancel.cs" />
     <Compile Include="RCS_Render_Job_Error.cs" />
     <Compile Include="RCS_Render_Job_Result.cs" />
+    <Compile Include="Remote_Content_Show_Header.cs" />
     <Compile Include="Remote_Content_Show_Message.cs" />
+    <Compile Include="Remote_Content_Show_MessageGenerator.cs" />
     <Compile Include="RSC_Configuration_Image.cs" />
   </ItemGroup>
   <ItemGroup>

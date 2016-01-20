@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RCS_Job : IRemote_Content_Show_MessageContent
+    public class RCS_Job : Remote_Content_Show_Messaget
     {
 
         public Job_Configuration Configuration
@@ -15,10 +15,5 @@ namespace Remote_Content_Show_Protocol
             get;
             private set;
         }
-
-        public string TypeToString()
-        {
-            return this.GetType().ToString();
-        }       
     }
 }

@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RCS_Cancel : IRemote_Content_Show_MessageContentProtocol
+    public class RCS_Cancel : Remote_Content_Show_Message
     {
-        public string TypeToString()
-        {
-            return this.GetType().ToString();
-        }
     }
 }

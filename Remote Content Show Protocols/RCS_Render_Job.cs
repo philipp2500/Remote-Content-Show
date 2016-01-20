@@ -7,11 +7,7 @@ using System.Runtime.Serialization;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RCS_Render_Job
+    public class RCS_Render_Job : Remote_Content_Show_Message
     {
-        public string TypeToString()
-        {
-            return this.GetType().ToString();
-        }
     }
 }

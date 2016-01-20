@@ -8,13 +8,8 @@ using Remote_Content_Show_Container;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RCS_Process_List_Response
+    public class RCS_Process_List_Response : Remote_Content_Show_Message
     {
-        public string TypeToString()
-        {
-            return this.GetType().ToString();
-        }
-
         public Process_List ProcesseList
         {
             get;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RCS_Event_List_Request : IRemote_Content_Show_MessageContentProtocol
+    public class RCS_Event_List_Request : Remote_Content_Show_Message
     {
         public string TypeToString()
         {
