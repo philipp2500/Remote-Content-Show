@@ -6,27 +6,27 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public class Job
+    public class RenderConfiguration
     {
-        public int OrderingNumber
+        public Guid RenderJobID
         {
             get;
             set;
         }
 
-        public int WindowLayoutNumber
+        public int RenderWidth
         {
             get;
             set;
         }
 
-        public bool Looping
+        public int RenderHeight
         {
             get;
             set;
         }
 
-        public IResource Resource
+        public double UpdateInterval
         {
             get;
             set;

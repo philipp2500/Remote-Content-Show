@@ -8,7 +8,7 @@ namespace Remote_Content_Show_Container
 {
     public class Process_List
     {
-        public List<ProcessWindows> Processes
+        public List<ProcessDescription> Processes
         {
             get;
             set;

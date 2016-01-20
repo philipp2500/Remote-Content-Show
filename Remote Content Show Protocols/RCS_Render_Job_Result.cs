@@ -9,5 +9,10 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Render_Job_Result : Remote_Content_Show_Message
     {
+        public Guid ConceredRenderJobID
+        {
+            get;
+            set;
+        }
     }
 }

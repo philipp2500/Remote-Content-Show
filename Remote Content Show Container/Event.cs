@@ -6,27 +6,21 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public class Job
+    public class Event
     {
-        public int OrderingNumber
+        public Enums.Job_EventType Type
         {
             get;
             set;
         }
 
-        public int WindowLayoutNumber
+        public string Description
         {
             get;
             set;
         }
 
-        public bool Looping
-        {
-            get;
-            set;
-        }
-
-        public IResource Resource
+        public Guid ConcernedJobID
         {
             get;
             set;
