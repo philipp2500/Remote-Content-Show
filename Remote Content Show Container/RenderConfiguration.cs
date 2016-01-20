@@ -14,6 +14,15 @@ namespace Remote_Content_Show_Container
             set;
         }
 
+        /// <summary>
+        /// If the PI has to cancel the job, the agent also has to cancel the job.
+        /// </summary>
+        public Guid JobID
+        {
+            get;
+            set;
+        }
+
         public int RenderWidth
         {
             get;

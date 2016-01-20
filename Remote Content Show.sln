@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remote Content Show Protocols", "Remote Content Show Protocols\Remote Content Show Protocols.csproj", "{A3B6ED0B-9F6A-4D2E-88CB-F223F3B92C5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remote Content Show Protocol", "Remote Content Show Protocols\Remote Content Show Protocol.csproj", "{A3B6ED0B-9F6A-4D2E-88CB-F223F3B92C5A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remote Content Show Container", "Remote Content Show Container\Remote Content Show Container.csproj", "{9A835B04-3EEB-46F2-B3AC-58F2F3D563E3}"
 EndProject
