@@ -11,16 +11,22 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Render_Job_Cancel : Remote_Content_Show_Message
     {
+        public RCS_Render_Job_Cancel(CancelRenderJobReason reason, Guid concernedRenderJobID)
+        {
+            this.Reason = reason;
+            this.ConcernedRenderJobID = concernedRenderJobID;
+        }
+
         public CancelRenderJobReason Reason
         {
             get;
-            set;
+            private set;
         }
 
         public Guid ConcernedRenderJobID
         {
             get;
-            set;
+            private set;
         }
     }
 }

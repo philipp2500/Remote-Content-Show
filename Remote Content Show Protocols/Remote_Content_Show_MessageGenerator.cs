@@ -1,25 +1,52 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Remote_Content_Show_Container;
 
-namespace Remote_Content_Show_Protocols
+namespace Remote_Content_Show_Protocol
 {
     public static class Remote_Content_Show_MessageGenerator
     {
-        public static Remote_Content_Show_Header GetHeaderFromByte(byte[] data)
-        {
 
+        public static byte[] GetMessageAsByte(object message)
+        {
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+        }
+        public static object GetMessageFromByte<T>(byte[] data, Remote_Content_Show_Header header)
+        {
+            return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(data));
         }
 
-        public static Remote_Content_Show_Header CreateHeader(byte[] message)
-        {
-            return new Remote_Content_Show_Header(message.Length);
-        }
-
-        public static Remote_Content_Show_Header GetHeaderFromByte(byte[] data)
-        {
-        }
+        //switch (header.Code)
+        //    {
+        //        case MessageCode.MC_Alive:
+        //            return JsonConvert.DeserializeObject<>(Encoding.UTF8.GetString(data));
+        //            break;
+        //        case MessageCode.MC_Configuration_Image:
+        //            break;
+        //        case MessageCode.MC_Event_List_Request:
+        //            break;
+        //        case MessageCode.MC_Event_List_Response:
+        //            break;
+        //        case MessageCode.MC_Job:
+        //            break;
+        //        case MessageCode.MC_Job_Cancel:
+        //            break;
+        //        case MessageCode.MC_Process_List_Request:
+        //            break;
+        //        case MessageCode.MC_Process_List_Response:
+        //            break;
+        //        case MessageCode.MC_Render_Job:
+        //            break;
+        //        case MessageCode.MC_Render_Job_Cancel:
+        //            break;
+        //        case MessageCode.MC_Render_Job_Error:
+        //            break;
+        //        case MessageCode.MC_Render_Job_Result:
+        //            break;
+        //    }
     }
 }

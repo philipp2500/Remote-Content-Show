@@ -57,7 +57,7 @@
     <Compile Include="Resouces\FileResource.cs" />
     <Compile Include="Resouces\ProcessResource.cs" />
     <Compile Include="TypeOfTarget.cs" />
-    <Compile Include="WindowLayout.cs" />
+    <Compile Include="Enums\WindowLayout.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

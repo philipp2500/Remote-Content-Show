@@ -11,10 +11,15 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Render_Job : Remote_Content_Show_Message
     {
+        public RCS_Render_Job(RenderConfiguration configuration)
+        {
+            this.Configuration = configuration;
+        }
+
         public RenderConfiguration Configuration
         {
             get;
-            set;
+            private set;
         }
     }
 }

@@ -9,16 +9,24 @@ namespace Remote_Content_Show_Container
 {
     public class ProcessDescription
     {
-        public int WindowPicture
+
+        public ProcessDescription(byte[] windowPicture, int processId)
+        {
+            this.WindowPicture = windowPicture;
+            this.ProcessId = processId;
+        }
+            
+
+        public byte[] WindowPicture
         {
             get;
             private set;
         }
 
-        int ProcessId
+        public int ProcessId
         {
             get;
-            set;
+            private set;
         }
     }
 }

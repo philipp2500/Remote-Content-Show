@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Remote_Content_Show_Container.Enums;
+using Remote_Content_Show_Container;
 
 namespace Remote_Content_Show_Protocol
 {
@@ -23,7 +23,7 @@ namespace Remote_Content_Show_Protocol
         private static Dictionary<MessageCode, Type> GetMap()
         {
             Dictionary<MessageCode, Type> dict = new Dictionary<MessageCode, Type>();
-
+            
             dict.Add(MessageCode.MC_Alive, typeof(RCS_Alive));
             dict.Add(MessageCode.MC_Job, typeof(RCS_Job));
             dict.Add(MessageCode.MC_Job_Cancel, typeof(RCS_Job_Cancel));

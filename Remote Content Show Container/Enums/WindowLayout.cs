@@ -10,6 +10,6 @@ namespace Remote_Content_Show_Container
     {
         SingleWindow,
         DoubleWindowVertikalSplitted,
-        DoubleWindowHSplitted
+        DoubleWindowHorizontalSplitted
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Remote_Content_Show_Container.Enums
+﻿namespace Remote_Content_Show_Container
 {
     using System;
     using System.Collections.Generic;
