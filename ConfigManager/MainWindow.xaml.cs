@@ -24,5 +24,26 @@ namespace ConfigManager
         {
             InitializeComponent();
         }
+
+        private void NewJob_Click(object sender, RoutedEventArgs e)
+        {
+            NewJob newJobWindow = new NewJob();
+            newJobWindow.ShowDialog();
+        }
+
+        private void SendJob_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ChangePicture_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GetEventList_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
