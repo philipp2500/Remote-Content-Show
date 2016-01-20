@@ -17,7 +17,7 @@ namespace Remote_Content_Show_Protocol
             set;
         }
 
-        public Guid ConceredRenderJobID
+        public Guid ConcernedRenderJobID
         {
             get;
             set;
