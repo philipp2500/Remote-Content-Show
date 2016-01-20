@@ -7,6 +7,22 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="lstProcesses">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="local:ProcessVM">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=ProcessId}" />
+                        <TextBlock Text="{Binding Path=ProcessName}" />
+                        <TextBlock Text="{Binding Path=ProcessTitle}" />
+                        <Image Width="150" Height="150" Source="{Binding Path=WindowPicture}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Grid.Row="1" Click="Button_Click">Get Processes</Button>
     </Grid>
 </Window>
