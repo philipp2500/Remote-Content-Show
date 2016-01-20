@@ -27,8 +27,8 @@ namespace DisplayClient
             this.InitializeComponent();
 
             ContentDisplay display1 = new ContentDisplay();
-            display1.Width = 200;
-            display1.Height = 200;
+            display1.Width = 800;
+            display1.Height = 800;
 
             display1.DisplayManager = new DisplayManager(null);
 

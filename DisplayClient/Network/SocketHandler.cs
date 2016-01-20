@@ -35,6 +35,16 @@ namespace DisplayClient.Network
             });
         }
 
+        public void Stop()
+        {
+            this.running = false;
+        }
+
+        public void Close()
+        {
+            this.socket.Dispose();
+        }
+
         private async void HandleSocket()
         {
             DataReader reader = new DataReader(this.socket.InputStream);
