@@ -10,14 +10,21 @@ namespace Remote_Content_Show_Container
     public class ProcessDescription
     {
 
-        public ProcessDescription(byte[] windowPicture, int processId, string processName)
+        public ProcessDescription(byte[] windowPicture, int processId, string processName, string processTitle)
         {
             this.WindowPicture = windowPicture;
             this.ProcessId = processId;
             this.ProcessName = processName;
+            this.ProcessTitle = processTitle;
         }
             
         public string ProcessName
+        {
+            get;
+            private set;
+        }
+
+        public string ProcessTitle
         {
             get;
             private set;
