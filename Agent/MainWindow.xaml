@@ -8,10 +8,12 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="lstProcesses">
+        <Button x:Name="btnListen" Click="btnListen_Click">Listen for clients</Button>
+        <ListBox Grid.Row="1" x:Name="lstProcesses">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="local:ProcessVM">
                     <StackPanel Orientation="Horizontal">
@@ -23,6 +25,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Grid.Row="1" Click="Button_Click">Get Processes</Button>
+        <Button Grid.Row="2" Click="Button_Click">Get Processes</Button>
     </Grid>
 </Window>

@@ -1,9 +1,12 @@
-﻿using Remote_Content_Show_Container;
+﻿using Agent.Network;
+using Remote_Content_Show_Container;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Windows;
 
 namespace Agent
@@ -13,7 +16,10 @@ namespace Agent
     /// </summary>
     public partial class MainWindow : Window
     {
-        ObservableCollection<ProcessVM> processes = new ObservableCollection<ProcessVM>();
+        private const int PORT = 1234; //TODO
+        private TcpListener listener = null;
+        private System.Drawing.Size pictureSize = new System.Drawing.Size(150, 150);
+        private ObservableCollection<ProcessVM> processes = new ObservableCollection<ProcessVM>();
 
         public MainWindow()
         {
@@ -36,25 +42,31 @@ namespace Agent
                         continue;
                     }
 
-                    byte[] picture = ImageToBytes(bmp);
+                    byte[] picture = ImageToBytes(ImageHandler.ImageHandler.Resize(bmp, pictureSize));
                     ProcessDescription p = new ProcessDescription(picture, proc.Id, proc.ProcessName, proc.MainWindowTitle);
                     processes.Add(new ProcessVM(p));
                 }
             }
         }
 
-        public static byte[] ImageToBytes(Bitmap img)
+        public static byte[] ImageToBytes(Image img)
         {
-            byte[] byteArray = new byte[0];
+            byte[] bytes = null;
+
             using (MemoryStream stream = new MemoryStream())
             {
                 img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
                 stream.Close();
 
-                byteArray = stream.ToArray();
+                bytes = stream.ToArray();
             }
 
-            return byteArray;
+            return bytes;
+        }
+
+        private void btnListen_Click(object sender, RoutedEventArgs e)
+        {
+            new Server(PORT).Start();
         }
     }
 }

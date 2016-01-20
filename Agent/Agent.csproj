@@ -57,6 +57,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Network\ClientHandler.cs" />
+    <Compile Include="Network\ListenerThreadArgs.cs" />
+    <Compile Include="Network\Server.cs" />
     <Compile Include="ScreenCapture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -103,6 +106,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ImageHandler\ImageHandler.csproj">
+      <Project>{425647ea-49d0-47c2-b680-fade47d46a90}</Project>
+      <Name>ImageHandler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Remote Content Show Container\Remote Content Show Container.csproj">
       <Project>{9a835b04-3eeb-46f2-b3ac-58f2f3d563e3}</Project>
       <Name>Remote Content Show Container</Name>

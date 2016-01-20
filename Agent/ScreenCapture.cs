@@ -8,10 +8,17 @@ namespace Agent
 {
     public class ScreenCapture
     {
+        /// <summary>
+        /// The event fired when a image was captured.
+        /// </summary>
         public event EventHandler<ImageEventArgs> OnImageCaptured;
+
+        /// <summary>
+        /// The event fired when the process whose window to capture has exited.
+        /// </summary>
         public event EventHandler OnProcessExited;
 
-        private const int SW_RESTORE = 9;
+        private const int SW_RESTORE = 9; // Indicates that a minimized window should be restored
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
 
         [StructLayout(LayoutKind.Sequential)]
@@ -34,7 +41,14 @@ namespace Agent
         
         [DllImport("user32.dll")]
         private static extern bool IsIconic(IntPtr hWnd);
-        
+
+        /// <summary>
+        /// Continuously captures images of the given process' window.
+        /// </summary>
+        /// <param name="proc">The process whose main window to capture.</param>
+        /// <param name="fps">The number of frames per second to capture.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the process' main window handle is <see cref="IntPtr.Zero"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown if fps is less than 0.</exception>
         public void StartCapture(Process proc, int fps)
         {
             if (proc.MainWindowHandle == IntPtr.Zero)
