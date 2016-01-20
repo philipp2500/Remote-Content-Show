@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\Server.cs" />
+    <Compile Include="Network\SocketHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
