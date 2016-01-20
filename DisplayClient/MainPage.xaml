@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Grid Name="rootGrid" Background="White">
+        <!--<Button Content="aölksdfasfd" Width="200" Height="50"></Button>-->
     </Grid>
 </Page>

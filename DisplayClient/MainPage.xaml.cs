@@ -25,6 +25,14 @@ namespace DisplayClient
         public MainPage()
         {
             this.InitializeComponent();
+
+            ContentDisplay display1 = new ContentDisplay();
+            display1.Width = 200;
+            display1.Height = 200;
+
+            display1.DisplayManager = new DisplayManager(null);
+
+            this.rootGrid.Children.Add(display1);
         }
     }
 }
