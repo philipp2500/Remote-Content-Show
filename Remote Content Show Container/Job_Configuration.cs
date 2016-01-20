@@ -9,7 +9,7 @@ namespace Remote_Content_Show_Container
     {
         public Job_Configuration()
         {
-            this.Jobs = new Dictionary<int, JobWindowList>();
+            this.JobLists = new Dictionary<int, JobWindowList>();
             this.Agents = new List<Agent>();
         }
 

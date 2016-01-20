@@ -8,7 +8,7 @@ namespace Remote_Content_Show_Container
 {
     public class Event
     {
-        public Enums.Job_EventType Type
+        public Job_EventType Type
         {
             get;
             set;
