@@ -96,9 +96,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Layout\ContentDisplayView.xaml.cs">
-      <DependentUpon>ContentDisplayView.xaml</DependentUpon>
+    <Compile Include="Layout\ContentDisplay.xaml.cs">
+      <DependentUpon>ContentDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DisplayManager\DisplayManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -128,7 +129,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Layout\ContentDisplayView.xaml">
+    <Page Include="Layout\ContentDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -147,6 +148,7 @@
       <Name>Remote Content Show Protocol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
