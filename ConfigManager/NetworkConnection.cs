@@ -55,11 +55,11 @@ namespace ConfigManager
             this.client.Close();
         }
 
-        protected void FireOnMessageReceived(byte[] messageData)
+        protected void FireOnMessageReceived(byte[] messageData, MessageCode code)
         {
             if (this.OnMessageReceived != null)
             {
-                OnMessageReceived(this, new MessageRecivedEventHandler(messageData));
+                OnMessageReceived(this, new MessageRecivedEventHandler(messageData, code));
             }
         }
 
@@ -83,7 +83,7 @@ namespace ConfigManager
 
                     data = new byte[header.Length];
                     this.stream.Read(data, 0, data.Length);
-                    this.FireOnMessageReceived(data);
+                    this.FireOnMessageReceived(data, header.Code);
                 }
             }
             catch
