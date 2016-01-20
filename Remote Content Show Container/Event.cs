@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Remote_Content_Show_Container
 {
     public class Event
-    {
+    { 
         public Job_EventType Type
         {
             get;
@@ -15,6 +15,12 @@ namespace Remote_Content_Show_Container
         }
 
         public string Description
+        {
+            get;
+            set;
+        }
+
+        public DateTime Time
         {
             get;
             set;
