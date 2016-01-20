@@ -43,6 +43,7 @@
     <Compile Include="Enums\CancelJobReason.cs" />
     <Compile Include="Enums\CancelRenderJobReason.cs" />
     <Compile Include="Enums\Job_EventType.cs" />
+    <Compile Include="Enums\MessageCode.cs" />
     <Compile Include="Enums\RenderError.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Event_List.cs" />

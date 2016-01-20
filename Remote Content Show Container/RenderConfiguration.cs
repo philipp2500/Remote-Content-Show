@@ -25,8 +25,14 @@ namespace Remote_Content_Show_Container
             get;
             set;
         }
-
+        
         public double UpdateInterval
+        {
+            get;
+            set;
+        }
+
+        public bool IgnoreEqualImages
         {
             get;
             set;
