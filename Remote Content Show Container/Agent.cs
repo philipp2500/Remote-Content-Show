@@ -9,15 +9,7 @@ namespace Remote_Content_Show_Container
 {
     public class Agent
     {
-        IPAddress IP
-        {
-            get;
-            set;
-        }
-
-
-
-        int ProcessId
+        public IPAddress IP
         {
             get;
             set;

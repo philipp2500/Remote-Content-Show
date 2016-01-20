@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public enum WindowLayout
+    public class Event_List
     {
-        SingleWindow,
-        DoubleWindowVertikalSplitted,
-        DoubleWindowHSplitted
+        public List<Event> List
+        {
+            get;
+            set;
+        }
     }
 }

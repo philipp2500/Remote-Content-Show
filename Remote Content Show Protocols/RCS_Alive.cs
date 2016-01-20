@@ -9,5 +9,6 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Alive : Remote_Content_Show_Message
     {
+        // No data required
     }
 }

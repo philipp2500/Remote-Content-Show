@@ -8,5 +8,10 @@ namespace Remote_Content_Show_Container.Resouces
 {
     public class ProcessResource : IResource
     {
+        public int ProcessID
+        {
+            get;
+            set;
+        }
     }
 }

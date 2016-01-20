@@ -13,6 +13,18 @@ namespace Remote_Content_Show_Container
             this.Agents = new List<Agent>();
         }
 
+        /// <summary>
+        // Find out connection between the job and the error events.
+        /// </summary>
+        public Guid JobID
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// int = WindowLayoutNumber vom Job
+        /// </summary>
         public Dictionary<int, List<Job>> Jobs
         {
             get;
@@ -20,12 +32,6 @@ namespace Remote_Content_Show_Container
         }
 
         public WindowLayout Layout
-        {
-            get;
-            set;
-        }
-
-        public bool Looping
         {
             get;
             set;
