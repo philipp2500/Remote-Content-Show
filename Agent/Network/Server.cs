@@ -21,14 +21,18 @@ namespace Agent.Network
             this.listener = new TcpListener(IPAddress.Any, port);
         }
 
+        public bool IsRunning { get; private set; }
+
         public void Start()
         {
             this.listener.Start();
+            this.IsRunning = true;
             this.listener.BeginAcceptTcpClient(new AsyncCallback(this.AcceptTcpClientCallback), null);
         }
 
         public void Stop()
         {
+            this.IsRunning = false;
             this.listener.Stop();
 
             foreach (ClientHandler client in this.clients)
@@ -43,9 +47,17 @@ namespace Agent.Network
             ClientHandler client = new ClientHandler(tcpClient);
 
             this.clients.Add(client);
+            client.OnClientDisconnected += this.Client_OnClientDisconnected;
             client.Start();
             
             this.listener.BeginAcceptTcpClient(this.AcceptTcpClientCallback, null);
+        }
+
+        private void Client_OnClientDisconnected(object sender, EventArgs e)
+        {
+            //TODO
+            Console.WriteLine("Client disconnected!");
+            this.clients.Remove((ClientHandler)sender);
         }
     }
 }

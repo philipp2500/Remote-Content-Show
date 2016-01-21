@@ -5,6 +5,7 @@ using System.Threading;
 using Remote_Content_Show_Container;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 
 
 // ***************************************************************
@@ -23,6 +24,11 @@ namespace Agent.Network
         private TcpClient client = null;
         private NetworkStream stream = null;
         private ListenerThreadArgs args = null;
+
+        /// <summary>
+        /// The event fired when the connected client disconnects.
+        /// </summary>
+        public event EventHandler OnClientDisconnected;
 
         public ClientHandler(TcpClient client)
         {
@@ -65,48 +71,60 @@ namespace Agent.Network
             byte[] headerBuffer = new byte[Remote_Content_Show_Header.HeaderLength];
             byte[] contentBuffer = null;
 
-            while (!args.Exit)
+            try
             {
-                this.stream.Read(headerBuffer, 0, Remote_Content_Show_Header.HeaderLength);
-
-                if (!Remote_Content_Show_Header.IsValidHeader(headerBuffer))
+                while (!args.Exit)
                 {
-                    continue;
-                }
+                    this.stream.Read(headerBuffer, 0, Remote_Content_Show_Header.HeaderLength);
 
-                header = Remote_Content_Show_Header.FromByte(headerBuffer);
-                contentBuffer = new byte[header.Length];
-                this.stream.Read(contentBuffer, 0, (int)header.Length);
+                    if (!Remote_Content_Show_Header.IsValidHeader(headerBuffer))
+                    {
+                        continue;
+                    }
 
-                switch (header.Code)
-                {
-                    case MessageCode.MC_Process_List_Request:
-                        RCS_Process_List_Request request = (RCS_Process_List_Request)
-                            Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Process_List_Request>(contentBuffer);
+                    header = Remote_Content_Show_Header.FromByte(headerBuffer);
+                    contentBuffer = new byte[header.Length];
+                    this.stream.Read(contentBuffer, 0, (int)header.Length);
 
-                        this.HandleProcessListRequest(request);
-                        break;
-                    case MessageCode.MC_Render_Job:
-                        RCS_Render_Job jobRequest = (RCS_Render_Job)
-                            Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job>(contentBuffer);
+                    switch (header.Code)
+                    {
+                        case MessageCode.MC_Process_List_Request:
+                            RCS_Process_List_Request request =
+                                Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Process_List_Request>(contentBuffer);
+
+                            this.HandleProcessListRequest(request);
+                            break;
+                        case MessageCode.MC_Render_Job:
+                            RCS_Render_Job jobRequest =
+                                Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job>(contentBuffer);
                         
-                        //TODO
+                            //TODO
 
-                        break;
-                    case MessageCode.MC_Render_Job_Cancel:
-                        RCS_Render_Job_Cancel cancelRequest = (RCS_Render_Job_Cancel)
-                            Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Cancel>(contentBuffer);
+                            break;
+                        case MessageCode.MC_Render_Job_Cancel:
+                            RCS_Render_Job_Cancel cancelRequest =
+                                Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Cancel>(contentBuffer);
+                                                
+                            //TODO
 
-                        //TODO
+                            break;
+                        case MessageCode.MC_Alive:
+                            RCS_Alive aliveMsg =
+                                Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Alive>(contentBuffer);
+                            
+                            //TODO
 
-                        break;
-                    case MessageCode.MC_Alive:
-                        RCS_Alive aliveMsg = (RCS_Alive)
-                            Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Alive>(contentBuffer);
+                            break;
+                    }
+                }
+            }
+            catch (IOException)
+            {
+                this.Stop();
 
-                        //TODO
-
-                        break;
+                if (this.OnClientDisconnected != null)
+                {
+                    this.OnClientDisconnected(this, EventArgs.Empty);
                 }
             }
         }
