@@ -60,7 +60,7 @@
     <Compile Include="Remote_Content_Show_Header.cs" />
     <Compile Include="Remote_Content_Show_Message.cs" />
     <Compile Include="Remote_Content_Show_MessageGenerator.cs" />
-    <Compile Include="RSC_Configuration_Image.cs" />
+    <Compile Include="RCS_Configuration_Image.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Remote Content Show Container\Remote Content Show Container.csproj">

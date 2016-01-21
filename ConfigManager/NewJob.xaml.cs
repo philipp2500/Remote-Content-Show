@@ -33,7 +33,13 @@ namespace ConfigManager
 
         private void Netmanager_OnMessageReceived(object sender, MessageRecivedEventHandler e)
         {
-            throw new NotImplementedException();
+            switch (e.Code)
+            {
+                case MessageCode.MC_Process_List_Response:
+                    RCS_Process_List_Response rcsPLR = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Process_List_Response>(e.MessageData);
+                    int a = 0;
+                    break;
+            }
         }
 
         private void Netmanager_OnError(object sender, ErrorEventHandler e)
