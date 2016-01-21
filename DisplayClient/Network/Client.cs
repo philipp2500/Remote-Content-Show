@@ -15,6 +15,11 @@ namespace DisplayClient
         {
         }
 
+        public async Task<StreamSocket> Connect(IPAddress address, int port)
+        {
+            return await this.Connect(address.ToString(), port);
+        }
+
         public async Task<StreamSocket> Connect(string address, int port)
         {
             StreamSocket socket = new StreamSocket();

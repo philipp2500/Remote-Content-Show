@@ -14,11 +14,24 @@ namespace DisplayClient.Network
     {
         private StreamSocket socket;
 
+        private DataReader reader;
+        private DataWriter writer;
+
+        public struct SocketMessage
+        {
+            public MessageCode Code;
+            public byte[] Content;
+            public bool Empty;
+        }
+
         private bool running;
 
         public SocketHandler(StreamSocket socket)
         {
             this.socket = socket;
+
+            this.reader = new DataReader(this.socket.InputStream);
+            this.writer = new DataWriter(this.socket.OutputStream);
         }
 
         public delegate void MessageBytesReceived(MessageCode code, byte[] bytes);
@@ -45,9 +58,69 @@ namespace DisplayClient.Network
             this.socket.Dispose();
         }
 
+        public async void SendMessage(MessageCode msgCode, byte[] data)
+        {
+            Remote_Content_Show_Header header = new Remote_Content_Show_Header(msgCode, data.Length);
+            byte[] headerBytes = header.ToByte;
+
+            this.writer.WriteBytes(headerBytes);
+            this.writer.WriteBytes(data);
+
+            await this.writer.StoreAsync();
+
+            await this.writer.FlushAsync();
+        }
+
+        public async Task<SocketMessage> WaitForMessage()
+        {
+            uint headerSize = Convert.ToUInt32(Remote_Content_Show_Header.HeaderLength);
+
+            SocketMessage msg;
+            msg.Code = MessageCode.MC_Alive;
+            msg.Content = new byte[] { };
+            msg.Empty = true;
+
+            if (await reader.LoadAsync(headerSize) == headerSize)
+            {
+                byte[] headerBytes = new byte[headerSize];
+
+                reader.ReadBytes(headerBytes);
+
+                Remote_Content_Show_Header header = Remote_Content_Show_Header.FromByte(headerBytes);
+
+                uint contentSize = Convert.ToUInt32(header.Length);
+
+                if (await reader.LoadAsync(contentSize) == contentSize)
+                {
+                    byte[] contentBytes = new byte[contentSize];
+
+                    reader.ReadBytes(contentBytes);
+
+                    msg.Code = header.Code;
+                    msg.Content = contentBytes;
+                    msg.Empty = false;
+                }
+            }
+
+            return msg;
+        }
+
         private async void HandleSocket()
         {
-            DataReader reader = new DataReader(this.socket.InputStream);
+            while (this.running)
+            {
+                SocketMessage msg = await this.WaitForMessage();
+
+                if (!msg.Empty)
+                {
+                    if (this.OnMessageBytesReceived != null)
+                    {
+                        this.OnMessageBytesReceived(msg.Code, msg.Content);
+                    }
+                }
+            }
+
+            /*DataReader reader = new DataReader(this.socket.InputStream);
             DataWriter writer = new DataWriter(this.socket.OutputStream);
 
             uint headerSize = Convert.ToUInt32(Remote_Content_Show_Header.HeaderLength);
@@ -80,7 +153,7 @@ namespace DisplayClient.Network
                 {
                     await Task.Delay(1000);
                 }
-            }
+            }*/
         }
     }
 }
