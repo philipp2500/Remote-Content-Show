@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Remote_Content_Show_Container;
+using System.Net;
+using Remote_Content_Show_Protocol;
 
 namespace ConfigManager
 {
@@ -20,9 +23,12 @@ namespace ConfigManager
     /// </summary>
     public partial class AgentProcessOverview : UserControl
     {
-        public AgentProcessOverview()
+        public AgentProcessOverview(RCS_Process_List_Response processResponce, IPAddress ip)
         {
             InitializeComponent();
+
+            this.AgentProcessOverviewName.Content = processResponce.ClientName;
+            this.AgentProcessOverviewIP.Content = ip.ToString();
         }
     }
 }

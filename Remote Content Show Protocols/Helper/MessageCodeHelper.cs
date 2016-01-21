@@ -35,7 +35,7 @@ namespace Remote_Content_Show_Protocol
             dict.Add(MessageCode.MC_Render_Job_Cancel, typeof(RCS_Render_Job_Cancel));
             dict.Add(MessageCode.MC_Render_Job_Message, typeof(RCS_Render_Job_Message));
             dict.Add(MessageCode.MC_Render_Job_Result, typeof(RCS_Render_Job_Result));
-            dict.Add(MessageCode.MC_Configuration_Image, typeof(RSC_Configuration_Image));
+            dict.Add(MessageCode.MC_Configuration_Image, typeof(RCS_Configuration_Image));
 
             return dict;
         }

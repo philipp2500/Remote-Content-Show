@@ -20,22 +20,29 @@ namespace ConfigManager
         private Thread thread;
         private NetworkStream stream;
         private bool run = true;
+        private IPAddress ip;
 
         public NetworkConnection(IPAddress ip)
         {
+            this.ip = ip;
+            this.client = new TcpClient();
+
+            this.thread = new Thread(this.Run);
+            this.thread.IsBackground = true;
+        }
+
+        public void Connect()
+        {
             try
             {
-                this.client = new TcpClient();
                 this.client.Connect(ip, NetworkConfiguration.Port);
                 this.stream = this.client.GetStream();
+                this.thread.Start();
             }
             catch
             {
                 this.FireOnError("Fehler beim Verbinden.");
             }
-
-            this.thread = new Thread(this.Run);
-            this.thread.IsBackground = true;
         }
 
         public void Write(byte[] messageData, MessageCode code)
@@ -55,11 +62,11 @@ namespace ConfigManager
             this.client.Close();
         }
 
-        protected void FireOnMessageReceived(byte[] messageData, MessageCode code)
+        protected void FireOnMessageReceived(byte[] messageData, MessageCode code, IPAddress ip)
         {
             if (this.OnMessageReceived != null)
             {
-                OnMessageReceived(this, new MessageRecivedEventHandler(messageData, code));
+                OnMessageReceived(this, new MessageRecivedEventHandler(messageData, code, ip));
             }
         }
 
@@ -83,13 +90,16 @@ namespace ConfigManager
 
                     data = new byte[header.Length];
                     this.stream.Read(data, 0, data.Length);
-                    this.FireOnMessageReceived(data, header.Code);
+                    this.FireOnMessageReceived(data, header.Code, this.ip);
                 }
             }
             catch
             {
-                this.FireOnError("Fehler beim Empfangen der Daten.");
-            }                
+                if (this.run)
+                {
+                    this.FireOnError("Fehler beim Empfangen der Daten.");
+                }
+            }
         }
     }
 }

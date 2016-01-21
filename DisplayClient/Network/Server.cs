@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
 
-namespace DisplayClient.Network
+namespace DisplayClient
 {
     public class Server
     {

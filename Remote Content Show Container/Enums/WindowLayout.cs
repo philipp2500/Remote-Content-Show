@@ -8,8 +8,8 @@ namespace Remote_Content_Show_Container
 {
     public enum WindowLayout
     {
-        SingleWindow,
-        DoubleWindowVertikalSplitted,
-        DoubleWindowHorizontalSplitted
+        SingleWindow = 0,
+        DoubleWindowVertikalSplitted = 1,
+        DoubleWindowHorizontalSplitted = 2
     }
 }

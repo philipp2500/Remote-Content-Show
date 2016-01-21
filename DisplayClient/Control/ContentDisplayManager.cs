@@ -9,13 +9,16 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace DisplayClient
 {
-    public class DisplayManager
+    public class ContentDisplayManager
     {
         private JobWindowList jobForWindow;
 
-        public DisplayManager(JobWindowList jobForWindow)
+        private List<WorkingAgent> workingAgents;
+
+        public ContentDisplayManager(JobWindowList jobForWindow)
         {
             this.jobForWindow = jobForWindow;
+            this.workingAgents = new List<WorkingAgent>();
 
             this.jobForWindow = new JobWindowList();
             this.jobForWindow.Jobs.Add(new Job() { Duration = 2, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.google.at" } });
@@ -43,6 +46,14 @@ namespace DisplayClient
                         this.RunJob(job);
                     }
                 });
+            }
+        }
+
+        public void Cancel()
+        {
+            foreach (WorkingAgent agent in this.workingAgents)
+            {
+                agent.CancelRenderJob();
             }
         }
 

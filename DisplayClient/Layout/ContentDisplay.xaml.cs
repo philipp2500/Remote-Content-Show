@@ -20,7 +20,7 @@ namespace DisplayClient
 {
     public partial class ContentDisplay : UserControl
     {
-        private DisplayManager manager;
+        private ContentDisplayManager manager;
 
         private FrameworkElement currentDisplayControl;
 
@@ -31,7 +31,7 @@ namespace DisplayClient
             this.currentDisplayControl = null;
         }
 
-        public DisplayManager DisplayManager
+        public ContentDisplayManager DisplayManager
         {
             get
             {

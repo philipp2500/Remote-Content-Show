@@ -8,7 +8,7 @@ using Remote_Content_Show_Protocol;
 using Windows.Storage.Streams;
 using Remote_Content_Show_Container;
 
-namespace DisplayClient.Network
+namespace DisplayClient
 {
     public class SocketHandler
     {
@@ -55,7 +55,13 @@ namespace DisplayClient.Network
 
         public void Close()
         {
-            this.socket.Dispose();
+            try
+            {
+                this.socket.Dispose();
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         public async void SendMessage(MessageCode msgCode, byte[] data)
