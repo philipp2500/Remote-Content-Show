@@ -96,11 +96,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DisplayManager\WorkingAgent.cs" />
+    <Compile Include="Control\ExternalAdmin.cs" />
+    <Compile Include="Control\WorkingAgent.cs" />
     <Compile Include="Layout\ContentDisplay.xaml.cs">
       <DependentUpon>ContentDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DisplayManager\DisplayManager.cs" />
+    <Compile Include="Control\ContentDisplayManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
