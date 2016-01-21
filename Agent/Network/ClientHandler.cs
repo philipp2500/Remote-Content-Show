@@ -6,6 +6,7 @@ using Remote_Content_Show_Container;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Collections.Generic;
 
 
 // ***************************************************************
@@ -151,6 +152,7 @@ namespace Agent.Network
         {
             ScreenCapture capturer = new ScreenCapture();
             Process_List processes = new Process_List();
+            processes.Processes = new List<ProcessDescription>();
 
             foreach (var proc in Process.GetProcesses())
             {

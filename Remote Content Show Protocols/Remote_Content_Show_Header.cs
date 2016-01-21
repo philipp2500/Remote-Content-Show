@@ -35,7 +35,7 @@ namespace Remote_Content_Show_Protocol
         public static Remote_Content_Show_Header FromByte(byte[] data)
         {
             MessageCode code = (MessageCode)BitConverter.ToInt32(data, 3);
-            long length = (long)BitConverter.ToInt64(data, 6);
+            long length = (long)BitConverter.ToInt64(data, 3 + sizeof(Int32));
 
             return new Remote_Content_Show_Header(code, length);
         }
