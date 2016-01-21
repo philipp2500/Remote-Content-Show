@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RSC_Configuration_Image : Remote_Content_Show_Message
+    public class RCS_Configuration_Image : Remote_Content_Show_Message
     {
-        public RSC_Configuration_Image(byte[] picture)
+        public RCS_Configuration_Image(byte[] picture)
         {
             this.Picture = picture;
         }
