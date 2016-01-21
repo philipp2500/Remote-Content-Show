@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public class FileResource : IResource
+    public class WebResource : IResource
     {
         public string Path
         {
