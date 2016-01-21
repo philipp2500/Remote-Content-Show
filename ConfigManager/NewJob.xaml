@@ -20,10 +20,33 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-                        <Label FontWeight="Bold">Name:</Label>
-                        <TextBox Width="522" Margin="5,0,0,0"></TextBox>
-                    </StackPanel>
+                    <Grid Grid.Row="0" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Name:</Label>
+                        <TextBox Width="522" Margin="5,0" Grid.Row="0" Grid.Column="1" Name="JobName"></TextBox>
+
+                        <Label Grid.Row="1" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Right" FontWeight="Bold">Layout:</Label>
+                        <ComboBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Width="94" Height="70" Name="JobLayout">
+                            <ComboBoxItem Margin="2" IsSelected="True">
+                                <Image Source="Resources/SingleWindow.png"></Image>
+                            </ComboBoxItem>
+                            <ComboBoxItem Margin="2">
+                                <Image Source="Resources/DoubleWindowVertikalSplitted.png"></Image>
+                            </ComboBoxItem>
+                            <ComboBoxItem Margin="2">
+                                <Image Source="Resources/DoubleWindowHorizontalSplitted.png"></Image>
+                            </ComboBoxItem>
+                        </ComboBox>                        
+                    </Grid>
 
                     <GroupBox Grid.Row="1" Header="Agent" Padding="5" Margin="5">
                         <Grid>
@@ -34,14 +57,13 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Grid.Column="0" FontWeight="Bold">Name/IP:</Label>
-                            <TextBox Grid.Column="1" Margin="5,0,0,0"></TextBox>
-                            <Button Grid.Column="2" Margin="5,0" Width="50">Add</Button>
+                            <TextBox Grid.Column="1" Margin="5,0,0,0" Name="AgentConnection"></TextBox>
+                            <Button Grid.Column="2" Margin="5,0" Width="50" Name="AddAgent" Click="AddAgent_Click">Add</Button>
                         </Grid>
                     </GroupBox>
                     
                     <ScrollViewer Grid.Row="2" Name="AddedAgents" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <ListView Name="AgentAddView">
-                            <local:AgentProcessOverview></local:AgentProcessOverview>
                         </ListView>
                     </ScrollViewer>
 
