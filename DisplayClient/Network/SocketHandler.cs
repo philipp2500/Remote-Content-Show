@@ -86,7 +86,7 @@ namespace DisplayClient
             {
                 if (this.OnConnectionLost != null)
                 {
-
+                    this.OnConnectionLost();
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace DisplayClient
             }
             catch (Exception)
             {
-
+                this.OnConnectionLost();
             }
 
             return msg;

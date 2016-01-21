@@ -33,7 +33,7 @@ namespace DisplayClient
             display1.Width = 800;
             display1.Height = 800;
 
-            display1.DisplayManager = new ContentDisplayManager(null) { Dispatcher = display1.Dispatcher };
+            display1.DisplayManager = new ContentDisplayManager(null) { DisplayDispatcher = display1.Dispatcher };
 
             this.rootGrid.Children.Add(display1);
         }

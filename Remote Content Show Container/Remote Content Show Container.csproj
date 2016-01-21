@@ -57,6 +57,7 @@
     <Compile Include="RenderConfiguration.cs" />
     <Compile Include="Resouces\FileResource.cs" />
     <Compile Include="Resouces\ProcessResource.cs" />
+    <Compile Include="Resouces\WebResource.cs" />
     <Compile Include="TypeOfTarget.cs" />
     <Compile Include="Enums\WindowLayout.cs" />
   </ItemGroup>
