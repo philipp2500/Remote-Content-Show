@@ -23,6 +23,12 @@ namespace Remote_Content_Show_Container
             set;
         }
 
+        public Job JobToDOo
+        {
+            get;
+            set;
+        }
+
         public int RenderWidth
         {
             get;

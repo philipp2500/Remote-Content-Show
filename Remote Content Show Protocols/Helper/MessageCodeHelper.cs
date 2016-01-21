@@ -33,7 +33,7 @@ namespace Remote_Content_Show_Protocol
             dict.Add(MessageCode.MC_Process_List_Response, typeof(RCS_Process_List_Response));
             dict.Add(MessageCode.MC_Render_Job, typeof(RCS_Render_Job));
             dict.Add(MessageCode.MC_Render_Job_Cancel, typeof(RCS_Render_Job_Cancel));
-            dict.Add(MessageCode.MC_Render_Job_Error, typeof(RCS_Render_Job_Error));
+            dict.Add(MessageCode.MC_Render_Job_Message, typeof(RCS_Render_Job_Message));
             dict.Add(MessageCode.MC_Render_Job_Result, typeof(RCS_Render_Job_Result));
             dict.Add(MessageCode.MC_Configuration_Image, typeof(RSC_Configuration_Image));
 

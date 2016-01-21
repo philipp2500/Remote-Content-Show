@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public enum RenderError
+    public enum RenderMessage
     {
-        NotSupported
+        NotSupported,
+        Supported
     }
 }

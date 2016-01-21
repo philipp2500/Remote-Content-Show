@@ -26,7 +26,7 @@ namespace Remote_Content_Show_Container
 
         MC_Render_Job_Cancel = 51,
 
-        MC_Render_Job_Error = 52,
+        MC_Render_Job_Message = 52,
 
         MC_Render_Job_Result = 53,
 

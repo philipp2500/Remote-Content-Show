@@ -8,15 +8,15 @@ using Remote_Content_Show_Container;
 
 namespace Remote_Content_Show_Protocol
 {
-    public class RCS_Render_Job_Error : Remote_Content_Show_Message
+    public class RCS_Render_Job_Message : Remote_Content_Show_Message
     {
-        public RCS_Render_Job_Error(RenderError errorDescription, Guid concernedRenderJobID)
+        public RCS_Render_Job_Message(RenderMessage errorDescription, Guid concernedRenderJobID)
         {
-            this.ErrorDescription = errorDescription;
+            this.Message = errorDescription;
             this.ConcernedRenderJobID = concernedRenderJobID;
         }
 
-        public RenderError ErrorDescription
+        public RenderMessage Message
         {
             get;
             private set;

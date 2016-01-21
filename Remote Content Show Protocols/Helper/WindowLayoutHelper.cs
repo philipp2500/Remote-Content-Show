@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Remote_Content_Show_Container;
 
-namespace Remote_Content_Show_Protocol.Helper
+namespace Remote_Content_Show_Protocol
 {
     public static class WindowLayoutHelper
     {
