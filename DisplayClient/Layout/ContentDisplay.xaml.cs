@@ -44,9 +44,24 @@ namespace DisplayClient
                 this.manager = value;
                 this.manager.OnImageDisplayRequested += Manager_OnImageDisplayRequested;
                 this.manager.OnWebsiteDisplayRequested += Manager_OnWebsiteDisplayRequested;
+                this.manager.OnDisplayAbortRequested += Manager_OnDisplayAbortRequested;
 
                 this.manager.Start();
             }
+        }
+
+        private void Manager_OnDisplayAbortRequested()
+        {
+            if (this.currentDisplayControl is Image)
+            {
+                ((Image)this.currentDisplayControl).Source = null;
+            }
+            else if (this.currentDisplayControl is WebView)
+            {
+
+            }
+
+            this.currentDisplayControl.Visibility = Visibility.Collapsed;
         }
 
         private void Manager_OnWebsiteDisplayRequested(Uri uri)

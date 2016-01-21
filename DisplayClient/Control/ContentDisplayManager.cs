@@ -1,8 +1,9 @@
 ﻿using Remote_Content_Show_Container;
-using Remote_Content_Show_Container.Resouces;
+//using Remote_Content_Show_Container.Resouces;
 using Remote_Content_Show_Protocol;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,11 +19,13 @@ namespace DisplayClient
 
         private JobWindowList jobForWindow;
 
-        private CoreDispatcher dispatcher;
+        private CoreDispatcher displayDispatcher;
 
         private List<Agent> availableAgents;
 
         private List<WorkingAgent> workingAgents;
+
+        private Job currentlyTreatedJob;
 
         public ContentDisplayManager(JobWindowList jobForWindow)
         {
@@ -32,8 +35,10 @@ namespace DisplayClient
             this.workingAgents = new List<WorkingAgent>();
 
             this.jobForWindow = new JobWindowList();
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.google.at" } });
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24bd3f8.jpg" } });
+            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.google.at" } });
+            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24sadfasdfbd3f8.jpg" } });
+            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
+            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 4, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24bd3f8.jpg" } });
         }
 
         // Display request events
@@ -42,17 +47,29 @@ namespace DisplayClient
 
         public delegate void WebsiteDisplayRequested(Uri uri);
 
+        public delegate void DisplayAbortRequested();
+
         public event ImageDisplayRequested OnImageDisplayRequested;
 
         public event WebsiteDisplayRequested OnWebsiteDisplayRequested;
 
+        public event DisplayAbortRequested OnDisplayAbortRequested;
+
         // Error events
 
-        public delegate void ResourceNotSupportedByAgent(Job job, Agent agent);
+        public delegate void NoResourceCompatibleAgentFound(IResource resource);
+
+        public delegate void ResourceNotAvailable(IResource resource);
+
+        public delegate void AgentNotReachable(Job job, Agent agent);
 
         public delegate void AgentWithProcessNotFound(Job job);
 
-        public event ResourceNotSupportedByAgent OnResourceNotSupportedByAgent;
+        public event NoResourceCompatibleAgentFound OnNoResourceCompatibleAgentFound;
+
+        public event ResourceNotAvailable OnResourceNotAvailable;
+
+        public event AgentNotReachable OnAgentNotReachable;
 
         public event AgentWithProcessNotFound OnAgentWithProcessNotFound;
 
@@ -74,11 +91,11 @@ namespace DisplayClient
             this.renderSize = size;
         }
 
-        public CoreDispatcher Dispatcher
+        public CoreDispatcher DisplayDispatcher
         {
             set
             {
-                this.dispatcher = value;
+                this.displayDispatcher = value;
             }
         }
 
@@ -94,21 +111,41 @@ namespace DisplayClient
                     {
                         foreach (Job job in ordered)
                         {
+                            this.currentlyTreatedJob = job;
+
                             this.RunJob(job);
 
                             await Task.Delay(job.Duration * 1000);
 
-
+                            this.CancelJob(job);
                         }
                     }
-                    while (true);
+                    while (false);
                 });
             }
         }
 
         public void Cancel()
         {
-            foreach (WorkingAgent agent in this.workingAgents)
+            this.CancelJob(this.currentlyTreatedJob);
+
+            this.currentlyTreatedJob = null;
+        }
+
+        private async void CancelJob(Job job)
+        {
+            // TODO
+            if (this.OnDisplayAbortRequested != null)
+            {
+                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    this.OnDisplayAbortRequested();
+                });
+            }
+
+            List<WorkingAgent> jobTreatingAgents = this.workingAgents.Where(x => x.Configuration.JobToDo.OrderingNumber == job.OrderingNumber).ToList();
+
+            foreach (WorkingAgent agent in jobTreatingAgents)
             {
                 agent.CancelRenderJob();
             }
@@ -121,6 +158,12 @@ namespace DisplayClient
                 FileResource fr = (FileResource)job.Resource;
 
                 this.HandleFileResource(fr);
+            }
+            else if (job.Resource is WebResource)
+            {
+                WebResource wr = (WebResource)job.Resource;
+
+                this.HandleWebResource(wr);
             }
             else if (job.Resource is ProcessResource)
             {
@@ -136,7 +179,7 @@ namespace DisplayClient
             {
                 if (this.OnImageDisplayRequested != null)
                 {
-                    await this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
                         BitmapImage img = new BitmapImage(new Uri(resource.Path));
 
@@ -144,22 +187,26 @@ namespace DisplayClient
                     });
                 }
             }
-            else if (this.OnWebsiteDisplayRequested != null)
+        }
+
+        private async void HandleWebResource(WebResource resource)
+        {
+            if (this.OnWebsiteDisplayRequested != null)
             {
-                await this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     this.OnWebsiteDisplayRequested(new Uri(resource.Path));
                 });
             }
-        }
-
+        }        
+        
         private void HandleProcessResource(Job job, ProcessResource resource)
         {
             List<Agent> foundAgents = this.availableAgents.Where(x => x.IP.Equals(resource.ProcessAgent.IP)).ToList();
 
             if (foundAgents.Count == 1)
             {
-
+                this.LookForResourceCompatibleAgent(foundAgents, resource);
             }
             else
             {
@@ -170,41 +217,94 @@ namespace DisplayClient
             }
         }
 
-        private async void HandleAgent(Agent agent, RenderConfiguration configuration)
+        private async void LookForResourceCompatibleAgent(List<Agent> givenAgents, IResource resource)
         {
-            WorkingAgent worker = new WorkingAgent(null);
+            RenderConfiguration configuration = null; // TODO
+            bool found = false;
 
-            try
+            foreach (Agent agent in givenAgents)
             {
-                RenderMessage msg = await worker.Connect(agent);
-
-                if (msg == RenderMessage.Supported)
+                if (!found)
                 {
-                    worker.OnResultReceived += Worker_OnResultReceived;
-                    
+                    WorkingAgent worker = new WorkingAgent(configuration);
 
-                    this.workingAgents.Add(worker);
-                }
-                else if (msg == RenderMessage.NotSupported)
-                {
-                    if (this.OnResourceNotSupportedByAgent != null)
+                    try
                     {
-                        this.OnResourceNotSupportedByAgent(configuration.JobToDo, agent);
+                        RenderMessage msg = await worker.Connect(agent);
+
+                        if (msg == RenderMessage.Supported)
+                        {
+                            worker.OnResultReceived += Worker_OnResultReceived;
+                            worker.OnMessageReceived += Worker_OnMessageReceived;
+                            worker.OnAgentGotUnreachable += Worker_OnAgentGotUnreachable;
+
+                            this.workingAgents.Add(worker);
+                        }
+                    }
+                    catch (AgentNotReachableException)
+                    {
+                        if (this.OnAgentNotReachable != null)
+                        {
+                            this.OnAgentNotReachable(configuration.JobToDo, agent);
+                        }
                     }
                 }
             }
-            catch (AgentNotReachableException)
+
+            if (!found)
             {
-                if (this.OnAgentWithProcessNotFound != null)
+                if (this.OnNoResourceCompatibleAgentFound != null)
                 {
-                    this.OnAgentWithProcessNotFound(configuration.JobToDo);
+                    this.OnNoResourceCompatibleAgentFound(resource);
                 }
             }
         }
 
-        private void Worker_OnResultReceived(RCS_Render_Job_Result result)
+        private void Worker_OnMessageReceived(WorkingAgent agent, RCS_Render_Job_Message message)
         {
+            // TODO: handling a process, which has been exited suddenly.
+            if (message.Message == RenderMessage.ProcessExited)
+            {
+                // Solution 1: Fuck it. We just say that the resource is not available anymore.
+                /*if (this.OnResourceNotAvailable != null)
+                {
+                    this.OnResourceNotAvailable(agent.Configuration.JobToDo.Resource);
+                }*/
 
+                // Solution 2:
+                this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
+            }
         }
+
+        private void Worker_OnAgentGotUnreachable(WorkingAgent agent)
+        {
+            if (this.OnAgentNotReachable != null)
+            {
+                this.OnAgentNotReachable(agent.Configuration.JobToDo, agent.Agent);
+            }
+        }
+
+        private void Worker_OnResultReceived(WorkingAgent agent, RCS_Render_Job_Result result)
+        {
+            this.HandleImageResult(result.Picture);
+        }
+
+        private async void HandleImageResult(byte[] bytes)
+        {
+            if (this.OnImageDisplayRequested != null)
+            {
+                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    BitmapImage image = new BitmapImage();
+
+                    using (MemoryStream ms = new MemoryStream(bytes))
+                    {
+                        await image.SetSourceAsync(ms.AsRandomAccessStream());
+                    }
+
+                    this.OnImageDisplayRequested(image);
+                });
+            }
+        } 
     }
 }

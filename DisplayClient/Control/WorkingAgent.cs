@@ -19,11 +19,11 @@ namespace DisplayClient
         {
         }
 
-        public delegate void MessageReceived(RCS_Render_Job_Message message);
+        public delegate void MessageReceived(WorkingAgent agent, RCS_Render_Job_Message message);
 
-        public delegate void ResultReceived(RCS_Render_Job_Result result);
+        public delegate void ResultReceived(WorkingAgent agent, RCS_Render_Job_Result result);
 
-        public delegate void AgentGotUnreachable();
+        public delegate void AgentGotUnreachable(WorkingAgent agent);
 
         public event MessageReceived OnMessageReceived;
 
@@ -32,6 +32,12 @@ namespace DisplayClient
         public event AgentGotUnreachable OnAgentGotUnreachable;
 
         public RenderConfiguration Configuration
+        {
+            get;
+            private set;
+        }
+
+        public Agent Agent
         {
             get;
             private set;
@@ -61,11 +67,17 @@ namespace DisplayClient
 
                 if (jobResponse.Message == RenderMessage.Supported)
                 {
+                    this.Agent = agent;
                     this.socketHandler = new SocketHandler(socket);
 
                     this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
+                    this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
 
                     this.alive = true;
+                }
+                else
+                {
+                    this.socketHandler.Close();
                 }
 
                 return jobResponse.Message;
@@ -74,11 +86,20 @@ namespace DisplayClient
             throw new AgentNotReachableException("The agent could not be found!");
         }
 
+        private void SocketHandler_OnConnectionLost()
+        {
+            if (this.OnAgentGotUnreachable != null)
+            {
+                this.OnAgentGotUnreachable(this);
+            }
+        }
+
         public void CancelRenderJob()
         {
             RCS_Render_Job_Cancel cancelRequest = new RCS_Render_Job_Cancel(CancelRenderJobReason.Manually, Configuration.RenderJobID);
 
             this.socketHandler.SendMessage(MessageCode.MC_Render_Job_Cancel, Remote_Content_Show_MessageGenerator.GetMessageAsByte(cancelRequest));
+            this.socketHandler.Close();
 
             this.socketHandler.OnMessageBytesReceived -= this.SocketHandler_OnMessageBytesReceived;
         }
@@ -103,7 +124,7 @@ namespace DisplayClient
 
                     if (this.OnAgentGotUnreachable != null)
                     {
-                        this.OnAgentGotUnreachable();
+                        this.OnAgentGotUnreachable(this);
                     }
                 }
             });
@@ -123,7 +144,7 @@ namespace DisplayClient
 
                 if (this.OnResultReceived != null)
                 {
-                    this.OnResultReceived(result);
+                    this.OnResultReceived(this, result);
                 }
             }
             else if (code == MessageCode.MC_Render_Job_Message)
@@ -132,7 +153,7 @@ namespace DisplayClient
 
                 if (this.OnMessageReceived != null)
                 {
-                    this.OnMessageReceived(message);
+                    this.OnMessageReceived(this, message);
                 }
             }
         }
