@@ -23,10 +23,11 @@ namespace ConfigManager
     public partial class NewJob : Window
     {
         private NetworkManager netmanager = new NetworkManager();
+        private List<ProcessDescriptionWrapper> allProcess = new List<ProcessDescriptionWrapper>();
 
         public NewJob()
         {
-            InitializeComponent();
+            InitializeComponent(); 
             this.netmanager.OnError += Netmanager_OnError;
             this.netmanager.OnMessageReceived += Netmanager_OnMessageReceived;
         }
@@ -37,7 +38,17 @@ namespace ConfigManager
             {
                 case MessageCode.MC_Process_List_Response:
                     RCS_Process_List_Response rcsPLR = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Process_List_Response>(e.MessageData);
-                    int a = 0;
+                    this.Dispatcher.Invoke(() =>
+                        {
+                            AgentProcessOverview apo = new AgentProcessOverview(rcsPLR, e.Ip);
+                            this.AddedAgents.Items.Add(apo);
+                        }
+                    );
+                    // Add the results for later!
+                    foreach (ProcessDescription pd in rcsPLR.ProcesseList.Processes)
+                    {
+                        this.allProcess.Add(new ProcessDescriptionWrapper(pd, e.Ip));
+                    }
                     break;
             }
         }
@@ -69,6 +80,20 @@ namespace ConfigManager
                 {
                     MessageBox.Show("IP/Name konnte nicht aufgelöst werden!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        private void ToContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(this.JobName.Text))
+            {
+                this.Tab1.IsEnabled = false;
+                this.Tab2.IsSelected = true;
+                this.Tab2.IsEnabled = true;
+            }
+            else
+            {
+                MessageBox.Show("Bitte Namen für den Job eingeben!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

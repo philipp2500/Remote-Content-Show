@@ -8,10 +8,12 @@
         Title="Job anlegen" 
         Height="500" 
         Width="600" 
-        ResizeMode="CanMinimize">
+        MinHeight="500"
+        MinWidth="600" 
+        Icon="Resources/Icon.ico">
     <Grid>
         <TabControl>
-            <TabItem Header="Name &amp; Agents">
+            <TabItem Header="Name &amp; Agents" Name="Tab1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -32,7 +34,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Name:</Label>
-                        <TextBox Width="522" Margin="5,0" Grid.Row="0" Grid.Column="1" Name="JobName"></TextBox>
+                        <TextBox Margin="5,0" Grid.Row="0" Grid.Column="1" Name="JobName"></TextBox>
 
                         <Label Grid.Row="1" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Right" FontWeight="Bold">Layout:</Label>
                         <ComboBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Width="94" Height="70" Name="JobLayout">
@@ -61,17 +63,16 @@
                             <Button Grid.Column="2" Margin="5,0" Width="50" Name="AddAgent" Click="AddAgent_Click">Add</Button>
                         </Grid>
                     </GroupBox>
-                    
-                    <ScrollViewer Grid.Row="2" Name="AddedAgents" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <ListView Name="AgentAddView">
-                        </ListView>
-                    </ScrollViewer>
 
-                    <Button Grid.Row="3" Content="Weiter" HorizontalAlignment="Right" Width="100" Margin="5"></Button>
+                    <ListView Grid.Row="2" Name="AddedAgents" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+  
+                    </ListView>
+
+                    <Button Grid.Row="3" Content="Weiter" HorizontalAlignment="Right" Width="100" Margin="5" Name="ToContent" Click="ToContent_Click"></Button>
                 </Grid>
             </TabItem>
             
-            <TabItem Header="Content" IsEnabled="False">
+            <TabItem Header="Content" IsEnabled="False" Name="Tab2">
                 <Label Content="Content goes here..." />
             </TabItem>
             
