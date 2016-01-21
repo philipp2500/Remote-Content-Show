@@ -23,7 +23,7 @@ namespace Remote_Content_Show_Container
             set;
         }
 
-        public Job JobToDOo
+        public Job JobToDo
         {
             get;
             set;
