@@ -7,10 +7,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Button x:Name="btnListen" Click="btnListen_Click">Listen for clients</Button>
+        <Button x:Name="btnListen" Click="btnListen_Click" IsDefault="True">Listen for clients</Button>
         <ListBox Grid.Row="1" x:Name="lstOutput"></ListBox>
-        <Button Grid.Row="2" IsEnabled="False">I don't do anything.</Button>
     </Grid>
 </Window>

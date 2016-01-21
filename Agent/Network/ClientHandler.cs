@@ -20,6 +20,7 @@ namespace Agent.Network
         private NetworkStream stream = null;
         private ListenerThreadArgs args = null;
         private Dictionary<Guid, ScreenCapture> runningRenderJobs = null;
+        private Timer keepAliveTimer = null;
 
         /// <summary>
         /// The event fired when the connected client disconnects or this <see cref="ClientHandler"/> is stopped.
@@ -40,21 +41,31 @@ namespace Agent.Network
         }
 
         /// <summary>
-        /// Starts listening for messages.
+        /// Starts listening for messages and starts sending <see cref="RCS_Alive"/> messages.
         /// </summary>
         public void Start()
         {
             this.args = new ListenerThreadArgs();
             Thread listenerThread = new Thread(new ParameterizedThreadStart(this.HandleMessages));
             listenerThread.Start(this.args);
+
+            this.keepAliveTimer = new Timer(new TimerCallback(SendKeepAlive), null, 1000, 5000);
         }
 
         /// <summary>
-        /// Stops listening for messages and disconnects from the remote client.
+        /// Stops listening for messages, stops all jobs, stops sending <see cref="RCS_Alive"/> messages
+        /// and disconnects from the remote client.
         /// </summary>
         public void Stop()
         {
             this.args.Exit = true;
+
+            foreach (var job in this.runningRenderJobs.Values)
+            {
+                job.StopCapture();
+            }
+
+            this.keepAliveTimer.Dispose();
 
             try { this.stream.Close(); }
             catch { }
@@ -126,15 +137,11 @@ namespace Agent.Network
                             RCS_Render_Job_Cancel cancelRequest =
                                 Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Cancel>(contentBuffer);
 
-                            //TODO
+                            this.HandleCancelRequest(cancelRequest);
 
                             break;
                         case MessageCode.MC_Alive:
-                            RCS_Alive aliveMsg =
-                                Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Alive>(contentBuffer);
-                            
-                            //TODO
-
+                            // no handling required.
                             break;
                     }
                 }
@@ -144,7 +151,24 @@ namespace Agent.Network
                 this.Stop();
             }
         }
-        
+
+        /// <summary>
+        /// Stops capturing images for the given render job.
+        /// </summary>
+        /// <param name="cancelRequest">The message containing the canceled render job's GUID.</param>
+        private void HandleCancelRequest(RCS_Render_Job_Cancel cancelRequest)
+        {
+            if (!this.runningRenderJobs.ContainsKey(cancelRequest.ConcernedRenderJobID))
+            {
+                return;
+            }
+
+            ScreenCapture capturer = this.runningRenderJobs[cancelRequest.ConcernedRenderJobID];
+
+            capturer.StopCapture();
+            this.runningRenderJobs.Remove(cancelRequest.ConcernedRenderJobID);
+        }
+
         /// <summary>
         /// Responds with a list of the running processes that have a window.
         /// </summary>
@@ -176,10 +200,10 @@ namespace Agent.Network
         private void HandleJobRequest(RCS_Render_Job jobRequest)
         {
             // TODO check if this agent is able to execute the render job
-            if (!this.CheckExecutionAbility("x.y", jobRequest.Configuration.RenderJobID))
-            {
-                return;
-            }
+            //if (!this.CheckExecutionAbility("x.y", jobRequest.Configuration.RenderJobID))
+            //{
+            //    return;
+            //}
 
             ScreenCapture capturer = new ScreenCapture();
             capturer.OnImageCaptured += Capturer_OnImageCaptured;
@@ -305,6 +329,17 @@ namespace Agent.Network
             }
 
             return processes;
+        }
+
+        private void SendKeepAlive(object state)
+        {
+            try
+            {
+                this.SendMessage(MessageCode.MC_Alive, new RCS_Alive());
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>
