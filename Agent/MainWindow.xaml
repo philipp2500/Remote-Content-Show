@@ -10,18 +10,7 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Button x:Name="btnListen" Click="btnListen_Click">Listen for clients</Button>
-        <ListBox Grid.Row="1" x:Name="lstProcesses">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="local:ProcessVM">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=ProcessId}" />
-                        <TextBlock Text="{Binding Path=ProcessName}" />
-                        <TextBlock Text="{Binding Path=ProcessTitle}" />
-                        <Image Width="150" Height="150" Source="{Binding Path=WindowPicture}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <Button Grid.Row="2" Click="Button_Click">Get Processes</Button>
+        <ListBox Grid.Row="1" x:Name="lstOutput"></ListBox>
+        <Button Grid.Row="2" IsEnabled="False">I don't do anything.</Button>
     </Grid>
 </Window>

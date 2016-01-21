@@ -24,19 +24,35 @@ namespace DisplayClient.DisplayManager
 
         public delegate void CancelRequestReceived(Guid jobID, CancelJobReason reason);
 
-        public delegate void EventRequestReceived();
+        public delegate void ConfigurationImageReceived(byte[] image);
+
+        // Need to know the sender to send a response back.
+        public delegate void EventRequestReceived(ExternalAdmin sender);
 
         public event JobConfigurationReceived OnJobConfigurationReceived;
 
         public event CancelRequestReceived OnCancelRequestReceived;
 
+        public event ConfigurationImageReceived OnConfigurationImageReceived;
+
         public event EventRequestReceived OnEventRequestReceived;
+
+        public void SendEventsList(Event_List events)
+        {
+            RCS_Event_List_Response response = new RCS_Event_List_Response(events);
+
+            this.socketHandler.SendMessage(MessageCode.MC_Event_List_Response, Remote_Content_Show_MessageGenerator.GetMessageAsByte(response));
+
+            this.socketHandler.Close();
+        }
 
         private void SocketHandler_OnMessageBytesReceived(MessageCode code, byte[] bytes)
         {
             if (code == MessageCode.MC_Job)
             {
                 RCS_Job job = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Job>(bytes);
+
+                this.socketHandler.Close();
 
                 if (this.OnJobConfigurationReceived != null)
                 {
@@ -47,9 +63,22 @@ namespace DisplayClient.DisplayManager
             {
                 RCS_Job_Cancel cancel = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Job_Cancel>(bytes);
 
+                this.socketHandler.Close();
+
                 if (this.OnCancelRequestReceived != null)
                 {
                     this.OnCancelRequestReceived(cancel.JobID, cancel.Reason);
+                }
+            }
+            else if (code == MessageCode.MC_Configuration_Image)
+            {
+                RCS_Configuration_Image image = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Configuration_Image>(bytes);
+
+                this.socketHandler.Close();
+
+                if (this.OnConfigurationImageReceived != null)
+                {
+                    this.OnConfigurationImageReceived(image.Picture);
                 }
             }
             else if (code == MessageCode.MC_Event_List_Request)
@@ -58,12 +87,8 @@ namespace DisplayClient.DisplayManager
 
                 if (this.OnEventRequestReceived != null)
                 {
-                    this.OnEventRequestReceived();
+                    this.OnEventRequestReceived(this);
                 }
-            }
-            else if (code == MessageCode.MC_Configuration_Image)
-            {
-
             }
         }
     }

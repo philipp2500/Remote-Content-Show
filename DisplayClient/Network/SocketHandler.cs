@@ -36,7 +36,11 @@ namespace DisplayClient
 
         public delegate void MessageBytesReceived(MessageCode code, byte[] bytes);
 
+        public delegate void ConnectionLost();
+
         public event MessageBytesReceived OnMessageBytesReceived;
+
+        public event ConnectionLost OnConnectionLost;
 
         public void Start()
         {
@@ -59,7 +63,7 @@ namespace DisplayClient
             {
                 this.socket.Dispose();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -69,12 +73,22 @@ namespace DisplayClient
             Remote_Content_Show_Header header = new Remote_Content_Show_Header(msgCode, data.Length);
             byte[] headerBytes = header.ToByte;
 
-            this.writer.WriteBytes(headerBytes);
-            this.writer.WriteBytes(data);
+            try
+            {
+                this.writer.WriteBytes(headerBytes);
+                this.writer.WriteBytes(data);
 
-            await this.writer.StoreAsync();
+                await this.writer.StoreAsync();
 
-            await this.writer.FlushAsync();
+                await this.writer.FlushAsync();
+            }
+            catch (Exception)
+            {
+                if (this.OnConnectionLost != null)
+                {
+
+                }
+            }
         }
 
         public async Task<SocketMessage> WaitForMessage()
@@ -86,26 +100,33 @@ namespace DisplayClient
             msg.Content = new byte[] { };
             msg.Empty = true;
 
-            if (await reader.LoadAsync(headerSize) == headerSize)
+            try
             {
-                byte[] headerBytes = new byte[headerSize];
-
-                reader.ReadBytes(headerBytes);
-
-                Remote_Content_Show_Header header = Remote_Content_Show_Header.FromByte(headerBytes);
-
-                uint contentSize = Convert.ToUInt32(header.Length);
-
-                if (await reader.LoadAsync(contentSize) == contentSize)
+                if (await reader.LoadAsync(headerSize) == headerSize)
                 {
-                    byte[] contentBytes = new byte[contentSize];
+                    byte[] headerBytes = new byte[headerSize];
 
-                    reader.ReadBytes(contentBytes);
+                    reader.ReadBytes(headerBytes);
 
-                    msg.Code = header.Code;
-                    msg.Content = contentBytes;
-                    msg.Empty = false;
+                    Remote_Content_Show_Header header = Remote_Content_Show_Header.FromByte(headerBytes);
+
+                    uint contentSize = Convert.ToUInt32(header.Length);
+
+                    if (await reader.LoadAsync(contentSize) == contentSize)
+                    {
+                        byte[] contentBytes = new byte[contentSize];
+
+                        reader.ReadBytes(contentBytes);
+
+                        msg.Code = header.Code;
+                        msg.Content = contentBytes;
+                        msg.Empty = false;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+
             }
 
             return msg;
