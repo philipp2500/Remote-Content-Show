@@ -44,15 +44,8 @@ namespace Agent
             {
                 if (this.windowPicture == null)
                 {
-                    using (var memory = new MemoryStream(this.process.WindowPicture))
-                    {
-                        memory.Position = 0;
-                        this.windowPicture = new BitmapImage();
-                        this.windowPicture.BeginInit();
-                        this.windowPicture.StreamSource = memory;
-                        this.windowPicture.CacheOption = BitmapCacheOption.OnLoad;
-                        this.windowPicture.EndInit();
-                    }
+                    this.windowPicture = 
+                        ImageHandler.ImageHandler.BytesToImage(this.process.WindowPicture);
                 }
 
                 return this.windowPicture;

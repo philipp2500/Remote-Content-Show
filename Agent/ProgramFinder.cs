@@ -6,27 +6,27 @@ namespace Agent
     public class ProgramFinder
     {
         [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
-        public static extern long FindExecutableA(
+        private static extern long FindExecutableA(
           string lpFile, string lpDirectory, StringBuilder lpResult);
 
-        public static string FindExecutable(
-          string pv_strFilename)
+        /// <summary>
+        /// Gets the path to the executable that is able to process the given file.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns>The absolute path to the executable or <see cref="string.Empty"/> if no executable is found or if the file is inaccessible.</returns>
+        public static string FindExecutable(string filename)
         {
-            StringBuilder objResultBuffer =
-              new StringBuilder(1024);
-            long lngResult = 0;
+            StringBuilder objResultBuffer = new StringBuilder(1024);
+            long result = 0;
 
-            lngResult =
-              FindExecutableA(pv_strFilename,
-                string.Empty, objResultBuffer);
+            result = FindExecutableA(filename, string.Empty, objResultBuffer);
 
-            if (lngResult >= 32)
+            if (result >= 32)
             {
                 return objResultBuffer.ToString();
             }
 
-            return string.Format(
-              "Error: ({0})", lngResult);
+            return string.Empty;
         }
     }
 }

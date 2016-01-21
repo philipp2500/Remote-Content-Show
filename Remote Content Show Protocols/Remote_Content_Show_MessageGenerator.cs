@@ -15,7 +15,7 @@ namespace Remote_Content_Show_Protocol
         {
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
         }
-        public static object GetMessageFromByte<T>(byte[] data)
+        public static T GetMessageFromByte<T>(byte[] data)
         {
             return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(data));
         }
