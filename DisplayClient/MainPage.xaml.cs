@@ -1,10 +1,13 @@
-﻿using System;
+﻿using DisplayClient.Log;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,7 +33,7 @@ namespace DisplayClient
             display1.Width = 800;
             display1.Height = 800;
 
-            display1.DisplayManager = new ContentDisplayManager(null);
+            display1.DisplayManager = new ContentDisplayManager(null) { Dispatcher = display1.Dispatcher };
 
             this.rootGrid.Children.Add(display1);
         }

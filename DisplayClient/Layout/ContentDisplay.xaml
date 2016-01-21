@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Background="White">
+    <Grid Background="LightGray">
         <Image Name="DisplayingImage" Visibility="Collapsed"></Image>
         <WebView Name="DisplayingWebView" Visibility="Collapsed"></WebView>
         <!--<MediaElement x:Name="mediaElement" Source="/Assets/Wildlife.wmv" AutoPlay="False" Margin="5" HorizontalAlignment="Stretch" AreTransportControlsEnabled="True"></MediaElement>-->

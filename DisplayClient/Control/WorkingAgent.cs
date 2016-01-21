@@ -15,13 +15,8 @@ namespace DisplayClient
 
         private bool alive;
 
-        public WorkingAgent(RenderConfiguration configuration, StreamSocket socket)
+        public WorkingAgent(RenderConfiguration configuration)
         {
-            this.socketHandler = new SocketHandler(socket);
-
-            this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
-
-            this.alive = true;
         }
 
         public delegate void MessageReceived(RCS_Render_Job_Message message);
@@ -42,7 +37,7 @@ namespace DisplayClient
             private set;
         }
 
-        public async static Task<WorkingAgent> SendRenderJob(Agent agent, RenderConfiguration configuration)
+        public async Task<RenderMessage> Connect(Agent agent)
         {
             Client c = new Client();
 
@@ -51,7 +46,7 @@ namespace DisplayClient
             SocketHandler handler = new SocketHandler(socket);
 
             // send render job request
-            RCS_Render_Job jobRequest = new RCS_Render_Job(configuration);
+            RCS_Render_Job jobRequest = new RCS_Render_Job(this.Configuration);
 
             byte[] sendData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(jobRequest);
 
@@ -66,16 +61,17 @@ namespace DisplayClient
 
                 if (jobResponse.Message == RenderMessage.Supported)
                 {
-                    return new WorkingAgent(configuration, socket);
+                    this.socketHandler = new SocketHandler(socket);
+
+                    this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
+
+                    this.alive = true;
                 }
-                else
-                {
-                    // TODO: better handling
-                    return null;
-                }
+
+                return jobResponse.Message;
             }
 
-            return null;
+            throw new AgentNotReachableException("The agent could not be found!");
         }
 
         public void CancelRenderJob()
@@ -87,7 +83,7 @@ namespace DisplayClient
             this.socketHandler.OnMessageBytesReceived -= this.SocketHandler_OnMessageBytesReceived;
         }
         
-        private void CheckAliveStatus()
+        private void KeepAlive()
         {
             Task.Factory.StartNew(() =>
             {
@@ -95,7 +91,13 @@ namespace DisplayClient
 
                 Task.Delay(1000 * 60);
 
-                if (!this.alive)
+                if (this.alive)
+                {
+                    RCS_Alive alive = new RCS_Alive();
+
+                    this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
+                }
+                else
                 {
                     this.socketHandler.Close();
 

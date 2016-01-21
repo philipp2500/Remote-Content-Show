@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -63,8 +64,8 @@ namespace DisplayClient
 
         private void Manager_OnImageDisplayRequested(Windows.UI.Xaml.Media.Imaging.BitmapImage image)
         {
-            Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
+            //Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            //{
                 if (this.currentDisplayControl != null)
                 {
                     this.currentDisplayControl.Visibility = Visibility.Collapsed;
@@ -74,7 +75,7 @@ namespace DisplayClient
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
                 this.DisplayingImage.Source = image;
-            });
+            //});
         }
     }
 }
