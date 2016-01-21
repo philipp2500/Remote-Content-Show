@@ -21,7 +21,7 @@ namespace Agent
         /// <summary>
         /// The event fired when the process whose window to capture has exited.
         /// </summary>
-        public event EventHandler OnProcessExited;
+        public event EventHandler<CaptureFinishEventArgs> OnProcessExited;
 
         private const int SW_RESTORE = 9; // Indicates that a minimized window should be restored
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
@@ -118,14 +118,14 @@ namespace Agent
                 prevImage = image;                
             }
 
-            if (DateTime.Now > endTime && this.OnCaptureFinished != null)
+            if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
             {
                 this.OnCaptureFinished(this, new CaptureFinishEventArgs(args.RenderJobId));
             }
 
             if (proc.HasExited && this.OnProcessExited != null)
             {
-                this.OnProcessExited(this, EventArgs.Empty);
+                this.OnProcessExited(this, new CaptureFinishEventArgs(args.RenderJobId));
             }
         }
 

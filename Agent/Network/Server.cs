@@ -60,7 +60,7 @@ namespace Agent.Network
         }
         
         /// <summary>
-        /// Accepts 
+        /// Accepts a new TCP client and asynchronously handles the connection and its messages.
         /// </summary>
         public void AcceptTcpClientCallback(IAsyncResult ar)
         {

@@ -8,12 +8,6 @@ using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
 
-
-// ***************************************************************
-// TODO: ERROR HANDLING
-// ***************************************************************
-
-
 namespace Agent.Network
 {
     public class ClientHandler
@@ -32,6 +26,12 @@ namespace Agent.Network
         /// </summary>
         public event EventHandler OnClientDisconnected;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClientHandler"/> class.
+        /// </summary>
+        /// <param name="client">The client whose messages to handle.</param>
+        /// <exception cref="InvalidOperationException">The System.Net.Sockets.TcpClient is not connected to a remote host.</exception>
+        /// <exception cref="ObjectDisposedException">The System.Net.Sockets.TcpClient has been closed.</exception>
         public ClientHandler(TcpClient client)
         {
             this.client = client;
@@ -152,9 +152,15 @@ namespace Agent.Network
             byte[] responseHeader =
                 new Remote_Content_Show_Header(MessageCode.MC_Process_List_Response, responseMsg.Length).ToByte;
 
-            this.stream.Write(responseHeader, 0, responseHeader.Length);
-            this.stream.Write(responseMsg, 0, responseMsg.Length);
-            this.stream.Flush();
+            try
+            {
+                this.stream.Write(responseHeader, 0, responseHeader.Length);
+                this.stream.Write(responseMsg, 0, responseMsg.Length);
+                this.stream.Flush();
+            }
+            catch
+            {
+            }
         }
 
         private void HandleJobRequest(RCS_Render_Job jobRequest)
@@ -174,10 +180,27 @@ namespace Agent.Network
             //TODO not devenv.exe
         }
 
-        private void Capturer_OnProcessExited(object sender, EventArgs e)
+        /// <summary>
+        /// Sends a message to the client indicating that the captured process has exited.
+        /// </summary>
+        private void Capturer_OnProcessExited(object sender, CaptureFinishEventArgs e)
         {
-            // TODO
-            // TODO send back when captured process exits
+            this.runningRenderJobs.Remove(e.RenderJobId);
+
+            byte[] msg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(
+                new RCS_Render_Job_Message(RenderMessage.ProcessExited, e.RenderJobId));
+
+            byte[] header = new Remote_Content_Show_Header(MessageCode.MC_Render_Job_Message, msg.Length).ToByte;
+
+            try
+            {
+                this.stream.Write(header, 0, header.Length);
+                this.stream.Write(msg, 0, msg.Length);
+                this.stream.Flush();
+            }
+            catch
+            {
+            }
         }
 
         private void Capturer_OnCaptureFinished(object sender, CaptureFinishEventArgs e)

@@ -29,10 +29,16 @@ namespace Agent
                 return;
             }
 
-            this.server = new Server(Remote_Content_Show_Protocol.NetworkConfiguration.Port);
-            this.server.Start();
-            this.btnListen.Content = "Listening...";
-            this.btnListen.IsEnabled = false;
+            try
+            {
+                this.server = new Server(Remote_Content_Show_Protocol.NetworkConfiguration.Port);
+                this.server.Start();
+                this.btnListen.Content = "Listening...";
+                this.btnListen.IsEnabled = false;
+            }
+            catch
+            {
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
