@@ -22,6 +22,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Grid.Row="2" Click="Button_Click">Get Processes</Button>
+        <Button Grid.Row="2" IsEnabled="False">I don't do anything.</Button>
     </Grid>
 </Window>

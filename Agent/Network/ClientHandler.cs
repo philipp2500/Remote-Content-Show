@@ -25,6 +25,7 @@ namespace Agent.Network
         private TcpClient client = null;
         private NetworkStream stream = null;
         private ListenerThreadArgs args = null;
+        private Dictionary<Guid, ScreenCapture> runningRenderJobs = null;
 
         /// <summary>
         /// The event fired when the connected client disconnects.
@@ -35,6 +36,7 @@ namespace Agent.Network
         {
             this.client = client;
             this.stream = this.client.GetStream();
+            this.runningRenderJobs = new Dictionary<Guid, ScreenCapture>();
         }
 
         public void Start()
@@ -47,8 +49,12 @@ namespace Agent.Network
         public void Stop()
         {
             this.args.Exit = true;
-            this.stream.Close();
-            this.client.Close();
+
+            try { this.stream.Close(); }
+            catch { }
+
+            try { this.client.Close(); }
+            catch { }
         }
 
         /// <summary>
@@ -93,19 +99,23 @@ namespace Agent.Network
                             RCS_Process_List_Request request =
                                 Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Process_List_Request>(contentBuffer);
 
-                            this.HandleProcessListRequest(request);
+                            this.HandleProcessListRequest();
+
+                            // cut connection after handling of the process list request
+                            this.Stop();
                             break;
                         case MessageCode.MC_Render_Job:
                             RCS_Render_Job jobRequest =
                                 Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job>(contentBuffer);
-                        
+
+                            this.HandleJobRequest(jobRequest);
                             //TODO
 
                             break;
                         case MessageCode.MC_Render_Job_Cancel:
                             RCS_Render_Job_Cancel cancelRequest =
                                 Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Cancel>(contentBuffer);
-                                                
+
                             //TODO
 
                             break;
@@ -129,12 +139,11 @@ namespace Agent.Network
                 }
             }
         }
-
+        
         /// <summary>
         /// Responds with a list of the running processes that have a window.
         /// </summary>
-        /// <param name="request"></param>
-        private void HandleProcessListRequest(RCS_Process_List_Request request)
+        private void HandleProcessListRequest()
         {
             RCS_Process_List_Response response =
                 new RCS_Process_List_Response(this.GetProcessList(this.previewImageSize), Environment.MachineName);
@@ -148,6 +157,49 @@ namespace Agent.Network
             this.stream.Flush();
         }
 
+        private void HandleJobRequest(RCS_Render_Job jobRequest)
+        {
+            ScreenCapture capturer = new ScreenCapture();
+            capturer.OnImageCaptured += Capturer_OnImageCaptured;
+            capturer.OnCaptureFinished += Capturer_OnCaptureFinished;
+            capturer.OnProcessExited += Capturer_OnProcessExited;
+
+            this.runningRenderJobs.Add(jobRequest.Configuration.RenderJobID, capturer);
+
+            capturer.StartCapture(
+                Process.GetProcessesByName("devenv")[0], 
+                (int)jobRequest.Configuration.UpdateInterval,
+                jobRequest.Configuration.JobToDo.Duration, 
+                jobRequest.Configuration.RenderJobID);
+            //TODO not devenv.exe
+        }
+
+        private void Capturer_OnProcessExited(object sender, EventArgs e)
+        {
+            // TODO
+            // TODO send back when captured process exits
+        }
+
+        private void Capturer_OnCaptureFinished(object sender, CaptureFinishEventArgs e)
+        {
+            this.runningRenderJobs.Remove(e.RenderJobId);
+        }
+
+        private void Capturer_OnImageCaptured(object sender, ImageEventArgs e)
+        {
+            byte[] img = ImageHandler.ImageHandler.ImageToBytes(e.Image);
+            byte[] msg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Render_Job_Result(e.ConcernedRenderJobID, img));
+            byte[] header = new Remote_Content_Show_Header(MessageCode.MC_Render_Job_Result, msg.Length).ToByte;
+
+            this.stream.Write(header, 0, header.Length);
+            this.stream.Write(msg, 0, msg.Length);
+            this.stream.Flush();
+        }
+
+        /// <summary>
+        /// Returns a list of the running processes that have a window (except this app's process and explorer.exe).
+        /// </summary>
+        /// <param name="previewImageSize">The size of the preview images for the processes.</param>
         private Process_List GetProcessList(Size previewImageSize)
         {
             ScreenCapture capturer = new ScreenCapture();
@@ -156,21 +208,25 @@ namespace Agent.Network
 
             foreach (var proc in Process.GetProcesses())
             {
-                if (proc.MainWindowHandle != IntPtr.Zero)
+                if (proc.MainWindowHandle == IntPtr.Zero || 
+                    proc.Id == Process.GetCurrentProcess().Id ||
+                    proc.ProcessName == "explorer")
                 {
-                    Bitmap bmp = capturer.CaptureWindow(proc.MainWindowHandle);
-                    if (bmp == null)
-                    {
-                        // only give access to processes which provide a window
-                        continue;
-                    }
-
-                    // convert the resized picture to bytes
-                    byte[] picture = ImageHandler.ImageHandler.ImageToBytes(ImageHandler.ImageHandler.Resize(bmp, previewImageSize));
-
-                    ProcessDescription desc = new ProcessDescription(picture, proc.Id, proc.ProcessName, proc.MainWindowTitle);
-                    processes.Processes.Add(desc);
+                    continue;
                 }
+
+                Bitmap bmp = capturer.CaptureWindow(proc.MainWindowHandle);
+                if (bmp == null)
+                {
+                    // only give access to processes which provide a window
+                    continue;
+                }
+
+                // convert the resized picture to bytes
+                byte[] picture = ImageHandler.ImageHandler.ImageToBytes(ImageHandler.ImageHandler.Resize(bmp, previewImageSize));
+
+                ProcessDescription desc = new ProcessDescription(picture, proc.Id, proc.ProcessName, proc.MainWindowTitle);
+                processes.Processes.Add(desc);
             }
 
             return processes;
