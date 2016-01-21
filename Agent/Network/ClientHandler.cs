@@ -1,8 +1,8 @@
 ﻿using Remote_Content_Show_Protocol;
+using Remote_Content_Show_Container;
 using System;
 using System.Net.Sockets;
 using System.Threading;
-using Remote_Content_Show_Container;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -22,7 +22,7 @@ namespace Agent.Network
         private Dictionary<Guid, ScreenCapture> runningRenderJobs = null;
 
         /// <summary>
-        /// The event fired when the connected client disconnects.
+        /// The event fired when the connected client disconnects or this <see cref="ClientHandler"/> is stopped.
         /// </summary>
         public event EventHandler OnClientDisconnected;
 
@@ -39,6 +39,9 @@ namespace Agent.Network
             this.runningRenderJobs = new Dictionary<Guid, ScreenCapture>();
         }
 
+        /// <summary>
+        /// Starts listening for messages.
+        /// </summary>
         public void Start()
         {
             this.args = new ListenerThreadArgs();
@@ -46,6 +49,9 @@ namespace Agent.Network
             listenerThread.Start(this.args);
         }
 
+        /// <summary>
+        /// Stops listening for messages and disconnects from the remote client.
+        /// </summary>
         public void Stop()
         {
             this.args.Exit = true;
@@ -55,6 +61,11 @@ namespace Agent.Network
 
             try { this.client.Close(); }
             catch { }
+
+            if (this.OnClientDisconnected != null)
+            {
+                this.OnClientDisconnected(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -107,9 +118,8 @@ namespace Agent.Network
                         case MessageCode.MC_Render_Job:
                             RCS_Render_Job jobRequest =
                                 Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job>(contentBuffer);
-
+                            
                             this.HandleJobRequest(jobRequest);
-                            //TODO
 
                             break;
                         case MessageCode.MC_Render_Job_Cancel:
@@ -132,11 +142,6 @@ namespace Agent.Network
             catch (IOException)
             {
                 this.Stop();
-
-                if (this.OnClientDisconnected != null)
-                {
-                    this.OnClientDisconnected(this, EventArgs.Empty);
-                }
             }
         }
         
@@ -163,8 +168,19 @@ namespace Agent.Network
             }
         }
 
+        /// <summary>
+        /// Sends a message indicating whether this agent is able to execute the job.
+        /// If this agent is able, starts capturing images as configured in the given render job.
+        /// </summary>
+        /// <param name="jobRequest">The render job to execute.</param>
         private void HandleJobRequest(RCS_Render_Job jobRequest)
         {
+            // TODO check if this agent is able to execute the render job
+            if (!this.CheckExecutionAbility("x.y", jobRequest.Configuration.RenderJobID))
+            {
+                return;
+            }
+
             ScreenCapture capturer = new ScreenCapture();
             capturer.OnImageCaptured += Capturer_OnImageCaptured;
             capturer.OnCaptureFinished += Capturer_OnCaptureFinished;
@@ -177,7 +193,39 @@ namespace Agent.Network
                 (int)jobRequest.Configuration.UpdateInterval,
                 jobRequest.Configuration.JobToDo.Duration, 
                 jobRequest.Configuration.RenderJobID);
-            //TODO not devenv.exe
+            //TODO not devenv.exe | other resource
+        }
+
+        /// <summary>
+        /// Checks if this agent is able to execute the given file and sends an according message to the client.
+        /// </summary>
+        /// <param name="filename">The file to check if it is executable by any program on this agent.</param>
+        /// <param name="renderJobId">The GUID of the render job containing the file.</param>
+        /// <returns>True if this agent is able to execute the file, false otherwise.</returns>
+        private bool CheckExecutionAbility(string filename, Guid renderJobId)
+        {
+            bool capable = false;
+            RCS_Render_Job_Message msg = null;
+
+            if (ProgramFinder.FindExecutable(filename) != string.Empty)
+            {
+                capable = true;
+                msg = new RCS_Render_Job_Message(RenderMessage.Supported, renderJobId);
+            }
+            else
+            {
+                msg = new RCS_Render_Job_Message(RenderMessage.NotSupported, renderJobId);
+            }
+            
+            try
+            {
+                this.SendMessage(MessageCode.MC_Render_Job_Message, msg);
+            }
+            catch
+            {
+            }
+
+            return capable;
         }
 
         /// <summary>
@@ -187,36 +235,40 @@ namespace Agent.Network
         {
             this.runningRenderJobs.Remove(e.RenderJobId);
 
-            byte[] msg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(
-                new RCS_Render_Job_Message(RenderMessage.ProcessExited, e.RenderJobId));
-
-            byte[] header = new Remote_Content_Show_Header(MessageCode.MC_Render_Job_Message, msg.Length).ToByte;
+            var msg = new RCS_Render_Job_Message(RenderMessage.ProcessExited, e.RenderJobId);
 
             try
             {
-                this.stream.Write(header, 0, header.Length);
-                this.stream.Write(msg, 0, msg.Length);
-                this.stream.Flush();
+                this.SendMessage(MessageCode.MC_Render_Job_Message, msg);
             }
             catch
             {
             }
         }
 
+        /// <summary>
+        /// Removes the finished render job from the list of running jobs.
+        /// </summary>
         private void Capturer_OnCaptureFinished(object sender, CaptureFinishEventArgs e)
         {
             this.runningRenderJobs.Remove(e.RenderJobId);
         }
 
+        /// <summary>
+        /// Sends the captured image to the client.
+        /// </summary>
         private void Capturer_OnImageCaptured(object sender, ImageEventArgs e)
         {
             byte[] img = ImageHandler.ImageHandler.ImageToBytes(e.Image);
-            byte[] msg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Render_Job_Result(e.ConcernedRenderJobID, img));
-            byte[] header = new Remote_Content_Show_Header(MessageCode.MC_Render_Job_Result, msg.Length).ToByte;
+            var msg = new RCS_Render_Job_Result(e.ConcernedRenderJobID, img);
 
-            this.stream.Write(header, 0, header.Length);
-            this.stream.Write(msg, 0, msg.Length);
-            this.stream.Flush();
+            try
+            {
+                this.SendMessage(MessageCode.MC_Render_Job_Result, msg);
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>
@@ -253,6 +305,27 @@ namespace Agent.Network
             }
 
             return processes;
+        }
+
+        /// <summary>
+        /// Sends a header and the given message to the remote client.
+        /// </summary>
+        /// <param name="msgCode">The type of message to send.</param>
+        /// <param name="msg">The message to send.</param>
+        /// <exception cref="IOException">
+        /// There was a failure while writing to the network. -or-
+        /// An error occurred when accessing the socket.</exception>
+        /// <exception cref="ObjectDisposedException">
+        /// The System.Net.Sockets.NetworkStream is closed. -or-
+        /// There was a failure reading from the network.</exception>
+        private void SendMessage(MessageCode msgCode, Remote_Content_Show_Message msg)
+        {
+            byte[] byteMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg);
+            byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length).ToByte;
+
+            this.stream.Write(header, 0, header.Length);
+            this.stream.Write(byteMsg, 0, byteMsg.Length);
+            this.stream.Flush();
         }
     }
 }

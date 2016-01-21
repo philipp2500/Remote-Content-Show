@@ -32,6 +32,8 @@ namespace Agent
             try
             {
                 this.server = new Server(Remote_Content_Show_Protocol.NetworkConfiguration.Port);
+                this.server.OnClientConnected += this.Server_OnClientConnected;
+                this.server.OnClientDisconnected += this.Server_OnClientDisconnected;
                 this.server.Start();
                 this.btnListen.Content = "Listening...";
                 this.btnListen.IsEnabled = false;
@@ -39,6 +41,22 @@ namespace Agent
             catch
             {
             }
+        }
+
+        private void Server_OnClientDisconnected(object sender, EventArgs e)
+        {
+            this.lstOutput.Dispatcher.Invoke(() =>
+            {
+                this.lstOutput.Items.Add("A client has disconnected.");
+            });
+        }
+
+        private void Server_OnClientConnected(object sender, EventArgs e)
+        {
+            this.lstOutput.Dispatcher.Invoke(() =>
+            {
+                this.lstOutput.Items.Add("A client has connected.");
+            });
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

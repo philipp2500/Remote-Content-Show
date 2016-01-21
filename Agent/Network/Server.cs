@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
-
-// ***************************************************************
-// TODO: ERROR HANDLING
-// ***************************************************************
-
-
 namespace Agent.Network
 {
     public class Server
     {
+        public event EventHandler OnClientConnected;
+        public event EventHandler OnClientDisconnected;
+
         private List<ClientHandler> clients = new List<ClientHandler>();
         private TcpListener listener = null;
 
@@ -73,6 +70,11 @@ namespace Agent.Network
                 client.OnClientDisconnected += this.Client_OnClientDisconnected;
                 client.Start();
 
+                if (this.OnClientConnected != null)
+                {
+                    this.OnClientConnected(this, EventArgs.Empty);
+                }
+
                 this.listener.BeginAcceptTcpClient(this.AcceptTcpClientCallback, null);
             }
             catch (Exception ex)
@@ -84,8 +86,12 @@ namespace Agent.Network
 
         private void Client_OnClientDisconnected(object sender, EventArgs e)
         {
-            Console.WriteLine("Client disconnected!"); //TODO output
             this.clients.Remove((ClientHandler)sender);
+
+            if (this.OnClientDisconnected != null)
+            {
+                this.OnClientDisconnected(this, EventArgs.Empty);
+            }
         }
     }
 }
