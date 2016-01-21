@@ -1,15 +1,10 @@
 ﻿namespace ImageHandler
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
 
     public static class ImageHandler
@@ -60,6 +55,37 @@
 
                 return md5.ComputeHash(data);
             }
+        }
+        
+        public static byte[] ImageToBytes(Image img)
+        {
+            byte[] bytes = null;
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                img.Save(stream, ImageFormat.Png);
+                stream.Close();
+
+                bytes = stream.ToArray();
+            }
+
+            return bytes;
+        }
+
+        public static BitmapImage BytesToImage(byte[] data)
+        {
+            BitmapImage bmp = new BitmapImage();
+
+            using (var memory = new MemoryStream(data))
+            {
+                memory.Position = 0;
+                bmp.BeginInit();
+                bmp.StreamSource = memory;
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.EndInit();
+            }
+
+            return bmp;
         }
 
         public static BitmapImage BitmapToBitmapImage(Bitmap bitmap)
