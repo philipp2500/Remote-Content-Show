@@ -17,7 +17,10 @@ namespace Agent
             this.CaptureDelay = captureDelay;
             this.Duration = duration;
             this.RenderJobId = renderJobId;
+            this.Exit = false;
         }
+
+        public bool Exit { get; set; }
 
         public Process Process { get; private set; }
 

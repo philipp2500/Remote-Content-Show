@@ -23,29 +23,11 @@ namespace Agent
         /// </summary>
         public event EventHandler<CaptureFinishEventArgs> OnProcessExited;
 
+        public bool IsRunning { get; private set; }
+
         private const int SW_RESTORE = 9; // Indicates that a minimized window should be restored
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct Rect
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetClientRect(IntPtr hWnd, ref Rect rect);
-
-        [DllImport("user32.dll")]
-        private static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, int nFlags);
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-        
-        [DllImport("user32.dll")]
-        private static extern bool IsIconic(IntPtr hWnd);
+        private CaptureThreadArgs captureArgs = null;
 
         /// <summary>
         /// Continuously captures images of the given process' window and fires the <see cref="ScreenCapture.OnImageCaptured"/> event.
@@ -69,64 +51,22 @@ namespace Agent
             }
 
             Thread capturer = new Thread(new ParameterizedThreadStart(this.Capture));
+            this.captureArgs = new CaptureThreadArgs(proc, captureDelay, duration, renderJobId);
             capturer.IsBackground = true;
-            capturer.Start(new CaptureThreadArgs(proc, captureDelay, duration, renderJobId));
+            capturer.Start(this.captureArgs);
         }
 
-        private void Capture(object data)
+        /// <summary>
+        /// Stops the previously started capturing of a process' window.
+        /// </summary>
+        public void StopCapture()
         {
-            CaptureThreadArgs args = data as CaptureThreadArgs;
-
-            if (args == null)
+            if (this.captureArgs == null)
             {
-                throw new ArgumentException("Parameter must be of type CaptureThreadArgs and must not be null.");
+                return;
             }
 
-            Process proc = args.Process;
-            Bitmap prevImage = new Bitmap(1, 1);
-            IntPtr windowHandle = proc.MainWindowHandle;
-            DateTime endTime = DateTime.Now.AddSeconds(args.Duration);
-
-            if (windowHandle == IntPtr.Zero)
-            {
-                throw new InvalidOperationException("Cannot capture images of a window-less process.");
-            }
-            
-            while (DateTime.Now <= endTime && !proc.HasExited)
-            {
-                if (IsIconic(windowHandle))
-                {
-                    ShowWindow(windowHandle, SW_RESTORE);
-                }
-
-                Thread.Sleep(args.CaptureDelay);
-                
-                var image = CaptureWindow(windowHandle);
-
-                if (image == null)
-                {
-                    continue;
-                }
-                
-                //if (!ImageHandler.ImageHandler.AreEqual(image, prevImage)) //TODO equal images
-                if (this.OnImageCaptured != null)
-                {
-                    this.OnImageCaptured(this, new ImageEventArgs(args.RenderJobId, image));
-                }
-
-                prevImage.Dispose();
-                prevImage = image;                
-            }
-
-            if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
-            {
-                this.OnCaptureFinished(this, new CaptureFinishEventArgs(args.RenderJobId));
-            }
-
-            if (proc.HasExited && this.OnProcessExited != null)
-            {
-                this.OnProcessExited(this, new CaptureFinishEventArgs(args.RenderJobId));
-            }
+            this.captureArgs.Exit = true;
         }
 
         public Bitmap CaptureWindow(IntPtr handle)
@@ -152,6 +92,85 @@ namespace Agent
 
             return bmp;
         }
+
+        private void Capture(object data)
+        {
+            CaptureThreadArgs args = data as CaptureThreadArgs;
+
+            if (args == null)
+            {
+                throw new ArgumentException("Parameter must be of type CaptureThreadArgs and must not be null.");
+            }
+
+            Process proc = args.Process;
+            Bitmap prevImage = new Bitmap(1, 1);
+            IntPtr windowHandle = proc.MainWindowHandle;
+            DateTime endTime = DateTime.Now.AddSeconds(args.Duration);
+
+            if (windowHandle == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("Cannot capture images of a window-less process.");
+            }
+            
+            while (DateTime.Now <= endTime && !proc.HasExited && !args.Exit)
+            {
+                if (IsIconic(windowHandle))
+                {
+                    ShowWindow(windowHandle, SW_RESTORE);
+                }
+
+                Thread.Sleep(args.CaptureDelay);
+                
+                var image = CaptureWindow(windowHandle);
+
+                if (image == null)
+                {
+                    continue;
+                }
+                
+                //if (!ImageHandler.ImageHandler.AreEqual(image, prevImage)) //TODO equal images
+                if (this.OnImageCaptured != null)
+                {
+                    this.OnImageCaptured(this, new ImageEventArgs(args.RenderJobId, image));
+                }
+
+                prevImage.Dispose();
+                prevImage = image;                
+            }
+            
+            this.IsRunning = false;
+
+            if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
+            {
+                this.OnCaptureFinished(this, new CaptureFinishEventArgs(args.RenderJobId));
+            }
+
+            if (proc.HasExited && this.OnProcessExited != null)
+            {
+                this.OnProcessExited(this, new CaptureFinishEventArgs(args.RenderJobId));
+            }
+        }
+        
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Rect
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetClientRect(IntPtr hWnd, ref Rect rect);
+
+        [DllImport("user32.dll")]
+        private static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, int nFlags);
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsIconic(IntPtr hWnd);
 
     }
 }
