@@ -14,9 +14,14 @@ namespace Agent
         public event EventHandler<ImageEventArgs> OnImageCaptured;
 
         /// <summary>
+        /// The event fired when the capturing of images is finished.
+        /// </summary>
+        public event EventHandler<CaptureFinishEventArgs> OnCaptureFinished;
+
+        /// <summary>
         /// The event fired when the process whose window to capture has exited.
         /// </summary>
-        public event EventHandler OnProcessExited;
+        public event EventHandler<CaptureFinishEventArgs> OnProcessExited;
 
         private const int SW_RESTORE = 9; // Indicates that a minimized window should be restored
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
@@ -43,27 +48,29 @@ namespace Agent
         private static extern bool IsIconic(IntPtr hWnd);
 
         /// <summary>
-        /// Continuously captures images of the given process' window.
+        /// Continuously captures images of the given process' window and fires the <see cref="ScreenCapture.OnImageCaptured"/> event.
         /// </summary>
         /// <param name="proc">The process whose main window to capture.</param>
-        /// <param name="fps">The number of frames per second to capture.</param>
+        /// <param name="captureDelay">The number of milliseconds between two screen captures.</param>
+        /// <param name="duration">The duration in seconds indicating how long to capture.</param>
+        /// <param name="renderJobId">The GUID of the associated RenderJob.</param>
         /// <exception cref="InvalidOperationException">Thrown if the process' main window handle is <see cref="IntPtr.Zero"/>.</exception>
-        /// <exception cref="ArgumentException">Thrown if fps is less than 0.</exception>
-        public void StartCapture(Process proc, int fps)
+        /// <exception cref="ArgumentException">Thrown if captureDelay is less than 0.</exception>
+        public void StartCapture(Process proc, int captureDelay, int duration, Guid renderJobId)
         {
             if (proc.MainWindowHandle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Cannot capture images of a window-less process.");
             }
 
-            if (fps < 0)
+            if (captureDelay < 0)
             {
                 throw new ArgumentException("The FPS must not be less than 0.", "fps");
             }
 
             Thread capturer = new Thread(new ParameterizedThreadStart(this.Capture));
             capturer.IsBackground = true;
-            capturer.Start(new CaptureThreadArgs(proc, fps));
+            capturer.Start(new CaptureThreadArgs(proc, captureDelay, duration, renderJobId));
         }
 
         private void Capture(object data)
@@ -76,23 +83,23 @@ namespace Agent
             }
 
             Process proc = args.Process;
-            int captureDelay = 1000 / args.FPS;
             Bitmap prevImage = new Bitmap(1, 1);
             IntPtr windowHandle = proc.MainWindowHandle;
+            DateTime endTime = DateTime.Now.AddSeconds(args.Duration);
 
             if (windowHandle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Cannot capture images of a window-less process.");
             }
             
-            while (!args.Exit && !proc.HasExited)
+            while (DateTime.Now <= endTime && !proc.HasExited)
             {
                 if (IsIconic(windowHandle))
                 {
                     ShowWindow(windowHandle, SW_RESTORE);
                 }
 
-                Thread.Sleep(captureDelay);
+                Thread.Sleep(args.CaptureDelay);
                 
                 var image = CaptureWindow(windowHandle);
 
@@ -101,19 +108,24 @@ namespace Agent
                     continue;
                 }
                 
-                //if (!ImageHandler.ImageHandler.AreEqual(image, prevImage))
+                //if (!ImageHandler.ImageHandler.AreEqual(image, prevImage)) //TODO equal images
                 if (this.OnImageCaptured != null)
                 {
-                    this.OnImageCaptured(this, new ImageEventArgs(image));
+                    this.OnImageCaptured(this, new ImageEventArgs(args.RenderJobId, image));
                 }
 
                 prevImage.Dispose();
                 prevImage = image;                
             }
 
+            if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
+            {
+                this.OnCaptureFinished(this, new CaptureFinishEventArgs(args.RenderJobId));
+            }
+
             if (proc.HasExited && this.OnProcessExited != null)
             {
-                this.OnProcessExited(this, EventArgs.Empty);
+                this.OnProcessExited(this, new CaptureFinishEventArgs(args.RenderJobId));
             }
         }
 
@@ -124,7 +136,7 @@ namespace Agent
             int width = rect.Right - rect.Left;
             int height = rect.Bottom - rect.Top;
 
-            if (width == 0 && height == 0)
+            if (width <= 0 || height <= 0)
             {
                 // if window has been closed
                 return null;

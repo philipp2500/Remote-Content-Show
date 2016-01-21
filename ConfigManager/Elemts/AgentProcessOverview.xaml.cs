@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Remote_Content_Show_Container;
 using System.Net;
 using Remote_Content_Show_Protocol;
+using ImageHandler;
 
 namespace ConfigManager
 {
@@ -29,6 +30,16 @@ namespace ConfigManager
 
             this.AgentProcessOverviewName.Content = processResponce.ClientName;
             this.AgentProcessOverviewIP.Content = ip.ToString();
+
+            foreach (ProcessDescription pd in processResponce.ProcesseList.Processes)
+            {
+                Image i = new Image();
+                i.Source = ImageHandler.ImageHandler.BytesToImage(pd.WindowPicture);
+                i.Height = 100;
+                i.Width = 100;
+                i.Margin = new Thickness(2);
+                this.AgentProcessOverviewStackPanel.Children.Add(i);
+            }
         }
     }
 }

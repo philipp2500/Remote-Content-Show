@@ -23,17 +23,35 @@ namespace Agent.Network
 
         public bool IsRunning { get; private set; }
 
+        /// <summary>
+        /// Starts listening for clients.
+        /// </summary>
+        /// <exception cref="SocketException">Thrown if binding to local port failed.</exception>
         public void Start()
         {
             this.listener.Start();
             this.IsRunning = true;
-            this.listener.BeginAcceptTcpClient(new AsyncCallback(this.AcceptTcpClientCallback), null);
+
+            try
+            {
+                this.listener.BeginAcceptTcpClient(new AsyncCallback(this.AcceptTcpClientCallback), null);
+            }
+            catch (Exception ex)
+            when (ex is ObjectDisposedException ||
+                  ex is SocketException)
+            {
+            }
         }
 
+        /// <summary>
+        /// Stops listening for clients and closes all client connections.
+        /// </summary>
         public void Stop()
         {
             this.IsRunning = false;
-            this.listener.Stop();
+
+            try { this.listener.Stop(); }
+            catch { }
 
             foreach (ClientHandler client in this.clients)
             {
@@ -41,22 +59,32 @@ namespace Agent.Network
             }
         }
         
+        /// <summary>
+        /// Accepts a new TCP client and asynchronously handles the connection and its messages.
+        /// </summary>
         public void AcceptTcpClientCallback(IAsyncResult ar)
         {
-            TcpClient tcpClient = this.listener.EndAcceptTcpClient(ar);
-            ClientHandler client = new ClientHandler(tcpClient);
+            try
+            {
+                TcpClient tcpClient = this.listener.EndAcceptTcpClient(ar);
+                ClientHandler client = new ClientHandler(tcpClient);
 
-            this.clients.Add(client);
-            client.OnClientDisconnected += this.Client_OnClientDisconnected;
-            client.Start();
-            
-            this.listener.BeginAcceptTcpClient(this.AcceptTcpClientCallback, null);
+                this.clients.Add(client);
+                client.OnClientDisconnected += this.Client_OnClientDisconnected;
+                client.Start();
+
+                this.listener.BeginAcceptTcpClient(this.AcceptTcpClientCallback, null);
+            }
+            catch (Exception ex)
+            when (ex is ObjectDisposedException ||
+                  ex is SocketException)
+            {
+            }
         }
 
         private void Client_OnClientDisconnected(object sender, EventArgs e)
         {
-            //TODO
-            Console.WriteLine("Client disconnected!");
+            Console.WriteLine("Client disconnected!"); //TODO output
             this.clients.Remove((ClientHandler)sender);
         }
     }
