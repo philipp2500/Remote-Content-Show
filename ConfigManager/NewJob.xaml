@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ConfigManager"
+        xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         mc:Ignorable="d"
         Title="Job anlegen" 
         Height="500" 
@@ -73,10 +74,73 @@
             </TabItem>
             
             <TabItem Header="Content" IsEnabled="False" Name="Tab2">
-                <Label Content="Content goes here..." />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Grid.Row="0" Grid.Column="0" Header="Content">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Grid.Column="0" FontWeight="Bold">Dauer: </Label>
+                            <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Value="1" Minimum="1" Width="100" ToolTip="In Sekunden"/>
+                            
+                            <Label Grid.Row="1" Grid.Column="0" FontWeight="Bold">Window: </Label>
+                            <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1" Value="1" Minimum="1" Width="100" Name="ToShowWindowId"/>
+
+                            <ComboBox Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Right" Width="76" Height="84" SelectionChanged="ComboBox_SelectionChanged" >
+                                <ComboBoxItem>
+                                    <StackPanel>
+                                        <Image Source="Resources/loadFromProcess.png"></Image>
+                                        <Label>Process</Label>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                                <ComboBoxItem>
+                                    <StackPanel>
+                                        <Image Source="Resources/loadFromweb.png"></Image>
+                                        <Label>Web</Label>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                                <ComboBoxItem>
+                                    <StackPanel>
+                                        <Image Source="Resources/loadFromFile.png"></Image>
+                                        <Label>File</Label>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                            </ComboBox>
+
+                            <Button Grid.Row="3" Grid.Column="2" Width="50" Margin="5" HorizontalAlignment="Right" Name="AddJobToTimeLine" Click="AddJobToTimeLine_Click">Add</Button>
+                        </Grid>
+                    </GroupBox>
+                    <Image Grid.Row="0" Grid.Column="1" Name="LayoutImagOverwie" Margin="5,0,0,0" Height="100" Width="100"></Image>
+
+                    <StackPanel Name="TimeLineContainer" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">                        
+                        
+                    </StackPanel>
+
+                    <Button Grid.Row="2" Grid.ColumnSpan="2" Content="Weiter" HorizontalAlignment="Right" Width="100" Margin="5" Name="ToAction" Click="ToAction_Click"></Button>
+
+                </Grid>
             </TabItem>
-            
-            <TabItem Header="Action" IsEnabled="False">
+
+            <TabItem  Header="Action" IsEnabled="False">
                 <Label Content="Content goes here..." />
             </TabItem>
         </TabControl>

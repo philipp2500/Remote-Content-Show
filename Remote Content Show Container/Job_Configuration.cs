@@ -11,6 +11,7 @@ namespace Remote_Content_Show_Container
         {
             this.JobLists = new Dictionary<int, JobWindowList>();
             this.Agents = new List<Agent>();
+            this.JobID = Guid.NewGuid();
         }
 
         /// <summary>
@@ -19,7 +20,7 @@ namespace Remote_Content_Show_Container
         public Guid JobID
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>

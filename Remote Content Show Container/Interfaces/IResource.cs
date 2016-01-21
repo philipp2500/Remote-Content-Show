@@ -8,5 +8,10 @@ namespace Remote_Content_Show_Container
 {
     public interface IResource
     {
+        string Name
+        {
+            get;
+            set;
+        }
     }
 }

@@ -82,7 +82,7 @@ namespace ConfigManager
         {
             try
             {
-                while (this.run)
+                if (this.run)
                 {
                     byte[] data = new byte[Remote_Content_Show_Header.HeaderLength];
                     this.stream.Read(data, 0, data.Length);
@@ -91,7 +91,7 @@ namespace ConfigManager
                     data = new byte[header.Length];
                     this.stream.Read(data, 0, data.Length);
                     this.FireOnMessageReceived(data, header.Code, this.ip);
-                }
+                }                
             }
             catch
             {
@@ -100,6 +100,8 @@ namespace ConfigManager
                     this.FireOnError("Fehler beim Empfangen der Daten.");
                 }
             }
+
+            this.Close();
         }
     }
 }

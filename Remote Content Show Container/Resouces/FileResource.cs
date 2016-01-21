@@ -8,6 +8,12 @@ namespace Remote_Content_Show_Container
 {
     public class FileResource : IResource
     {
+        public string Name
+        {
+            get;
+            set;
+        }
+
         public string Path
         {
             get;

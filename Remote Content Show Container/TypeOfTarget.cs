@@ -9,10 +9,8 @@ namespace Remote_Content_Show_Container
     public enum TypeOfTarget
     {
         URL,
-        Webpage,
         Picture,
         Video,
         PowerPoint,
-
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Net;
 using Remote_Content_Show_Protocol;
 using Remote_Content_Show_Container;
+using Microsoft.Win32;
 
 namespace ConfigManager
 {
@@ -24,6 +25,8 @@ namespace ConfigManager
     {
         private NetworkManager netmanager = new NetworkManager();
         private List<ProcessDescriptionWrapper> allProcess = new List<ProcessDescriptionWrapper>();
+        private Job_Configuration job = new Job_Configuration();
+        private IResource currenResource;
 
         public NewJob()
         {
@@ -47,8 +50,10 @@ namespace ConfigManager
                     // Add the results for later!
                     foreach (ProcessDescription pd in rcsPLR.ProcesseList.Processes)
                     {
-                        this.allProcess.Add(new ProcessDescriptionWrapper(pd, e.Ip));
+                        this.allProcess.Add(new ProcessDescriptionWrapper(pd, e.Ip, rcsPLR.ClientName));
                     }
+
+                    this.job.Agents.Add(new Agent() { IP = e.Ip });
                     break;
             }
         }
@@ -74,6 +79,8 @@ namespace ConfigManager
                         NetworkConnection netC = this.netmanager.ConnectTo(ips[0]);
                         byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Process_List_Request());
                         netC.Write(messageData, MessageCode.MC_Process_List_Request);
+
+                        this.AgentConnection.Text = string.Empty;
                     }
                 }
                 catch (Exception ex)
@@ -90,11 +97,67 @@ namespace ConfigManager
                 this.Tab1.IsEnabled = false;
                 this.Tab2.IsSelected = true;
                 this.Tab2.IsEnabled = true;
+                // Change Lyout
+                this.LayoutImagOverwie.Source = ((Image)((ComboBoxItem)this.JobLayout.SelectedItem).Content).Source;
+
+                this.job.Name = this.JobName.Text;
+                this.job.Layout = (WindowLayout)this.JobLayout.SelectedIndex;
+                this.ToShowWindowId.Maximum = WindowLayoutHelper.GetWindows(this.job.Layout);
+
+                for (int i = 1; i <= WindowLayoutHelper.GetWindows(this.job.Layout); i++)
+                {
+                    this.job.JobLists.Add(i, new JobWindowList());
+                    TimeLineControl tlc = new TimeLineControl(i);
+                    this.TimeLineContainer.Children.Add(tlc);
+                }
             }
             else
             {
                 MessageBox.Show("Bitte Namen für den Job eingeben!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        private void ToAction_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (((ComboBox)sender).SelectedIndex)
+            {
+                case 0:
+                    // Proses
+                    ProcessDialog pd = new ProcessDialog(this.allProcess);
+                    if (pd.ShowDialog() == true)
+                    {
+                        ProcessDescriptionWrapper pdw = this.allProcess.Find(x => x.Id == pd.Result);
+                        this.currenResource = new ProcessResource() { ProcessID = pdw.PDescription.ProcessId, ProcessAgent = new Agent() { IP = pdw.Ip }, Name = pdw.PDescription.ProcessName };
+                    }
+                    break;
+                case 1:
+                    //Web
+                    UrlDialog ud = new UrlDialog();
+                    if (ud.ShowDialog() == true)
+                    {
+                        this.currenResource = new WebResource() { Path = ud.Url,  Name = new Uri(ud.Url).Host };
+                    }
+                    break;
+                case 2:
+                    // File
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.Multiselect = false;
+                    if (ofd.ShowDialog() == true)
+                    {
+                        this.currenResource = new FileResource() { Path = ofd.FileName, Name = System.IO.Path.GetFileName(ofd.FileName) };
+                    }
+                    break;
+            }
+        }
+
+        private void AddJobToTimeLine_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
