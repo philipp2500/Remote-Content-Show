@@ -26,7 +26,7 @@ namespace Remote_Content_Show_Container
             set;
         }
 
-        public Guid ConcernedJobID
+        public string NameOfConcernedJob
         {
             get;
             set;
