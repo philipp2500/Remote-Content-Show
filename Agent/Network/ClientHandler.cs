@@ -53,12 +53,17 @@ namespace Agent.Network
         }
 
         /// <summary>
-        /// Stops listening for messages, sending <see cref="RCS_Alive"/> messages
+        /// Stops listening for messages, stops all jobs, stops sending <see cref="RCS_Alive"/> messages
         /// and disconnects from the remote client.
         /// </summary>
         public void Stop()
         {
             this.args.Exit = true;
+
+            foreach (var job in this.runningRenderJobs.Values)
+            {
+                job.StopCapture();
+            }
 
             this.keepAliveTimer.Dispose();
 
