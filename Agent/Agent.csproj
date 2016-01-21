@@ -108,7 +108,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Resource Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageHandler\ImageHandler.csproj">
@@ -123,6 +123,12 @@
       <Project>{a3b6ed0b-9f6a-4d2e-88cb-f223f3b92c5a}</Project>
       <Name>Remote Content Show Protocol</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
