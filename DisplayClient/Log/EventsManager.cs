@@ -1,4 +1,5 @@
-﻿using Remote_Content_Show_Container;
+﻿using DisplayClient.Storage;
+using Remote_Content_Show_Container;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,11 +13,11 @@ namespace DisplayClient.Log
 {
     public static class EventsManager
     {
-        public const string LoggedEventsFileName = "events.xml";
+        public const string LoggedEventsFilename = "events.xml";
 
         public static void Log(Job_EventType logType, Job_Configuration concernedJob, string description)
         {
-            List<LoggedEvent> loggedEvents = new List<LoggedEvent>();
+            List<LoggedEvent> loggedEvents = GetLoggedEvents();
 
             LoggedEvent newloggedEvent = new LoggedEvent() { Type = logType, Description = description };
             newloggedEvent.Time = DateTime.Now;
@@ -25,20 +26,38 @@ namespace DisplayClient.Log
             {
                 LoggedJob newLoggedJob = new LoggedJob() { JobID = concernedJob.JobID };
                 newLoggedJob.Name = concernedJob.Name;
+
+                newloggedEvent.ConcernedJob = newLoggedJob;
             }
 
             loggedEvents.Add(newloggedEvent);
 
-            Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            FileStream fs = new FileStream(Path.Combine(storageFolder.Path, LoggedEventsFileName), FileMode.Create, FileAccess.Write);
-
-            DataContractSerializer dcs = new DataContractSerializer(typeof(List<LoggedEvent>));
-
-            using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateTextWriter(fs, Encoding.UTF8))
+            using (FileStream fs = new FileStream(Path.Combine(PersistenceManager.GetWriteablePath(), LoggedEventsFilename), FileMode.Create, FileAccess.Write))
             {
-                writer.WriteStartDocument();
-                dcs.WriteObject(writer, loggedEvents);
-            }            
+                DataContractSerializer dcs = new DataContractSerializer(typeof(List<LoggedEvent>));
+
+                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateTextWriter(fs, Encoding.UTF8))
+                {
+                    writer.WriteStartDocument();
+                    dcs.WriteObject(writer, loggedEvents);
+                }
+            }     
+        }
+
+        public static void ClearLog()
+        {
+            List<LoggedEvent> loggedEvents = new List<LoggedEvent>();
+
+            using (FileStream fs = new FileStream(Path.Combine(PersistenceManager.GetWriteablePath(), LoggedEventsFilename), FileMode.Create, FileAccess.Write))
+            {
+                DataContractSerializer dcs = new DataContractSerializer(typeof(List<LoggedEvent>));
+
+                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateTextWriter(fs, Encoding.UTF8))
+                {
+                    writer.WriteStartDocument();
+                    dcs.WriteObject(writer, loggedEvents);
+                }
+            }
         }
 
         public static List<LoggedEvent> GetLoggedEvents()
@@ -48,18 +67,18 @@ namespace DisplayClient.Log
 
         public static List<LoggedEvent> GetLoggedEvents(DateTime from, DateTime to)
         {
-            Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            FileStream fs = new FileStream(Path.Combine(storageFolder.Path, LoggedEventsFileName), FileMode.Open, FileAccess.Read);
-
-            DataContractSerializer dcs = new DataContractSerializer(typeof(List<LoggedEvent>));
-            List<LoggedEvent> events;
-
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas()))
+            using (FileStream fs = new FileStream(Path.Combine(PersistenceManager.GetWriteablePath(), LoggedEventsFilename), FileMode.Open, FileAccess.Read))
             {
-                events = (List<LoggedEvent>)dcs.ReadObject(reader);
-            }
+                DataContractSerializer dcs = new DataContractSerializer(typeof(List<LoggedEvent>));
+                List<LoggedEvent> events;
 
-            return events.Where(x => from >= x.Time && to <= x.Time).ToList();
+                using (XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas()))
+                {
+                    events = (List<LoggedEvent>)dcs.ReadObject(reader);
+                }
+
+                return events.Where(x => from <= x.Time && to >= x.Time).ToList();
+            }  
         }
     }
 }

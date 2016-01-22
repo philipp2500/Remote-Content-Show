@@ -27,7 +27,7 @@ namespace DisplayClient
             this.listener = new StreamSocketListener();
             this.listener.ConnectionReceived += Listener_ConnectionReceived;
 
-            await listener.BindServiceNameAsync(this.port.ToString());
+            await listener.BindServiceNameAsync("1051");
         }
 
         private void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
