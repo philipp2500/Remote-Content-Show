@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace DisplayClient.Layout
 {
-    public interface IDisplayArray
+    public interface IContentWindow
     {
         Grid[] GetAllDisplays();
     }

@@ -45,8 +45,6 @@ namespace DisplayClient
                 this.manager.OnImageDisplayRequested += Manager_OnImageDisplayRequested;
                 this.manager.OnWebsiteDisplayRequested += Manager_OnWebsiteDisplayRequested;
                 this.manager.OnDisplayAbortRequested += Manager_OnDisplayAbortRequested;
-
-                this.manager.Start();
             }
         }
 

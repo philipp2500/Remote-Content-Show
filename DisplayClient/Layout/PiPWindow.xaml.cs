@@ -17,9 +17,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace DisplayClient.Layout
 {
-    public sealed partial class DoubleWindowHorizontalSplittedWindow : UserControl, IContentWindow
+    public sealed partial class PiPWindow : UserControl, IContentWindow
     {
-        public DoubleWindowHorizontalSplittedWindow()
+        public PiPWindow()
         {
             this.InitializeComponent();
         }
@@ -30,6 +30,9 @@ namespace DisplayClient.Layout
 
             array.Add(this.Display1);
             array.Add(this.Display2);
+            array.Add(this.Display3);
+            array.Add(this.Display4);
+            array.Add(this.Display5);
 
             return array.ToArray();
         }

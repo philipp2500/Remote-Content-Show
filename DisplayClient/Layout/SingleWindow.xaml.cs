@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace DisplayClient.Layout
 {
-    public sealed partial class SingleWindow : UserControl, IDisplayArray
+    public sealed partial class SingleWindow : UserControl, IContentWindow
     {
         public SingleWindow()
         {
