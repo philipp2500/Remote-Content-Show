@@ -46,10 +46,10 @@ namespace DisplayClient
                 this.agentSelectors[job] = selector;
             }
 
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.google.at" } });
+            /*this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.google.at" } });
             this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24sadfasdfbd3f8.jpg" } });
             this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 4, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24bd3f8.jpg" } });
+            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 4, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24bd3f8.jpg" } });*/
         }
 
         private void Selector_OnAgentNotReachable(AgentSelector sender, Agent agent)
@@ -126,7 +126,7 @@ namespace DisplayClient
                             this.CancelJob(job);
                         }
                     }
-                    while (false);
+                    while (jobForWindow.Looping);
                 });
             }
         }

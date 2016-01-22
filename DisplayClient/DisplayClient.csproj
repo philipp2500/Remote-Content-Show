@@ -112,6 +112,9 @@
       <DependentUpon>DoubleWindowVerticalSplittedWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Layout\IContentWindow.cs" />
+    <Compile Include="Layout\PiPWindow.xaml.cs">
+      <DependentUpon>PiPWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Layout\SingleWindow.xaml.cs">
       <DependentUpon>SingleWindow.xaml</DependentUpon>
     </Compile>
@@ -157,6 +160,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Layout\DoubleWindowVerticalSplittedWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layout\PiPWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
