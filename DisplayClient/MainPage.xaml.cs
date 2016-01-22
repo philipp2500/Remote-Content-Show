@@ -78,6 +78,22 @@ namespace DisplayClient
             this.adminListener.OnConnectionReceived += AdminListener_OnConnectionReceived;
 
             this.DataContext = this;
+
+            this.Loaded += MainPage_Loaded;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
+
+            if (configuration != null)
+            {
+                Show show = new Show(configuration);
+
+                this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+
+                show.Start();
+            }
         }
 
         public ImageBrush ConfigImage
