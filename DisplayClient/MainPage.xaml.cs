@@ -64,11 +64,7 @@ namespace DisplayClient
             config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
             config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
 
-            Show show = new Show(config);
-
-            this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
-
-            show.Start();
+            
 
             EventsManager.ClearLog();
 
@@ -82,6 +78,22 @@ namespace DisplayClient
             this.adminListener.OnConnectionReceived += AdminListener_OnConnectionReceived;
 
             this.DataContext = this;
+
+            this.Loaded += MainPage_Loaded;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
+
+            if (configuration != null)
+            {
+                Show show = new Show(configuration);
+
+                this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+
+                show.Start();
+            }
         }
 
         public ImageBrush ConfigImage
@@ -115,9 +127,18 @@ namespace DisplayClient
             }
         }
 
-        private void Admin_OnJobConfigurationReceived(Job_Configuration configuration)
+        private async void Admin_OnJobConfigurationReceived(Job_Configuration configuration)
         {
             PersistenceManager.SaveJobConfiguration(configuration);
+
+            await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Show show = new Show(configuration);
+
+                this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+
+                show.Start();
+            });
         }
 
         private void Admin_OnCancelRequestReceived(Guid jobID, CancelJobReason reason)
