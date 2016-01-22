@@ -13,13 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GongSolutions.Wpf.DragDrop;
 
 namespace ConfigManager
 {
     /// <summary>
     /// Interaction logic for TimeLineControl.xaml
     /// </summary>
-    public partial class TimeLineControl : UserControl
+    public partial class TimeLineControl : UserControl, IDropTarget
     {
         private ObservableCollection<TimeLineItemVM> items = new ObservableCollection<TimeLineItemVM>();
 
@@ -41,5 +42,24 @@ namespace ConfigManager
             get;
             private set;
         }
+
+        void IDropTarget.DragOver(IDropInfo dropInfo)
+        {
+            TimeLineItemVM sourceItem = dropInfo.Data as TimeLineItemVM;
+            TimeLineItemVM targetItem = dropInfo.TargetItem as TimeLineItemVM;
+
+            if (sourceItem != null && targetItem != null)
+            {
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+                dropInfo.Effects = DragDropEffects.Copy;
+            }
+        }
+
+        void IDropTarget.Drop(IDropInfo dropInfo)
+        {
+            TimeLineItemVM sourceItem = dropInfo.Data as TimeLineItemVM;
+            TimeLineItemVM targetItem = dropInfo.TargetItem as TimeLineItemVM;
+           
+        }        
     }
 }
