@@ -10,5 +10,6 @@ namespace Remote_Content_Show_Protocol
     {
         public const int PortConfig = 1049;
         public const int PortAgent = 1050;
+        public const int PortPi = 1050;
     }
 }
