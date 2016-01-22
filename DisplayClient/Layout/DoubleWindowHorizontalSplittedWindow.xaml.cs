@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace DisplayClient.Layout
 {
-    public sealed partial class DoubleWindowHorizontalSplittedWindow : UserControl, IDisplayArray
+    public sealed partial class DoubleWindowHorizontalSplittedWindow : UserControl, IContentWindow
     {
         public DoubleWindowHorizontalSplittedWindow()
         {

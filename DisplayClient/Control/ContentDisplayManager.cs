@@ -27,9 +27,13 @@ namespace DisplayClient
 
         private Dictionary<Job, AgentSelector> agentSelectors;
 
-        public ContentDisplayManager(JobWindowList jobForWindow, List<Agent> availableAgents)
+        // TODO: remove it
+        private Guid jobID;
+
+        public ContentDisplayManager(JobWindowList jobForWindow, List<Agent> availableAgents, Guid jobID)
         {
             this.jobForWindow = jobForWindow;
+            this.jobID = jobID;
 
             this.workingAgents = new List<WorkingAgent>();
             this.agentSelectors = new Dictionary<Job, AgentSelector>();
@@ -151,7 +155,7 @@ namespace DisplayClient
             {
                 agent.CancelRenderJob();
             }
-
+            
             this.workingAgents.RemoveAll(x => jobTreatingAgents.Contains(x));
         }
 
@@ -211,8 +215,8 @@ namespace DisplayClient
             if (foundAgents.Count == 1)
             {
                 //this.LookForResourceCompatibleAgent(foundAgents, resource);
-
-                WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgentFromList(null, foundAgents);
+                RenderConfiguration config = this.GetNewRenderConfiguration(job);
+                WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgentFromList(config, foundAgents);
 
                 this.HandleFoundWorkingAgent(worker);
             }
@@ -224,49 +228,6 @@ namespace DisplayClient
                 }
             }
         }
-
-        /*private async void LookForResourceCompatibleAgent(List<Agent> givenAgents, IResource resource)
-        {
-            RenderConfiguration configuration = null; // TODO
-            bool found = false;
-
-            foreach (Agent agent in givenAgents)
-            {
-                if (!found)
-                {
-                    WorkingAgent worker = new WorkingAgent(configuration);
-
-                    try
-                    {
-                        RenderMessage msg = await worker.Connect(agent);
-
-                        if (msg == RenderMessage.Supported)
-                        {
-                            worker.OnResultReceived += Worker_OnResultReceived;
-                            worker.OnMessageReceived += Worker_OnMessageReceived;
-                            worker.OnAgentGotUnreachable += Worker_OnAgentGotUnreachable;
-
-                            this.workingAgents.Add(worker);
-                        }
-                    }
-                    catch (AgentNotReachableException)
-                    {
-                        if (this.OnAgentNotReachable != null)
-                        {
-                            this.OnAgentNotReachable(configuration.JobToDo, agent);
-                        }
-                    }
-                }
-            }
-
-            if (!found)
-            {
-                if (this.OnNoResourceCompatibleAgentFound != null)
-                {
-                    this.OnNoResourceCompatibleAgentFound(resource);
-                }
-            }
-        }*/
 
         private async void Worker_OnMessageReceived(WorkingAgent agent, RCS_Render_Job_Message message)
         {
@@ -284,7 +245,8 @@ namespace DisplayClient
                 Job todo = agent.Configuration.JobToDo;
                 List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => x.IP.Equals(agent.Agent.IP)).ToList();
 
-                WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(null, excluded);
+                RenderConfiguration config = this.GetNewRenderConfiguration(todo);
+                WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(config, excluded);
 
                 this.HandleFoundWorkingAgent(worker);
             }
@@ -339,5 +301,20 @@ namespace DisplayClient
                 });
             }
         } 
+
+        private RenderConfiguration GetNewRenderConfiguration(Job jobToDo)
+        {
+            RenderConfiguration config = new RenderConfiguration();
+            config.RenderJobID = new Guid();
+            config.JobID = this.jobID;
+            config.JobToDo = jobToDo;
+            config.RenderWidth = (int)this.renderSize.Width;
+            config.RenderHeight = (int)this.renderSize.Height;
+
+            config.UpdateInterval = 30;
+            config.IgnoreEqualImages = true;
+
+            return config;
+        }
     }
 }

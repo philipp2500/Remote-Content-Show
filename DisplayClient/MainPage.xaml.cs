@@ -96,7 +96,7 @@ namespace DisplayClient
 
         private void Admin_OnJobConfigurationReceived(Job_Configuration configuration)
         {
-
+            PersistenceManager.SaveJobConfiguration(configuration);
         }
 
         private void Admin_OnCancelRequestReceived(Guid jobID, CancelJobReason reason)
@@ -107,7 +107,7 @@ namespace DisplayClient
         {
             List<LoggedEvent> events = EventsManager.GetLoggedEvents();
 
-            List<Event> convEvents = events.Select(x => new Event() { Type = x.Type, Description = x.Description, NameOfConcernedJob = "philip", Time = x.Time }).ToList();
+            List<Event> convEvents = events.Select(x => new Event() { Type = x.Type, Description = x.Description, NameOfConcernedJob = x.ConcernedJob.Name, Time = x.Time }).ToList();
 
             sender.SendEventsList(new Event_List() { List = convEvents });
         }

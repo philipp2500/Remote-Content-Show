@@ -99,6 +99,7 @@
     <Compile Include="Control\AgentNotReachableException.cs" />
     <Compile Include="Control\AgentSelector.cs" />
     <Compile Include="Control\ExternalAdmin.cs" />
+    <Compile Include="Control\Show.cs" />
     <Compile Include="Control\WorkingAgent.cs" />
     <Compile Include="Layout\ContentDisplay.xaml.cs">
       <DependentUpon>ContentDisplay.xaml</DependentUpon>
@@ -110,7 +111,7 @@
     <Compile Include="Layout\DoubleWindowVerticalSplittedWindow.xaml.cs">
       <DependentUpon>DoubleWindowVerticalSplittedWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Layout\IDisplayArray.cs" />
+    <Compile Include="Layout\IContentWindow.cs" />
     <Compile Include="Layout\SingleWindow.xaml.cs">
       <DependentUpon>SingleWindow.xaml</DependentUpon>
     </Compile>
