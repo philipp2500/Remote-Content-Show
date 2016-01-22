@@ -19,13 +19,12 @@ namespace ConfigManager
         private TcpClient client;
         private Thread thread;
         private NetworkStream stream;
-        private bool run = true;
-        private IPAddress ip;
+        private bool run = true;        
         private int port;
 
         public NetworkConnection(IPAddress ip, int port)
         {
-            this.ip = ip;
+            this.Ip = ip;
             this.port = port;
             this.client = new TcpClient();
 
@@ -33,18 +32,28 @@ namespace ConfigManager
             this.thread.IsBackground = true;
         }
 
+        public IPAddress Ip
+        {
+            get;
+            private set;
+        }
+
         public void Connect()
         {                     
             try
             {
-                this.client.Connect(this.ip, this.port);
-                this.stream = this.client.GetStream();
-                this.thread.Start();
+                this.client.Connect(this.Ip, this.port);
+                this.stream = this.client.GetStream();                
             }
             catch
             {
                 this.FireOnError("Fehler beim Verbinden.");
             }
+        }
+
+        public void StartRead()
+        {
+            this.thread.Start();
         }
 
         public void Write(byte[] messageData, MessageCode code)
@@ -99,7 +108,7 @@ namespace ConfigManager
 
                     data = new byte[header.Length];
                     this.stream.Read(data, 0, data.Length);
-                    this.FireOnMessageReceived(data, header.Code, this.ip);
+                    this.FireOnMessageReceived(data, header.Code, this.Ip);
                 }                
             }
             catch

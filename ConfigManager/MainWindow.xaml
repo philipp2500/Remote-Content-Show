@@ -8,7 +8,9 @@
         Title="Remote Content Configuration" 
         Height="400" 
         Width="400" 
-        ResizeMode="CanMinimize" Icon="Resources/Icon.ico">
+        ResizeMode="CanMinimize" 
+        Icon="Resources/Icon.ico"
+        WindowStartupLocation="CenterScreen">
     <Grid Margin="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

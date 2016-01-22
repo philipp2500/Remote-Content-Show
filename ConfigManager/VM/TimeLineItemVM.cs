@@ -11,31 +11,40 @@ using ImageHandler;
 namespace ConfigManager
 {
     public class TimeLineItemVM
-    {
-        private IResource resource;
-        private int duration;
-
+    {   
         public TimeLineItemVM(int duration, IResource resource)
         {
-            this.duration = duration;
-            this.resource = resource;
+            this.Duration = duration;
+            this.Resource = resource;
         }
 
-        public string Duration
+        public string DurationS
         {
             get
             {
-                string min = (this.duration / 60).ToString();
-                string sek = (this.duration % 60).ToString();
+                string min = (this.Duration / 60).ToString();
+                string sek = (this.Duration % 60).ToString();
                 return string.Format("{0}:{1}", min, sek);
             }
+        }
+
+        public int Duration
+        {
+            get;
+            private set;
+        }
+
+        public IResource Resource
+        {
+            get;
+            private set;
         }
 
         public string Name
         {
             get
             {
-                return this.resource.Name;
+                return this.Resource.Name;
             }
         }
 
@@ -43,11 +52,11 @@ namespace ConfigManager
         {
             get
             {
-                if (this.resource is WebResource)
+                if (this.Resource is WebResource)
                 {
                     return ImageHandler.ImageHandler.BitmapToBitmapImage(ConfigManager.Properties.Resources.smallloadFromweb);
                 }
-                else if (this.resource is ProcessResource)
+                else if (this.Resource is ProcessResource)
                 {
                     return ImageHandler.ImageHandler.BitmapToBitmapImage(ConfigManager.Properties.Resources.smallloadFromProcess);
                 }

@@ -16,6 +16,18 @@ namespace ConfigManager
 
         private List<NetworkConnection> connections = new List<NetworkConnection>();
 
+        public NetworkConnection ConnectToRead(IPAddress ip, int port)
+        {
+            NetworkConnection netCon = new NetworkConnection(ip, port);
+            netCon.OnError += NetCon_OnError;
+            netCon.OnMessageReceived += NetCon_OnMessageReceived;
+            netCon.Connect();
+            netCon.StartRead();
+            this.connections.Add(netCon);
+
+            return netCon;
+        }
+
         public NetworkConnection ConnectTo(IPAddress ip, int port)
         {
             NetworkConnection netCon = new NetworkConnection(ip, port);

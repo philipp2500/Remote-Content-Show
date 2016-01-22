@@ -11,7 +11,8 @@
         Width="600" 
         MinHeight="500"
         MinWidth="600" 
-        Icon="Resources/Icon.ico">
+        Icon="Resources/Icon.ico"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <TabControl>
             <TabItem Header="Name &amp; Agents" Name="Tab1">
@@ -146,8 +147,26 @@
                 </Grid>
             </TabItem>
 
-            <TabItem  Header="Action" IsEnabled="False">
-                <Label Content="Content goes here..." />
+            <TabItem  Header="Action" IsEnabled="False" Name="Tab3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Name="IptosendJob" Grid.Row="0" Grid.Column="0" Margin="5"></TextBox>
+                    <Button Grid.Row="0" Grid.Column="1" Margin="5" Name="SendJob" Click="SendJob_Click" >Send Job</Button>
+                    <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="ToPiSendList">
+                    </ListView>
+                    
+                    <Button Grid.Row="2" Grid.Column="0" Margin="5"  Name="SpeicherDenJob" Click="SpeicherDenJob_Click" HorizontalAlignment="Right">Job Speichern</Button>
+                    <Button Grid.Row="2" Grid.Column="1" Margin="5" Width="50" Name="CloseThisThing" Click="CloseThisThing_Click" HorizontalAlignment="Right">Ok</Button>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

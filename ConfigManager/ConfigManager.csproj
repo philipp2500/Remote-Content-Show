@@ -95,6 +95,9 @@
     <Compile Include="EventList.xaml.cs">
       <DependentUpon>EventList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SendJob.xaml.cs">
+      <DependentUpon>SendJob.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VM\EventItemVM.cs" />
     <Compile Include="VM\TimeLineItemVM.cs" />
     <Page Include="Dialog\ProcessDialog.xaml">
@@ -150,6 +153,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NewJob.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SendJob.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

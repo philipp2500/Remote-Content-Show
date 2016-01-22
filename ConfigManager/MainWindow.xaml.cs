@@ -33,7 +33,8 @@ namespace ConfigManager
 
         private void SendJob_Click(object sender, RoutedEventArgs e)
         {
-
+            SendJob sj = new SendJob();
+            sj.ShowDialog();
         }
 
         private void ChangePicture_Click(object sender, RoutedEventArgs e)

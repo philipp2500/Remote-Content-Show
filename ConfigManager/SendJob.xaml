@@ -1,0 +1,36 @@
+﻿<Window x:Class="ConfigManager.SendJob"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConfigManager"
+        mc:Ignorable="d"
+        Title="SendJob" 
+        Height="300" 
+        Width="300"
+        MinHeight="300" 
+        MinWidth="300"
+        Icon="Resources/Icon.ico"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBox Name="IptosendJob" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"></TextBox>
+        <Button Grid.Row="0" Grid.Column="2" Margin="5" Name="SendJobB" Click="SendJobB_Click" >Send Job</Button>
+        <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="ToPiSendList">
+        </ListView>
+
+        <TextBox IsEnabled="False" Grid.Row="2" Grid.Column="0" Name="JobName" Margin="5"></TextBox>
+        <Button Grid.Row="2" Grid.Column="1" Margin="5"  Name="LoadDenJob" HorizontalAlignment="Right" Click="LoadDenJob_Click">Job Laden</Button>
+        <Button Grid.Row="2" Grid.Column="2" Margin="5" Width="50" Name="CloseThisThing" Click="CloseThisThing_Click" HorizontalAlignment="Right">Ok</Button>
+    </Grid>
+</Window>

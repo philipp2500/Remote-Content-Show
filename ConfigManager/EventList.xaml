@@ -10,7 +10,8 @@
         MinWidth="600" 
         Height="300"
         Width="600" 
-        Icon="Resources/Icon.ico">
+        Icon="Resources/Icon.ico"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
