@@ -8,6 +8,7 @@ namespace Remote_Content_Show_Protocol
 {
     public static class NetworkConfiguration
     {
-        public const int Port = 1049;
+        public const int PortConfig = 1049;
+        public const int PortAgent = 1050;
     }
 }
