@@ -149,6 +149,8 @@ namespace DisplayClient
             {
                 agent.CancelRenderJob();
             }
+
+            this.workingAgents.RemoveAll(x => jobTreatingAgents.Contains(x));
         }
 
         private void RunJob(Job job)

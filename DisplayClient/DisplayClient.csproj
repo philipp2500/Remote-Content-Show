@@ -103,6 +103,16 @@
       <DependentUpon>ContentDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\ContentDisplayManager.cs" />
+    <Compile Include="Layout\DoubleWindowHorizontalSplittedWindow.xaml.cs">
+      <DependentUpon>DoubleWindowHorizontalSplittedWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Layout\DoubleWindowVerticalSplittedWindow.xaml.cs">
+      <DependentUpon>DoubleWindowVerticalSplittedWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Layout\IDisplayArray.cs" />
+    <Compile Include="Layout\SingleWindow.xaml.cs">
+      <DependentUpon>SingleWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Log\EventsManager.cs" />
     <Compile Include="Log\LoggedEvent.cs" />
     <Compile Include="Log\LoggedJob.cs" />
@@ -113,6 +123,7 @@
     <Compile Include="Network\Server.cs" />
     <Compile Include="Network\SocketHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage\PersistenceManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -136,6 +147,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Layout\ContentDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layout\DoubleWindowHorizontalSplittedWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layout\DoubleWindowVerticalSplittedWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Layout\SingleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

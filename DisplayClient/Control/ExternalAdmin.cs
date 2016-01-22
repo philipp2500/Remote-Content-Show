@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
 
-namespace DisplayClient.DisplayManager
+namespace DisplayClient
 {
     public class ExternalAdmin
     {
@@ -18,6 +18,7 @@ namespace DisplayClient.DisplayManager
             this.socketHandler = new SocketHandler(socket);
 
             this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
+            this.socketHandler.Start();
         }
 
         public delegate void JobConfigurationReceived(Job_Configuration configuration);

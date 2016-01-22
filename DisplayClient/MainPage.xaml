@@ -9,5 +9,19 @@
 
     <Grid Name="rootGrid" Background="White">
         <!--<Button Content="aölksdfasfd" Width="200" Height="50"></Button>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Name="LayoutContainer" Background="{Binding ConfigImage}">
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Start config listener" Name="StartConfigListenerButton" Click="StartConfigListenerButton_Click"></Button>
+                <Button Content="refresh image" Click="Button_Click"></Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>
