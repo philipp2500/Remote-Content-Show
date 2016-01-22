@@ -21,24 +21,39 @@ namespace DisplayClient
 
         private CoreDispatcher displayDispatcher;
 
-        private List<Agent> availableAgents;
-
         private List<WorkingAgent> workingAgents;
 
         private Job currentlyTreatedJob;
 
-        public ContentDisplayManager(JobWindowList jobForWindow)
+        private Dictionary<Job, AgentSelector> agentSelectors;
+
+        public ContentDisplayManager(JobWindowList jobForWindow, List<Agent> availableAgents)
         {
             this.jobForWindow = jobForWindow;
 
-            this.availableAgents = new List<Agent>();
             this.workingAgents = new List<WorkingAgent>();
+            this.agentSelectors = new Dictionary<Job, AgentSelector>();
 
-            this.jobForWindow = new JobWindowList();
+            foreach (Job job in jobForWindow.Jobs)
+            {
+                AgentSelector selector = new AgentSelector(job, availableAgents);
+                selector.OnAgentNotReachable += Selector_OnAgentNotReachable;
+
+                this.agentSelectors[job] = selector;
+            }
+
             this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.google.at" } });
             this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24sadfasdfbd3f8.jpg" } });
             this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
             this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 4, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24bd3f8.jpg" } });
+        }
+
+        private void Selector_OnAgentNotReachable(AgentSelector sender, Agent agent)
+        {
+            if (this.OnAgentNotReachable != null)
+            {
+                this.OnAgentNotReachable(sender.JobToDo, agent);
+            }
         }
 
         // Display request events
@@ -57,7 +72,7 @@ namespace DisplayClient
 
         // Error events
 
-        public delegate void NoResourceCompatibleAgentFound(IResource resource);
+        public delegate void NoResourceCompatibleAgentFound(Job job);
 
         public delegate void ResourceNotAvailable(IResource resource);
 
@@ -72,19 +87,6 @@ namespace DisplayClient
         public event AgentNotReachable OnAgentNotReachable;
 
         public event AgentWithProcessNotFound OnAgentWithProcessNotFound;
-
-        public List<Agent> AvailableAgents
-        {
-            get
-            {
-                return this.availableAgents;
-            }
-
-            set
-            {
-                this.availableAgents = value;
-            }
-        }
 
         public void SetRenderSize(Size size)
         {
@@ -202,13 +204,17 @@ namespace DisplayClient
             }
         }        
         
-        private void HandleProcessResource(Job job, ProcessResource resource)
+        private async void HandleProcessResource(Job job, ProcessResource resource)
         {
-            List<Agent> foundAgents = this.availableAgents.Where(x => x.IP.Equals(resource.ProcessAgent.IP)).ToList();
+            List<Agent> foundAgents = this.agentSelectors[job].AvailableAgents.Where(x => x.IP.Equals(resource.ProcessAgent.IP)).ToList();
 
             if (foundAgents.Count == 1)
             {
-                this.LookForResourceCompatibleAgent(foundAgents, resource);
+                //this.LookForResourceCompatibleAgent(foundAgents, resource);
+
+                WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgentFromList(null, foundAgents);
+
+                this.HandleFoundWorkingAgent(worker);
             }
             else
             {
@@ -219,7 +225,7 @@ namespace DisplayClient
             }
         }
 
-        private async void LookForResourceCompatibleAgent(List<Agent> givenAgents, IResource resource)
+        /*private async void LookForResourceCompatibleAgent(List<Agent> givenAgents, IResource resource)
         {
             RenderConfiguration configuration = null; // TODO
             bool found = false;
@@ -260,9 +266,9 @@ namespace DisplayClient
                     this.OnNoResourceCompatibleAgentFound(resource);
                 }
             }
-        }
+        }*/
 
-        private void Worker_OnMessageReceived(WorkingAgent agent, RCS_Render_Job_Message message)
+        private async void Worker_OnMessageReceived(WorkingAgent agent, RCS_Render_Job_Message message)
         {
             // TODO: handling a process, which has been exited suddenly.
             if (message.Message == RenderMessage.ProcessExited)
@@ -273,8 +279,33 @@ namespace DisplayClient
                     this.OnResourceNotAvailable(agent.Configuration.JobToDo.Resource);
                 }*/
 
-                // Solution 2:
-                this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
+                // Solution 2: try it with another agent, except the current.
+                //this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
+                Job todo = agent.Configuration.JobToDo;
+                List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => x.IP.Equals(agent.Agent.IP)).ToList();
+
+                WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(null, excluded);
+
+                this.HandleFoundWorkingAgent(worker);
+            }
+        }
+
+        private void HandleFoundWorkingAgent(WorkingAgent worker)
+        {
+            if (worker == null)
+            {
+                if (this.OnNoResourceCompatibleAgentFound != null)
+                {
+                    this.OnNoResourceCompatibleAgentFound(worker.Configuration.JobToDo);
+                }
+            }
+            else
+            {
+                worker.OnResultReceived += Worker_OnResultReceived;
+                worker.OnMessageReceived += Worker_OnMessageReceived;
+                worker.OnAgentGotUnreachable += Worker_OnAgentGotUnreachable;
+
+                this.workingAgents.Add(worker);
             }
         }
 

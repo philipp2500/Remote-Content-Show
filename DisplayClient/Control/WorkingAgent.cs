@@ -72,6 +72,7 @@ namespace DisplayClient
 
                     this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
                     this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
+                    this.socketHandler.Start();
 
                     this.alive = true;
                 }

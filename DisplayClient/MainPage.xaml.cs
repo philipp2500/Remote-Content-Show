@@ -45,9 +45,9 @@ namespace DisplayClient
             //display1.Width = 800;
             //display1.Height = 800;
 
-            display1.DisplayManager = new ContentDisplayManager(null) { DisplayDispatcher = display1.Dispatcher };
+            display1.DisplayManager = new ContentDisplayManager(new JobWindowList(), new List<Agent>()) { DisplayDispatcher = display1.Dispatcher };
 
-            //this.LayoutContainer.Children.Add(display1);
+            this.LayoutContainer.Children.Add(display1);
 
             EventsManager.ClearLog();
 
