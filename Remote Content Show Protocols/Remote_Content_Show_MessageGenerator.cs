@@ -13,11 +13,15 @@ namespace Remote_Content_Show_Protocol
 
         public static byte[] GetMessageAsByte(object message)
         {
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.Objects;
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message, Formatting.Indented, settings));
         }
         public static T GetMessageFromByte<T>(byte[] data)
         {
-            return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(data));
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.Objects;
+            return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(data), settings);
         }
 
         //switch (header.Code)
