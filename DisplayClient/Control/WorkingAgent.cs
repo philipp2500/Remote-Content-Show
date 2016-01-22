@@ -47,7 +47,7 @@ namespace DisplayClient
         {
             Client c = new Client();
 
-            StreamSocket socket = await c.Connect(agent.IP, NetworkConfiguration.Port);
+            StreamSocket socket = await c.Connect(agent.IP, NetworkConfiguration.PortConfig);
 
             SocketHandler handler = new SocketHandler(socket);
 

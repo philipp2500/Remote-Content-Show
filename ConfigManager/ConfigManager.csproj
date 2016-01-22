@@ -88,6 +88,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EventList.xaml.cs">
+      <DependentUpon>EventList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VM\EventItemVM.cs" />
+    <Compile Include="VM\TimeLineItemVM.cs" />
     <Page Include="Dialog\ProcessDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -104,11 +109,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Elemts\ResourceControl.xaml">
+    <Page Include="Elemts\TimeLineControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Elemts\TimeLineControl.xaml">
+    <Page Include="EventList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -131,9 +136,6 @@
     </Compile>
     <Compile Include="Elemts\ProcessPickerItem.xaml.cs">
       <DependentUpon>ProcessPickerItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Elemts\ResourceControl.xaml.cs">
-      <DependentUpon>ResourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Elemts\TimeLineControl.xaml.cs">
       <DependentUpon>TimeLineControl.xaml</DependentUpon>
@@ -223,6 +225,15 @@
     <Resource Include="Resources\loadFromFile.png" />
     <Resource Include="Resources\loadFromProcess.png" />
     <Resource Include="Resources\loadFromweb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\smallloadFromProcess.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\smallloadFromweb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\snallloadFromFile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

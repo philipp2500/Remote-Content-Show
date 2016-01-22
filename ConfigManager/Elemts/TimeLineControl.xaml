@@ -14,14 +14,32 @@
 
         <Label Grid.Column="0" Name="LyoutWindowNumber" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"></Label>
         <CheckBox Grid.Column="1" Name="Loop" Margin="5,0" VerticalAlignment="Center">Schleife</CheckBox>
-        <ListBox Grid.Column="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Name="TimeLineItems" Height="100">
+        <ListBox Grid.Column="2" ScrollViewer.HorizontalScrollBarVisibility="Auto"  Name="TimeLineItems" Height="100" ItemsSource="{Binding}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" />
+                    <VirtualizingStackPanel Orientation="Horizontal"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            
-            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Black" BorderThickness="5" Margin="5" Height="60">
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        
+                            <Image Width="64" Height="32" Source="{Binding ShowImag}" Name="RCImag" Grid.Row="0" Grid.Column="0"></Image>
+                            <Label Content="{Binding Duration}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"></Label>
+                            <Label Content="{Binding Name}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"></Label>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
     </Grid>
 </UserControl>

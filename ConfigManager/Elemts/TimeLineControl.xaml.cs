@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,10 +21,25 @@ namespace ConfigManager
     /// </summary>
     public partial class TimeLineControl : UserControl
     {
+        private ObservableCollection<TimeLineItemVM> items = new ObservableCollection<TimeLineItemVM>();
+
         public TimeLineControl(int windowId)
         {
             InitializeComponent();
             this.LyoutWindowNumber.Content = windowId;
+            this.WindowLayoutId = windowId;
+            this.TimeLineItems.ItemsSource = this.items;
+        }
+
+        public void Add(TimeLineItemVM tivm)
+        {
+            this.items.Add(tivm);
+        }
+
+        public int WindowLayoutId
+        {
+            get;
+            private set;
         }
     }
 }

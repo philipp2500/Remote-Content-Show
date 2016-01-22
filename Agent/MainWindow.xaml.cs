@@ -35,7 +35,7 @@ namespace Agent
 
             try
             {
-                this.server = new Server(Remote_Content_Show_Protocol.NetworkConfiguration.Port);
+                this.server = new Server(Remote_Content_Show_Protocol.NetworkConfiguration.PortAgent);
                 this.server.OnClientConnected += this.Server_OnClientConnected;
                 this.server.OnClientDisconnected += this.Server_OnClientDisconnected;
                 this.server.Start();

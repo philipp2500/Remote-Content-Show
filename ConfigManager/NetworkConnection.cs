@@ -21,10 +21,12 @@ namespace ConfigManager
         private NetworkStream stream;
         private bool run = true;
         private IPAddress ip;
+        private int port;
 
-        public NetworkConnection(IPAddress ip)
+        public NetworkConnection(IPAddress ip, int port)
         {
             this.ip = ip;
+            this.port = port;
             this.client = new TcpClient();
 
             this.thread = new Thread(this.Run);
@@ -32,10 +34,10 @@ namespace ConfigManager
         }
 
         public void Connect()
-        {
+        {                     
             try
             {
-                this.client.Connect(ip, NetworkConfiguration.Port);
+                this.client.Connect(this.ip, this.port);
                 this.stream = this.client.GetStream();
                 this.thread.Start();
             }
@@ -58,8 +60,15 @@ namespace ConfigManager
             this.OnError = null;
             this.OnMessageReceived = null;
 
-            this.stream.Close();
-            this.client.Close();
+            try
+            {
+                this.client.Close();
+                this.stream.Close();
+            } 
+            catch
+            {
+
+            }
         }
 
         protected void FireOnMessageReceived(byte[] messageData, MessageCode code, IPAddress ip)
@@ -79,7 +88,7 @@ namespace ConfigManager
         }
 
         private void Run()
-        {
+        {            
             try
             {
                 if (this.run)

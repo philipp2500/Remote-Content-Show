@@ -16,9 +16,9 @@ namespace ConfigManager
 
         private List<NetworkConnection> connections = new List<NetworkConnection>();
 
-        public NetworkConnection ConnectTo(IPAddress ip)
+        public NetworkConnection ConnectTo(IPAddress ip, int port)
         {
-            NetworkConnection netCon = new NetworkConnection(ip);
+            NetworkConnection netCon = new NetworkConnection(ip, port);
             netCon.OnError += NetCon_OnError;
             netCon.OnMessageReceived += NetCon_OnMessageReceived;
             netCon.Connect();
@@ -38,6 +38,7 @@ namespace ConfigManager
             {
                 c.Close();
             }
+            this.connections = new List<NetworkConnection>();
         }
 
         protected void FireOnMessageReceived(MessageRecivedEventHandler e)

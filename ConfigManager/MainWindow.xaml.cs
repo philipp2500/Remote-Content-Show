@@ -43,7 +43,8 @@ namespace ConfigManager
 
         private void GetEventList_Click(object sender, RoutedEventArgs e)
         {
-
+            EventList ev = new EventList();
+            ev.ShowDialog();
         }
     }
 }

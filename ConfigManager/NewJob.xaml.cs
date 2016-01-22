@@ -76,7 +76,7 @@ namespace ConfigManager
                     }
                     else
                     {
-                        NetworkConnection netC = this.netmanager.ConnectTo(ips[0]);
+                        NetworkConnection netC = this.netmanager.ConnectTo(ips[0], NetworkConfiguration.PortAgent);
                         byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Process_List_Request());
                         netC.Write(messageData, MessageCode.MC_Process_List_Request);
 
@@ -94,6 +94,7 @@ namespace ConfigManager
         {
             if (!string.IsNullOrWhiteSpace(this.JobName.Text))
             {
+                this.netmanager.CloseAllConnection();
                 this.Tab1.IsEnabled = false;
                 this.Tab2.IsSelected = true;
                 this.Tab2.IsEnabled = true;
@@ -153,11 +154,24 @@ namespace ConfigManager
                     }
                     break;
             }
+
+            this.SelectedName.Text = this.currenResource.Name;
         }
 
         private void AddJobToTimeLine_Click(object sender, RoutedEventArgs e)
         {
-
+            if (this.currenResource != null)
+            {
+                int duration = ((int)this.ToDurationMinuten.Value) * 60 + (int)this.ToDurationSekunden.Value;
+                TimeLineItemVM tlivm = new TimeLineItemVM(duration, this.currenResource);
+                ((TimeLineControl)this.TimeLineContainer.Children[(int)this.ToShowWindowId.Value - 1]).Add(tlivm);
+                this.SelectIResource.SelectedIndex = -1;
+                this.SelectedName.Text = string.Empty;
+                this.currenResource = null;
+            } else
+            {
+                MessageBox.Show("Bitte eine Resource auswählen!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

@@ -37,9 +37,29 @@ namespace ConfigManager
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
-            this.Url = this.UrlInput.Text;
-            this.Close();
+            if (this.IsUrl())
+            {
+                this.DialogResult = true;
+                this.Url = this.UrlInput.Text;
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Keine gültige URL!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private bool IsUrl()
+        {
+            try
+            {
+                string a = new Uri(this.UrlInput.Text).Host;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

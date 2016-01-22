@@ -97,15 +97,19 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
                             <Label Grid.Row="0" Grid.Column="0" FontWeight="Bold">Dauer: </Label>
-                            <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Value="1" Minimum="1" Width="100" ToolTip="In Sekunden"/>
-                            
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                <xctk:IntegerUpDown Name="ToDurationMinuten"  Value="0" Minimum="0" Width="50" ToolTip="In Minuten"/>
+                                <xctk:IntegerUpDown Name="ToDurationSekunden" Value="1" Minimum="1" Width="50" Maximum="59" ToolTip="In Sekunden"/>
+                            </StackPanel>
+
                             <Label Grid.Row="1" Grid.Column="0" FontWeight="Bold">Window: </Label>
                             <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1" Value="1" Minimum="1" Width="100" Name="ToShowWindowId"/>
 
-                            <ComboBox Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Right" Width="76" Height="84" SelectionChanged="ComboBox_SelectionChanged" >
+                            <ComboBox Name="SelectIResource" Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Right" Width="76" Height="84" SelectionChanged="ComboBox_SelectionChanged" >
                                 <ComboBoxItem>
                                     <StackPanel>
                                         <Image Source="Resources/loadFromProcess.png"></Image>
@@ -126,7 +130,9 @@
                                 </ComboBoxItem>
                             </ComboBox>
 
-                            <Button Grid.Row="3" Grid.Column="2" Width="50" Margin="5" HorizontalAlignment="Right" Name="AddJobToTimeLine" Click="AddJobToTimeLine_Click">Add</Button>
+                            <TextBox Name="SelectedName" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" IsEnabled="False"/>
+
+                            <Button Grid.Row="3" Grid.Column="3" Width="50" Margin="5" HorizontalAlignment="Right" Name="AddJobToTimeLine" Click="AddJobToTimeLine_Click">Add</Button>
                         </Grid>
                     </GroupBox>
                     <Image Grid.Row="0" Grid.Column="1" Name="LayoutImagOverwie" Margin="5,0,0,0" Height="100" Width="100"></Image>
