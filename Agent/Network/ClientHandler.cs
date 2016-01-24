@@ -199,11 +199,11 @@ namespace Agent.Network
         /// <param name="jobRequest">The render job to execute.</param>
         private void HandleJobRequest(RCS_Render_Job jobRequest)
         {
-            // TODO check if this agent is able to execute the render job
-            //if (!this.CheckExecutionAbility("x.y", jobRequest.Configuration.RenderJobID))
-            //{
-            //    return;
-            //}
+            // check if this agent is able to execute the render job
+            if (!this.CheckExecutionAbility(jobRequest))
+            {
+                return;
+            }
 
             ScreenCapture capturer = new ScreenCapture();
             capturer.OnImageCaptured += Capturer_OnImageCaptured;
@@ -212,33 +212,52 @@ namespace Agent.Network
 
             this.runningRenderJobs.Add(jobRequest.Configuration.RenderJobID, capturer);
 
-            capturer.StartCapture(
-                Process.GetProcessesByName("devenv")[0], 
-                (int)jobRequest.Configuration.UpdateInterval,
-                jobRequest.Configuration.JobToDo.Duration, 
-                jobRequest.Configuration.RenderJobID);
-            //TODO not devenv.exe | other resource
+            capturer.StartCapture(jobRequest.Configuration);
         }
 
         /// <summary>
-        /// Checks if this agent is able to execute the given file and sends an according message to the client.
+        /// Checks if this agent is able to execute the given render job and sends an according message to the client.
         /// </summary>
-        /// <param name="filename">The file to check if it is executable by any program on this agent.</param>
-        /// <param name="renderJobId">The GUID of the render job containing the file.</param>
-        /// <returns>True if this agent is able to execute the file, false otherwise.</returns>
-        private bool CheckExecutionAbility(string filename, Guid renderJobId)
+        /// <param name="renderJob">The render job to execute</param>
+        /// <returns>True if this agent is able to execute the job, false otherwise.</returns>
+        private bool CheckExecutionAbility(RCS_Render_Job renderJob)
         {
             bool capable = false;
             RCS_Render_Job_Message msg = null;
+            IResource resource = renderJob.Configuration.JobToDo.Resource;
 
-            if (ProgramFinder.FindExecutable(filename) != string.Empty)
+            if (resource is FileResource)
             {
-                capable = true;
-                msg = new RCS_Render_Job_Message(RenderMessage.Supported, renderJobId);
+                // check if a program exists which can open the file
+                string filepath = ((FileResource)resource).Path;
+                capable = ProgramFinder.FindExecutable(filepath) != string.Empty;
+            }
+            else if (resource is ProcessResource)
+            {
+                // check if process with given ID is running
+                int pid = ((ProcessResource)resource).ProcessID;
+
+                try
+                {
+                    Process.GetProcessById(pid);
+                    capable = true;
+                }
+                catch
+                {
+                }
             }
             else
             {
-                msg = new RCS_Render_Job_Message(RenderMessage.NotSupported, renderJobId);
+                throw new NotSupportedException("Only FileResource and ProcessResource are supported.");
+            }
+
+            if (capable)
+            {
+                msg = new RCS_Render_Job_Message(RenderMessage.Supported, renderJob.Id);
+            }
+            else
+            {
+                msg = new RCS_Render_Job_Message(RenderMessage.NotSupported, renderJob.Id);
             }
             
             try

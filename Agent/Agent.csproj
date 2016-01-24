@@ -69,6 +69,7 @@
     <Compile Include="Network\ClientHandler.cs" />
     <Compile Include="Network\ListenerThreadArgs.cs" />
     <Compile Include="Network\Server.cs" />
+    <Compile Include="ProcessStartupException.cs" />
     <Compile Include="ScreenCapture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

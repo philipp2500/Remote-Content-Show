@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Remote_Content_Show_Container;
 using System.Diagnostics;
 
 namespace Agent
@@ -8,26 +8,17 @@ namespace Agent
         /// <summary>
         /// Initializes a new instance of the <see cref="CaptureThreadArgs"/> class.
         /// </summary>
-        /// <param name="process">The process whose main window to capture.</param>
-        /// <param name="captureDelay">The number of milliseconds between two screen captures.</param>
-        /// <param name="duration">The GUID of the associated RenderJob.</param>
-        public CaptureThreadArgs(Process process, int captureDelay, int duration, Guid renderJobId)
+        public CaptureThreadArgs(Process process, RenderConfiguration configuration)
         {
             this.Process = process;
-            this.CaptureDelay = captureDelay;
-            this.Duration = duration;
-            this.RenderJobId = renderJobId;
+			this.Configuration = configuration;
             this.Exit = false;
         }
 
-        public bool Exit { get; set; }
-
         public Process Process { get; private set; }
 
-        public int CaptureDelay { get; private set; }
-
-        public int Duration { get; private set; }
-
-        public Guid RenderJobId { get; private set; }
+		public RenderConfiguration Configuration { get; private set; }
+        
+        public bool Exit { get; set; }
     }
 }

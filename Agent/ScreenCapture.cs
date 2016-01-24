@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
+using Remote_Content_Show_Container;
 
 namespace Agent
 {
@@ -25,33 +26,73 @@ namespace Agent
 
         public bool IsRunning { get; private set; }
 
-        private const int SW_RESTORE = 9; // Indicates that a minimized window should be restored
+        /// <summary>
+        /// 
+        /// </summary>
+        private const int PROCESS_STARTUP_WAIT_DURATION = 15000;
+        /// <summary>
+        /// Indicates that a minimized window should be restored.
+        /// </summary>
+        private const int SW_RESTORE = 9;
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
         private CaptureThreadArgs captureArgs = null;
-
+		
         /// <summary>
-        /// Continuously captures images of the given process' window and fires the <see cref="ScreenCapture.OnImageCaptured"/> event.
+        /// Continuously captures images of the given resource and fires the <see cref="ScreenCapture.OnImageCaptured"/> event.
+        /// <see cref="FileResource"/>s are opened with their default program.
         /// </summary>
-        /// <param name="proc">The process whose main window to capture.</param>
-        /// <param name="captureDelay">The number of milliseconds between two screen captures.</param>
-        /// <param name="duration">The duration in seconds indicating how long to capture.</param>
-        /// <param name="renderJobId">The GUID of the associated RenderJob.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the process' main window handle is <see cref="IntPtr.Zero"/>.</exception>
-        /// <exception cref="ArgumentException">Thrown if captureDelay is less than 0.</exception>
-        public void StartCapture(Process proc, int captureDelay, int duration, Guid renderJobId)
+        /// <exception cref="InvalidOperationException">Thrown if the process has no UI.</exception>
+        /// <exception cref="ProcessStartupException">Thrown if the process took to long to start up (<seealso cref="ScreenCapture.PROCESS_STARTUP_WAIT_DURATION"/>).</exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if config's update interval is less than 0
+        /// or the process for a <see cref="FileResource"/> cannot be started
+        /// or a <see cref="ProcessResource"/>s PID cannot be found.</exception>
+        /// <exception cref="NotSupportedException">Thrown if the job's resource is not of type <see cref="FileResource"/> or <see cref="ProcessResource"/>.</exception>
+        public void StartCapture(RenderConfiguration config)
         {
+			Process proc = null;
+            IResource resource = config.JobToDo.Resource;
+
+            if (config.UpdateInterval < 0)
+            {
+                throw new ArgumentException("The update interval must not be less than 0.");
+            }
+
+            if (resource is FileResource)
+			{
+                string path = ((FileResource)resource).Path;
+
+                try
+                {
+                    proc = Process.Start(path);
+                }
+                catch
+                {
+                    throw new ArgumentException("Failed to start the process for the FileResource.");
+                }
+                
+                if (!proc.WaitForInputIdle(PROCESS_STARTUP_WAIT_DURATION))
+                {
+                    throw new ProcessStartupException();
+                }
+            }
+			else if (resource is ProcessResource)
+			{
+				int pid = ((ProcessResource)resource).ProcessID;
+				proc = Process.GetProcessById(pid);
+			}
+			else
+			{
+                throw new NotSupportedException("Only capturing of jobs with FileResource and ProcessResource is supported.");
+			}
+			
             if (proc.MainWindowHandle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Cannot capture images of a window-less process.");
             }
 
-            if (captureDelay < 0)
-            {
-                throw new ArgumentException("The FPS must not be less than 0.", "fps");
-            }
-
             Thread capturer = new Thread(new ParameterizedThreadStart(this.Capture));
-            this.captureArgs = new CaptureThreadArgs(proc, captureDelay, duration, renderJobId);
+            this.captureArgs = new CaptureThreadArgs(proc, config);
             capturer.IsBackground = true;
             capturer.Start(this.captureArgs);
         }
@@ -92,7 +133,7 @@ namespace Agent
 
             return bmp;
         }
-
+        
         private void Capture(object data)
         {
             CaptureThreadArgs args = data as CaptureThreadArgs;
@@ -101,11 +142,14 @@ namespace Agent
             {
                 throw new ArgumentException("Parameter must be of type CaptureThreadArgs and must not be null.");
             }
-
-            Process proc = args.Process;
-            Bitmap prevImage = new Bitmap(1, 1);
+			
+			RenderConfiguration config = args.Configuration;
+						
+			Size imageSize = new Size(config.RenderWidth, config.RenderHeight);
+			Process proc = args.Process;
             IntPtr windowHandle = proc.MainWindowHandle;
-            DateTime endTime = DateTime.Now.AddSeconds(args.Duration);
+            DateTime endTime = DateTime.Now.AddSeconds(config.JobToDo.Duration); //TODO sicherstellen, dass duration in sekunden!!!!!!!!!!!!
+            Bitmap prevImage = new Bitmap(1, 1);
 
             if (windowHandle == IntPtr.Zero)
             {
@@ -119,19 +163,20 @@ namespace Agent
                     ShowWindow(windowHandle, SW_RESTORE);
                 }
 
-                Thread.Sleep(args.CaptureDelay);
+                Thread.Sleep((int)config.UpdateInterval); //TODO warum ist update interval Double???????????
                 
-                var image = CaptureWindow(windowHandle);
+                var image = this.CaptureWindow(windowHandle);
 
                 if (image == null)
                 {
                     continue;
                 }
                 
-                //if (!ImageHandler.ImageHandler.AreEqual(image, prevImage)) //TODO equal images
-                if (this.OnImageCaptured != null)
+				if (this.OnImageCaptured != null &&
+				    (!config.IgnoreEqualImages || !ImageHandler.ImageHandler.AreEqual(image, prevImage)))
                 {
-                    this.OnImageCaptured(this, new ImageEventArgs(args.RenderJobId, image));
+					image = (Bitmap)ImageHandler.ImageHandler.Resize(image, imageSize);
+                    this.OnImageCaptured(this, new ImageEventArgs(config.JobID, image));
                 }
 
                 prevImage.Dispose();
@@ -142,12 +187,12 @@ namespace Agent
 
             if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
             {
-                this.OnCaptureFinished(this, new CaptureFinishEventArgs(args.RenderJobId));
+                this.OnCaptureFinished(this, new CaptureFinishEventArgs(config.JobID));
             }
 
             if (proc.HasExited && this.OnProcessExited != null)
             {
-                this.OnProcessExited(this, new CaptureFinishEventArgs(args.RenderJobId));
+                this.OnProcessExited(this, new CaptureFinishEventArgs(config.JobID));
             }
         }
         
