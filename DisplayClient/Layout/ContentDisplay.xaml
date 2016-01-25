@@ -12,6 +12,6 @@
     <Grid Background="LightGray">
         <Image Name="DisplayingImage" Visibility="Collapsed"></Image>
         <WebView Name="DisplayingWebView" Visibility="Collapsed"></WebView>
-        <MediaElement Name="DisplayingVideo" Visibility="Collapsed" AutoPlay="True" Source="Assets/mov_bbb.mp4" AreTransportControlsEnabled="True"></MediaElement>
+        <MediaElement Name="DisplayingVideo" Visibility="Collapsed" AutoPlay="True" Source="Assets/mov_bbb.mp4" IsLooping="True" AreTransportControlsEnabled="False"></MediaElement>
     </Grid>
 </UserControl>

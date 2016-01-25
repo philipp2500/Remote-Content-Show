@@ -81,8 +81,6 @@ namespace DisplayClient
             List<LoggedEvent> events = EventsManager.GetLoggedEvents();
 
             // 
-            this.adminListener = new Server(NetworkConfiguration.PortPi);
-            this.adminListener.OnConnectionReceived += AdminListener_OnConnectionReceived;
 
             this.DataContext = this;
 
@@ -91,6 +89,11 @@ namespace DisplayClient
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            this.adminListener = new Server(NetworkConfiguration.PortPi);
+            this.adminListener.OnConnectionReceived += AdminListener_OnConnectionReceived;
+
+            this.adminListener.Start();
+
             Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
 
             /*if (configuration != null)
