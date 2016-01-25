@@ -58,14 +58,14 @@ namespace DisplayClient
                 throw new AgentNotReachableException("The agent could not be found!");
             }
 
-            SocketHandler handler = new SocketHandler(socket);
-
             // send render job request
             RCS_Render_Job jobRequest = new RCS_Render_Job(this.Configuration, RemoteType.Client);
 
             byte[] sendData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(jobRequest);
 
-            handler.SendMessage(MessageCode.MC_Render_Job, sendData);
+            this.socketHandler = new SocketHandler(socket);
+
+            this.socketHandler.SendMessage(MessageCode.MC_Render_Job, sendData);
 
             // receive render job response
             SocketHandler.SocketMessage socketMsg;
@@ -75,7 +75,7 @@ namespace DisplayClient
 
             while (socketMsg.Code != MessageCode.MC_Render_Job_Message)
             {
-                socketMsg = await handler.WaitForMessage();
+                socketMsg = await this.socketHandler.WaitForMessage();
             }
 
             RCS_Render_Job_Message jobResponse = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Message>(socketMsg.Content);
@@ -83,7 +83,7 @@ namespace DisplayClient
             if (jobResponse.Message == RenderMessage.Supported)
             {
                 this.Agent = agent;
-                this.socketHandler = new SocketHandler(socket);
+                //this.socketHandler = new SocketHandler(socket);
 
                 this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
                 this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
@@ -94,7 +94,7 @@ namespace DisplayClient
             else
             {
                 //this.socketHandler.Close();
-                handler.Close();
+                this.socketHandler.Close();
             }
 
             return jobResponse.Message;
@@ -126,7 +126,7 @@ namespace DisplayClient
             {
                 this.alive = false;
 
-                Task.Delay(1000 * 60);
+                Task.Delay(1000 * 5);
 
                 if (this.alive)
                 {

@@ -124,7 +124,7 @@ namespace DisplayClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (this.OnConnectionLost != null)
                 {

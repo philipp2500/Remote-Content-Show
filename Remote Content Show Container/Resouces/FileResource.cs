@@ -8,7 +8,7 @@ namespace Remote_Content_Show_Container
 {
     public class FileResource : IResource
     {
-        public bool Loacal
+        public bool Local
         {
             get;
             set;
