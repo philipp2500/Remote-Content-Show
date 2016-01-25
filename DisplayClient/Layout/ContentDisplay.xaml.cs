@@ -59,8 +59,8 @@ namespace DisplayClient
             this.currentDisplayControl = this.DisplayingVideo;
             this.currentDisplayControl.Visibility = Visibility.Visible;
 
-            this.DisplayingVideo.Source = videoPath;
-            this.DisplayingVideo.Play();
+            //this.DisplayingVideo.Source = videoPath;
+            //this.DisplayingVideo.Play();
         }
 
         private void Manager_OnDisplayAbortRequested()

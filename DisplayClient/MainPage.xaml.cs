@@ -35,6 +35,8 @@ namespace DisplayClient
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Show currentShow;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -64,11 +66,11 @@ namespace DisplayClient
             config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
             config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
 
-            Show show = new Show(config);
+            this.currentShow = new Show(config);
 
-            this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+            this.LayoutContainer.Children.Add((UserControl)this.currentShow.ContentWindow);
 
-            show.Start();
+            this.currentShow.Start();
 
             //
             EventsManager.ClearLog();
@@ -93,11 +95,11 @@ namespace DisplayClient
 
             /*if (configuration != null)
             {
-                Show show = new Show(configuration);
+                this.currentShow = new Show(configuration);
 
-                this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+                this.LayoutContainer.Children.Add((UserControl)this.currentShow.ContentWindow);
 
-                show.Start();
+                this.currentShow.Start();
             }*/
         }
 
@@ -148,6 +150,10 @@ namespace DisplayClient
 
         private void Admin_OnCancelRequestReceived(Guid jobID, CancelJobReason reason)
         {
+            if (this.currentShow != null)
+            {
+                this.currentShow.Cancel();
+            }
         }
 
         private void Admin_OnEventRequestReceived(ExternalAdmin sender)
