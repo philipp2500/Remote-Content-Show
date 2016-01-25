@@ -1,8 +1,6 @@
 ﻿using Agent.Network;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Windows;
 
 namespace Agent
@@ -24,7 +22,7 @@ namespace Agent
 
             this.chbNotification.DataContext = this;
             this.NotificationsEnabled = true;
-                        
+            
             this.notifyIcon = new System.Windows.Forms.NotifyIcon();
             this.notifyIcon.Icon = Properties.Resources.Icon1;
             this.notifyIcon.MouseDoubleClick += this.NotifyIcon_MouseDoubleClick;
