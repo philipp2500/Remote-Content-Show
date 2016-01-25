@@ -1,9 +1,9 @@
 ﻿using Agent.Network;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace Agent
 {
@@ -15,7 +15,7 @@ namespace Agent
         private const string TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
         private bool notificationsEnabled = false;
         private Server server = null;
-        private NotifyIcon notifyIcon = null;
+        private System.Windows.Forms.NotifyIcon notifyIcon = null;
         private System.Drawing.Size pictureSize = new System.Drawing.Size(100, 100);
         
         public MainWindow()
@@ -24,9 +24,9 @@ namespace Agent
 
             this.chbNotification.DataContext = this;
             this.NotificationsEnabled = true;
-            
-            this.notifyIcon = new NotifyIcon();
-            this.notifyIcon.Icon = new Icon("../../Resources/Icon.ico");
+                        
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon();
+            this.notifyIcon.Icon = Properties.Resources.Icon1;
             this.notifyIcon.MouseDoubleClick += this.NotifyIcon_MouseDoubleClick;
             this.notifyIcon.Visible = true;
         }
@@ -81,6 +81,12 @@ namespace Agent
             }
             catch
             {
+                MessageBox.Show(
+                    "Konnte Agent nicht starten.\n" +
+                    $"Bitte überprüfen Sie, ob Port {Remote_Content_Show_Protocol.NetworkConfiguration.PortAgent} zum Binden bereit ist.",
+                    "Start fehlgeschlagen",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
 
@@ -121,7 +127,7 @@ namespace Agent
         /// <summary>
         /// Restores the window from the taskbar.
         /// </summary>
-        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             this.WindowState = WindowState.Normal;
         }
@@ -138,7 +144,7 @@ namespace Agent
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             this.notifyIcon.Visible = false;
             this.notifyIcon.Dispose();

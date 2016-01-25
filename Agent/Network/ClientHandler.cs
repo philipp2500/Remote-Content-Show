@@ -225,7 +225,15 @@ namespace Agent.Network
 
             this.runningRenderJobs.Add(jobRequest.Configuration.RenderJobID, capturer);
 
-            capturer.StartCapture(jobRequest.Configuration);
+            try
+            {
+                capturer.StartCapture(jobRequest.Configuration);
+            }
+            catch (Exception ex)
+            when (ex is InvalidOperationException ||
+                  ex is ArgumentException)
+            {
+            }
         }
 
         /// <summary>
@@ -238,6 +246,13 @@ namespace Agent.Network
             bool capable = false;
             RCS_Render_Job_Message msg = null;
             IResource resource = renderJob.Configuration.JobToDo.Resource;
+
+            if (renderJob == null ||
+                renderJob.Configuration == null ||
+                renderJob.Configuration.JobToDo == null)
+            {
+                return false;
+            }
 
             if (resource is FileResource)
             {
@@ -389,7 +404,6 @@ namespace Agent.Network
         {
             byte[] byteMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg);
             byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length, RemoteType.Agent).ToByte;
-
             this.stream.Write(header, 0, header.Length);
             this.stream.Write(byteMsg, 0, byteMsg.Length);
             this.stream.Flush();

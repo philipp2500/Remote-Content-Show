@@ -85,7 +85,7 @@ namespace Agent
 			{
                 throw new NotSupportedException("Only capturing of jobs with FileResource and ProcessResource is supported.");
 			}
-			
+            
             if (proc.MainWindowHandle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Cannot capture images of a window-less process.");
@@ -114,7 +114,7 @@ namespace Agent
         /// Captures an image of the given window.
         /// </summary>
         /// <param name="handle">The window handle of the window to capture.</param>
-        /// <returns>A bitmap image of the captured window.</returns>
+        /// <returns>A bitmap image of the captured window or null if the window is not visible (e.g. minimized).</returns>
         public Bitmap CaptureWindow(IntPtr handle)
         {
             var rect = new Rect();
