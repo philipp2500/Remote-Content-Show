@@ -6,9 +6,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button x:Name="btnListen" Click="btnListen_Click" Margin="3" IsDefault="True">Agent starten</Button>
-        <ListBox Grid.Row="1" x:Name="lstOutput"></ListBox>
+        <Button Grid.Row="0" x:Name="btnListen" Click="btnListen_Click" Margin="3" IsDefault="True">Agent starten</Button>
+        <CheckBox Grid.Row="1" x:Name="chbNotification" Content="Benachrichtigungen anzeigen" IsChecked="{Binding Path=NotificationsEnabled}" Margin="3"></CheckBox>
+        <ListBox Grid.Row="2" x:Name="lstOutput" Margin="3"></ListBox>
     </Grid>
 </Window>

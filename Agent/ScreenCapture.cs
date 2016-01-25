@@ -110,6 +110,11 @@ namespace Agent
             this.captureArgs.Exit = true;
         }
 
+        /// <summary>
+        /// Captures an image of the given window.
+        /// </summary>
+        /// <param name="handle">The window handle of the window to capture.</param>
+        /// <returns>A bitmap image of the captured window.</returns>
         public Bitmap CaptureWindow(IntPtr handle)
         {
             var rect = new Rect();
