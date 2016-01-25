@@ -58,7 +58,7 @@ namespace ConfigManager
 
         public void Write(byte[] messageData, MessageCode code)
         {
-            Remote_Content_Show_Header header = new Remote_Content_Show_Header(code, messageData.Length);
+            Remote_Content_Show_Header header = new Remote_Content_Show_Header(code, messageData.Length, RemoteType.Configurator);
             this.stream.Write(header.ToByte, 0, Remote_Content_Show_Header.HeaderLength);
             this.stream.Write(messageData, 0, messageData.Length);
         }

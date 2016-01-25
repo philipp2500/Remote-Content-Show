@@ -22,6 +22,7 @@ namespace ConfigManager
     public partial class TimeLineControl : UserControl
     {
         public ObservableCollection<TimeLineItemVM> Items = new ObservableCollection<TimeLineItemVM>();
+
         public bool Loop
         {
             get

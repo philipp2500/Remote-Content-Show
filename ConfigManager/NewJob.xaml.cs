@@ -55,7 +55,7 @@ namespace ConfigManager
                         this.allProcess.Add(new ProcessDescriptionWrapper(pd, e.Ip, rcsPLR.ClientName));
                     }
 
-                    this.job.Agents.Add(new Agent() { IP = e.Ip });
+                    this.job.Agents.Add(new Agent() { IP = e.Ip.ToString() });
                     break;
             }
         }
@@ -159,7 +159,7 @@ namespace ConfigManager
                     if (pd.ShowDialog() == true)
                     {
                         ProcessDescriptionWrapper pdw = this.allProcess.Find(x => x.Id == pd.Result);
-                        this.currenResource = new ProcessResource() { ProcessID = pdw.PDescription.ProcessId, ProcessAgent = new Agent() { IP = pdw.Ip }, Name = pdw.PDescription.ProcessName };
+                        this.currenResource = new ProcessResource() { ProcessID = pdw.PDescription.ProcessId, ProcessAgent = new Agent() { IP = pdw.Ip.ToString() }, Name = pdw.PDescription.ProcessName };
                         this.SelectedName.Text = this.currenResource.Name;
                     }
                     break;
@@ -215,7 +215,7 @@ namespace ConfigManager
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.AddExtension = true;
             sfd.DefaultExt = "rcs";
-            sfd.Filter = "Text files (*.rcs)|*.rcs|All files (*.*)|*.*";
+            sfd.Filter = "Remote Control Show Job (*.rcs)|*.rcs|All files (*.*)|*.*";
 
             if (sfd.ShowDialog() == true)
             {

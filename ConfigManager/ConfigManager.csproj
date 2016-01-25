@@ -92,6 +92,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CreateConfriguration.xaml.cs">
+      <DependentUpon>CreateConfriguration.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EventList.xaml.cs">
       <DependentUpon>EventList.xaml</DependentUpon>
     </Compile>
@@ -100,6 +103,10 @@
     </Compile>
     <Compile Include="VM\EventItemVM.cs" />
     <Compile Include="VM\TimeLineItemVM.cs" />
+    <Page Include="CreateConfriguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialog\ProcessDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -245,6 +252,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\snallloadFromFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\placeholder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

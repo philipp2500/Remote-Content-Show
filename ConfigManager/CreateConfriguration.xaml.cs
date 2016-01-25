@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,36 +12,31 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ImageHandler;
 using Remote_Content_Show_Container;
 using Remote_Content_Show_Protocol;
-using Microsoft.Win32;
 using System.IO;
 using System.Net;
 
 namespace ConfigManager
 {
     /// <summary>
-    /// Interaction logic for SendJob.xaml
+    /// Interaction logic for CreateConfriguration.xaml
     /// </summary>
-    public partial class SendJob : Window
+    public partial class CreateConfriguration : Window
     {
-        private RCS_Job currentJob;
+        private byte[] image;
         private NetworkManager netmanager = new NetworkManager();
+        private string imageName;
 
-        public SendJob()
+        public CreateConfriguration()
         {
             InitializeComponent();
         }
 
-        private void CloseThisThing_Click(object sender, RoutedEventArgs e)
-        {
-            this.netmanager.CloseAllConnection();
-            this.Close();
-        }
-
         private void SendJobB_Click(object sender, RoutedEventArgs e)
         {
-            if (this.currentJob != null)
+            if (this.image != null && this.image.Length > 0)
             {
                 if (!string.IsNullOrWhiteSpace(this.IptosendJob.Text))
                 {
@@ -54,10 +50,10 @@ namespace ConfigManager
                         else
                         {
                             NetworkConnection netC = this.netmanager.ConnectTo(ips[0], NetworkConfiguration.PortPi);
-                            byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(currentJob);
-                            netC.Write(messageData, MessageCode.MC_Job);
+                            byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Configuration_Image(this.image, RemoteType.Configurator));
+                            netC.Write(messageData, MessageCode.MC_Configuration_Image);
 
-                            this.ToPiSendList.Items.Add(new ListViewItem() { Content = netC.Ip + " " + this.currentJob.Configuration.Name });
+                            this.ToPiSendList.Items.Add(new ListViewItem() { Content = netC.Ip + " " + this.imageName });
                             this.IptosendJob.Text = string.Empty;
                         }
                     }
@@ -69,15 +65,15 @@ namespace ConfigManager
             }
             else
             {
-                MessageBox.Show("Sie haben aktuell keinen Job geladen!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Sie haben kein Bild geladen!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        private void LoadDenJob_Click(object sender, RoutedEventArgs e)
+        private void LoadDenBild_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Multiselect = false;
-            ofd.Filter = "Remote Control Show Job (*.rcs)|*.rcs|All files (*.*)|*.*";
+            ofd.Filter = "Image Files (*.png, *.jpg)|*.png;*.jpg|All files (*.*)|*.*";
             if (ofd.ShowDialog() == true)
             {
                 if (!string.IsNullOrWhiteSpace(ofd.FileName))
@@ -89,8 +85,11 @@ namespace ConfigManager
                         byte[] data = new byte[fs.Length];
                         fs.Read(data, 0, data.Length);
                         fs.Close();
-                        this.currentJob = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Job>(data);
-                        this.JobName.Text = this.currentJob.Configuration.Name;
+                        this.image = data;
+                        BitmapImage bi = ImageHandler.ImageHandler.BytesToImage(data);
+                        this.SelectedImag.Source = bi;
+                        this.ImagName.Text = ofd.SafeFileName;
+                        this.imageName = ofd.SafeFileName;
                     }
                     catch
                     {
@@ -99,6 +98,12 @@ namespace ConfigManager
 
                 }
             }
+        }
+
+        private void CloseThisThing_Click(object sender, RoutedEventArgs e)
+        {
+            this.netmanager.CloseAllConnection();
+            this.Close();
         }
     }
 }

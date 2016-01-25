@@ -39,7 +39,8 @@ namespace ConfigManager
 
         private void ChangePicture_Click(object sender, RoutedEventArgs e)
         {
-
+            CreateConfriguration cc = new CreateConfriguration();
+            cc.ShowDialog();
         }
 
         private void GetEventList_Click(object sender, RoutedEventArgs e)

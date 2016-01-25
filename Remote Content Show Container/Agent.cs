@@ -9,7 +9,7 @@ namespace Remote_Content_Show_Container
 {
     public class Agent
     {
-        public IPAddress IP
+        public string IP
         {
             get;
             set;
