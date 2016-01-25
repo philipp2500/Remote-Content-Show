@@ -49,11 +49,14 @@ namespace Agent.Network
 
             try { this.listener.Stop(); }
             catch { }
-
+            
             foreach (ClientHandler client in this.clients)
             {
+                client.OnClientDisconnected -= this.Client_OnClientDisconnected;
                 client.Stop();
             }
+
+            this.clients.Clear();
         }
         
         /// <summary>
