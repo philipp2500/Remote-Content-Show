@@ -101,6 +101,9 @@
     <Compile Include="EventList.xaml.cs">
       <DependentUpon>EventList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FileManeger.xaml.cs">
+      <DependentUpon>FileManeger.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SendJob.xaml.cs">
       <DependentUpon>SendJob.xaml</DependentUpon>
     </Compile>
@@ -135,6 +138,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EventList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileManeger.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -266,6 +273,12 @@
   <ItemGroup>
     <Resource Include="Resources\localFiles.png" />
     <Resource Include="Resources\smalllocalFiles.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\manageFiles.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\delet.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

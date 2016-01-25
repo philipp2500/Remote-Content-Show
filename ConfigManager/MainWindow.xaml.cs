@@ -48,5 +48,11 @@ namespace ConfigManager
             EventList ev = new EventList();
             ev.ShowDialog();
         }
+
+        private void FileManager_Click(object sender, RoutedEventArgs e)
+        {
+            FileManeger fm = new FileManeger();
+            fm.ShowDialog();
+        }
     }
 }

@@ -155,6 +155,8 @@ namespace Agent
             IntPtr windowHandle = proc.MainWindowHandle;
             DateTime endTime = DateTime.Now.AddSeconds(config.JobToDo.Duration); //TODO sicherstellen, dass duration in sekunden!!!!!!!!!!!!
             Bitmap prevImage = new Bitmap(1, 1);
+            double actualImageRatio = 0;
+            double configImageRatio = config.RenderWidth / (double)config.RenderHeight;
 
             if (windowHandle == IntPtr.Zero)
             {
@@ -180,7 +182,19 @@ namespace Agent
 				if (this.OnImageCaptured != null &&
 				    (!config.IgnoreEqualImages || !ImageHandler.ImageHandler.AreEqual(image, prevImage)))
                 {
-					image = (Bitmap)ImageHandler.ImageHandler.Resize(image, imageSize);
+                    actualImageRatio = image.Width / (double)image.Height;
+                    configImageRatio = config.RenderWidth / (double)config.RenderHeight;
+
+                    if (actualImageRatio < configImageRatio)
+                    {
+                        imageSize = new Size((int)(config.RenderHeight * actualImageRatio), config.RenderHeight);
+                    }
+                    else
+                    {
+                        imageSize = new Size(config.RenderWidth, (int)(config.RenderWidth * (1.0 / actualImageRatio)));
+                    }
+
+                    image = (Bitmap)ImageHandler.ImageHandler.Resize(image, imageSize);
                     this.OnImageCaptured(this, new ImageEventArgs(config.JobID, image));
                 }
 

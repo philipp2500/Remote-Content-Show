@@ -9,8 +9,9 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_FileDelete : Remote_Content_Show_Message
     {
-        public RCS_FileDelete(RemoteType remote) : base(remote)
+        public RCS_FileDelete(string name, RemoteType remote) : base(remote)
         {
+            this.Name = name;
         }
 
         public string Name

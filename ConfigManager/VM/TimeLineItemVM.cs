@@ -63,7 +63,7 @@ namespace ConfigManager
                 else
                 {
                     FileResource fr = this.Resource as FileResource;
-                    if (!fr.Loacal)
+                    if (!fr.Local)
                     {
                         return ImageHandler.ImageHandler.BitmapToBitmapImage(ConfigManager.Properties.Resources.snallloadFromFile);
                     }

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Remote Content Configuration" 
         Height="400" 
-        Width="400" 
+        Width="600" 
         ResizeMode="CanMinimize" 
         Icon="Resources/Icon.ico"
         WindowStartupLocation="CenterScreen">
@@ -17,6 +17,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
@@ -69,5 +70,16 @@
             </Grid>
         </Button>
 
+        <Button Grid.Row="1" Grid.Column="3" Margin="5" Background="Red" Padding="0" Name="FileManager" Click="FileManager_Click">
+            <Grid Height="130" Width="130">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+
+                <Image Grid.Row="0" Source="Resources/manageFiles.png" ></Image>
+                <Label Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Center">File Manager</Label>
+            </Grid>
+        </Button>
     </Grid>
 </Window>

@@ -73,6 +73,16 @@ namespace ConfigManager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap delet {
+            get {
+                object obj = ResourceManager.GetObject("delet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DoubleWindowHorizontalSplitted {
             get {
                 object obj = ResourceManager.GetObject("DoubleWindowHorizontalSplitted", resourceCulture);
@@ -156,6 +166,16 @@ namespace ConfigManager.Properties {
         internal static System.Drawing.Bitmap localFiles {
             get {
                 object obj = ResourceManager.GetObject("localFiles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap manageFiles {
+            get {
+                object obj = ResourceManager.GetObject("manageFiles", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
