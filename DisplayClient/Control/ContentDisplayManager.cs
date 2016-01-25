@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -322,20 +323,23 @@ namespace DisplayClient
 
         private async void HandleImageResult(byte[] bytes)
         {
-            if (this.OnImageDisplayRequested != null)
+            /*if (this.OnImageDisplayRequested != null)
             {
                 await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     BitmapImage image = new BitmapImage();
+                    IRandomAccessStream iras = null;
 
                     using (MemoryStream ms = new MemoryStream(bytes))
                     {
-                        await image.SetSourceAsync(ms.AsRandomAccessStream());
+                        iras = ms.AsRandomAccessStream();
                     }
+
+                    await image.SetSourceAsync(iras);
 
                     this.OnImageDisplayRequested(image);
                 });
-            }
+            }*/
         } 
 
         private RenderConfiguration GetNewRenderConfiguration(Job jobToDo)
