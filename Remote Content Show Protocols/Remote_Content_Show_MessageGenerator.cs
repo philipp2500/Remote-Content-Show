@@ -17,6 +17,7 @@ namespace Remote_Content_Show_Protocol
             settings.TypeNameHandling = TypeNameHandling.Objects;
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message, Formatting.Indented, settings));
         }
+
         public static T GetMessageFromByte<T>(byte[] data)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings();
