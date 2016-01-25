@@ -79,13 +79,13 @@ namespace ConfigManager
                     else
                     {
                         NetworkConnection netC = this.netmanager.ConnectToRead(ips[0], NetworkConfiguration.PortAgent);
-                        byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Process_List_Request());
+                        byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Process_List_Request(RemoteType.Configurator));
                         netC.Write(messageData, MessageCode.MC_Process_List_Request);
 
                         this.AgentConnection.Text = string.Empty;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show("IP/Name konnte nicht aufgelöst werden!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -223,7 +223,7 @@ namespace ConfigManager
                 {
                     try
                     {
-                        byte[] data = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Job(this.job));
+                        byte[] data = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Job(this.job, RemoteType.Configurator));
 
                         FileStream fs = new FileStream(sfd.FileName, FileMode.Create);                       
                         fs.Write(data, 0, data.Length);
@@ -252,14 +252,14 @@ namespace ConfigManager
                     else
                     {
                         NetworkConnection netC = this.netmanager.ConnectTo(ips[0], NetworkConfiguration.PortPi);
-                        byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Job(this.job));
+                        byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Job(this.job, RemoteType.Configurator));
                         netC.Write(messageData, MessageCode.MC_Job);
 
                         this.ToPiSendList.Items.Add(new ListViewItem() { Content = netC.Ip + " " + this.job.Name });
                         this.IptosendJob.Text = string.Empty;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show("IP/Name konnte nicht aufgelöst werden!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
