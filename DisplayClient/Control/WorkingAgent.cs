@@ -17,6 +17,7 @@ namespace DisplayClient
 
         public WorkingAgent(RenderConfiguration configuration)
         {
+            this.Configuration = configuration;
         }
 
         public delegate void MessageReceived(WorkingAgent agent, RCS_Render_Job_Message message);
@@ -46,8 +47,16 @@ namespace DisplayClient
         public async Task<RenderMessage> Connect(Agent agent)
         {
             Client c = new Client();
+            StreamSocket socket;
 
-            StreamSocket socket = await c.Connect(agent.IP, NetworkConfiguration.PortAgent);
+            try
+            {
+                socket = await c.Connect(agent.IP, NetworkConfiguration.PortAgent);
+            }
+            catch (Exception)
+            {
+                throw new AgentNotReachableException("The agent could not be found!");
+            }
 
             SocketHandler handler = new SocketHandler(socket);
 
@@ -59,32 +68,38 @@ namespace DisplayClient
             handler.SendMessage(MessageCode.MC_Render_Job, sendData);
 
             // receive render job response
-            SocketHandler.SocketMessage socketMsg = await handler.WaitForMessage();
-            
-            if (!socketMsg.Empty)
+            SocketHandler.SocketMessage socketMsg;
+            socketMsg.Code = MessageCode.MC_Alive;
+            socketMsg.Content = new byte[] { };
+            socketMsg.Empty = true;
+
+            while (socketMsg.Code != MessageCode.MC_Render_Job_Message)
             {
-                RCS_Render_Job_Message jobResponse = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Message>(socketMsg.Content);
-
-                if (jobResponse.Message == RenderMessage.Supported)
-                {
-                    this.Agent = agent;
-                    this.socketHandler = new SocketHandler(socket);
-
-                    this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
-                    this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
-                    this.socketHandler.Start();
-
-                    this.alive = true;
-                }
-                else
-                {
-                    this.socketHandler.Close();
-                }
-
-                return jobResponse.Message;
+                socketMsg = await handler.WaitForMessage();
             }
 
-            throw new AgentNotReachableException("The agent could not be found!");
+            RCS_Render_Job_Message jobResponse = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Message>(socketMsg.Content);
+
+            if (jobResponse.Message == RenderMessage.Supported)
+            {
+                this.Agent = agent;
+                this.socketHandler = new SocketHandler(socket);
+
+                this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
+                this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
+                this.socketHandler.Start();
+
+                this.alive = true;
+            }
+            else
+            {
+                //this.socketHandler.Close();
+                handler.Close();
+            }
+
+            return jobResponse.Message;
+
+            //throw new AgentNotReachableException("The agent could not be found!");
         }
 
         private void SocketHandler_OnConnectionLost()

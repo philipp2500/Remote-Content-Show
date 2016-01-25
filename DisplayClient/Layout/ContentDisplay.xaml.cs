@@ -65,21 +65,24 @@ namespace DisplayClient
 
         private void Manager_OnDisplayAbortRequested()
         {
-            if (this.currentDisplayControl is Image)
+            if (this.currentDisplayControl != null)
             {
-                ((Image)this.currentDisplayControl).Source = null;
-            }
-            else if (this.currentDisplayControl is MediaElement)
-            {
-                ((MediaElement)this.currentDisplayControl).Stop();
-                ((MediaElement)this.currentDisplayControl).AutoPlay = true;
-            }
-            else if (this.currentDisplayControl is WebView)
-            {
+                if (this.currentDisplayControl is Image)
+                {
+                    ((Image)this.currentDisplayControl).Source = null;
+                }
+                else if (this.currentDisplayControl is MediaElement)
+                {
+                    ((MediaElement)this.currentDisplayControl).Stop();
+                    ((MediaElement)this.currentDisplayControl).AutoPlay = true;
+                }
+                else if (this.currentDisplayControl is WebView)
+                {
 
-            }
+                }
 
-            this.currentDisplayControl.Visibility = Visibility.Collapsed;
+                this.currentDisplayControl.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Manager_OnWebsiteDisplayRequested(Uri uri)
