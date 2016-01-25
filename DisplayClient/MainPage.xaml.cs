@@ -51,10 +51,10 @@ namespace DisplayClient
 
             Job_Configuration config = new Job_Configuration();
             config.Name = "testconfig1";
-            config.Layout = WindowLayout.DoubleWindowVertikalSplitted;
+            config.Layout = WindowLayout.SingleWindow;
 
             List<Job> jobs1 = new List<Job>();
-            jobs1.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/d1ca6e0b8c1969c2.jpg" } });
+            jobs1.Add(new Job() { Duration = 50, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
             jobs1.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.google.at" } });
 
             List<Job> jobs2 = new List<Job>();
@@ -62,10 +62,15 @@ namespace DisplayClient
             jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
 
             config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
-            config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
+            //config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
 
-            
+            Show show = new Show(config);
 
+            this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+
+            show.Start();
+
+            //
             EventsManager.ClearLog();
 
             EventsManager.Log(Job_EventType.Error, null, @"Resource C:\Temp\jellyfish1.jpg not found.");
@@ -86,14 +91,14 @@ namespace DisplayClient
         {
             Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
 
-            if (configuration != null)
+            /*if (configuration != null)
             {
                 Show show = new Show(configuration);
 
                 this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
 
                 show.Start();
-            }
+            }*/
         }
 
         public ImageBrush ConfigImage

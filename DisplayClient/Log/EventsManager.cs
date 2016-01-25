@@ -29,6 +29,12 @@ namespace DisplayClient.Log
 
                 newloggedEvent.ConcernedJob = newLoggedJob;
             }
+            else
+            {
+                LoggedJob emptyJob = new LoggedJob() { JobID = new Guid(), Name = "-" };
+
+                newloggedEvent.ConcernedJob = emptyJob;
+            }
 
             loggedEvents.Add(newloggedEvent);
 

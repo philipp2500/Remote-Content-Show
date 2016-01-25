@@ -64,11 +64,15 @@ namespace DisplayClient
 
         public delegate void ImageDisplayRequested(BitmapImage image);
 
+        public delegate void VideoDisplayRequested(Uri videoPath);
+
         public delegate void WebsiteDisplayRequested(Uri uri);
 
         public delegate void DisplayAbortRequested();
 
         public event ImageDisplayRequested OnImageDisplayRequested;
+
+        public event VideoDisplayRequested OnVideoDisplayRequested;
 
         public event WebsiteDisplayRequested OnWebsiteDisplayRequested;
 
@@ -183,7 +187,8 @@ namespace DisplayClient
 
         private async void HandleFileResource(FileResource resource)
         {
-            if (resource.Path.EndsWith(".jpg"))
+            // Todo: handle powerpoint files
+            /*if (resource.Path.EndsWith(".jpg"))
             {
                 if (this.OnImageDisplayRequested != null)
                 {
@@ -192,6 +197,29 @@ namespace DisplayClient
                         BitmapImage img = new BitmapImage(new Uri(resource.Path));
 
                         this.OnImageDisplayRequested(img);
+                    });
+                }
+            }*/
+
+            if (CompatibilityManager.IsCompatibleImage(resource))
+            {
+                if (this.OnImageDisplayRequested != null)
+                {
+                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        BitmapImage img = new BitmapImage(new Uri(resource.Path));
+
+                        this.OnImageDisplayRequested(img);
+                    });
+                }
+            }
+            else if (CompatibilityManager.IsCompatibleVideo(resource))
+            {
+                if (this.OnVideoDisplayRequested != null)
+                {
+                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        this.OnVideoDisplayRequested(new Uri(resource.Path));
                     });
                 }
             }
@@ -243,7 +271,7 @@ namespace DisplayClient
                 // Solution 2: try it with another agent, except the current.
                 //this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
                 Job todo = agent.Configuration.JobToDo;
-                List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => x.IP.Equals(agent.Agent.IP)).ToList();
+                List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList();
 
                 RenderConfiguration config = this.GetNewRenderConfiguration(todo);
                 WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(config, excluded);
@@ -305,7 +333,7 @@ namespace DisplayClient
         private RenderConfiguration GetNewRenderConfiguration(Job jobToDo)
         {
             RenderConfiguration config = new RenderConfiguration();
-            config.RenderJobID = new Guid();
+            config.RenderJobID = Guid.NewGuid();
             config.JobID = this.jobID;
             config.JobToDo = jobToDo;
             config.RenderWidth = (int)this.renderSize.Width;

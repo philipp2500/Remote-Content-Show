@@ -40,7 +40,7 @@ namespace DisplayClient
 
         public void SendEventsList(Event_List events)
         {
-            RCS_Event_List_Response response = new RCS_Event_List_Response(events);
+            RCS_Event_List_Response response = new RCS_Event_List_Response(events, RemoteType.Client);
 
             this.socketHandler.SendMessage(MessageCode.MC_Event_List_Response, Remote_Content_Show_MessageGenerator.GetMessageAsByte(response));
 

@@ -52,7 +52,7 @@ namespace DisplayClient
             SocketHandler handler = new SocketHandler(socket);
 
             // send render job request
-            RCS_Render_Job jobRequest = new RCS_Render_Job(this.Configuration);
+            RCS_Render_Job jobRequest = new RCS_Render_Job(this.Configuration, RemoteType.Client);
 
             byte[] sendData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(jobRequest);
 
@@ -97,7 +97,7 @@ namespace DisplayClient
 
         public void CancelRenderJob()
         {
-            RCS_Render_Job_Cancel cancelRequest = new RCS_Render_Job_Cancel(CancelRenderJobReason.Manually, Configuration.RenderJobID);
+            RCS_Render_Job_Cancel cancelRequest = new RCS_Render_Job_Cancel(CancelRenderJobReason.Manually, Configuration.RenderJobID, RemoteType.Client);
 
             this.socketHandler.SendMessage(MessageCode.MC_Render_Job_Cancel, Remote_Content_Show_MessageGenerator.GetMessageAsByte(cancelRequest));
             this.socketHandler.Close();
@@ -115,7 +115,7 @@ namespace DisplayClient
 
                 if (this.alive)
                 {
-                    RCS_Alive alive = new RCS_Alive();
+                    RCS_Alive alive = new RCS_Alive(RemoteType.Client);
 
                     this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
                 }

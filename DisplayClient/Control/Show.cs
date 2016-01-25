@@ -67,6 +67,8 @@ namespace DisplayClient
                 manager.OnNoResourceCompatibleAgentFound += Manager_OnNoResourceCompatibleAgentFound;
 
                 display.DisplayManager = manager;
+
+                // Manager starts after this event has been fired.
                 display.Loaded += Display_Loaded;                
                 
                 this.ContentWindow.GetAllDisplays()[windowLayoutID - 1].Children.Add(display);
@@ -74,10 +76,10 @@ namespace DisplayClient
                 this.displayManagers.Add(manager);
             }
 
-            foreach (ContentDisplayManager manager in this.displayManagers)
+            /*foreach (ContentDisplayManager manager in this.displayManagers)
             {
                 manager.Start();
-            }
+            }*/
         }
 
         private void Display_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -85,6 +87,7 @@ namespace DisplayClient
             ContentDisplay display = (ContentDisplay)sender;
 
             display.DisplayManager.SetRenderSize(new Size(display.ActualWidth, display.ActualHeight));
+            display.DisplayManager.Start();
         }
 
         public void Cancel()

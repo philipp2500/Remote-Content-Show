@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="Control\AgentNotReachableException.cs" />
     <Compile Include="Control\AgentSelector.cs" />
+    <Compile Include="Control\CompatibilityManager.cs" />
     <Compile Include="Control\ExternalAdmin.cs" />
     <Compile Include="Control\Show.cs" />
     <Compile Include="Control\WorkingAgent.cs" />

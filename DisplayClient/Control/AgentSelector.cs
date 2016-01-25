@@ -35,7 +35,13 @@ namespace DisplayClient
 
         public async Task<WorkingAgent> GetCompatibleAgent(RenderConfiguration configuration)
         {
-            List<Agent> allAgents = new List<Agent>() { currentCompatibleAgent };
+            List<Agent> allAgents = new List<Agent>() { };
+
+            if (currentCompatibleAgent != null)
+            {
+                allAgents.Add(currentCompatibleAgent);
+            }
+
             allAgents.AddRange(this.AvailableAgents.ToList());
 
             return await this.GetCompatibleAgentFromList(configuration, allAgents);

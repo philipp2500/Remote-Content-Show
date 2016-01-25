@@ -26,7 +26,7 @@ namespace DisplayClient.Storage
 
         public static void SaveJobConfiguration(Job_Configuration configuration)
         {
-            RCS_Job jobMessage = new RCS_Job(configuration);
+            RCS_Job jobMessage = new RCS_Job(configuration, RemoteType.Client);
             byte[] bytes = Remote_Content_Show_MessageGenerator.GetMessageAsByte(jobMessage);
 
             try

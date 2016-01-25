@@ -43,9 +43,24 @@ namespace DisplayClient
             {
                 this.manager = value;
                 this.manager.OnImageDisplayRequested += Manager_OnImageDisplayRequested;
+                this.manager.OnVideoDisplayRequested += Manager_OnVideoDisplayRequested;
                 this.manager.OnWebsiteDisplayRequested += Manager_OnWebsiteDisplayRequested;
                 this.manager.OnDisplayAbortRequested += Manager_OnDisplayAbortRequested;
             }
+        }
+
+        private void Manager_OnVideoDisplayRequested(Uri videoPath)
+        {
+            if (this.currentDisplayControl != null)
+            {
+                this.currentDisplayControl.Visibility = Visibility.Collapsed;
+            }
+
+            this.currentDisplayControl = this.DisplayingVideo;
+            this.currentDisplayControl.Visibility = Visibility.Visible;
+
+            this.DisplayingVideo.Source = videoPath;
+            this.DisplayingVideo.Play();
         }
 
         private void Manager_OnDisplayAbortRequested()
