@@ -115,7 +115,7 @@ namespace DisplayClient
 
         private void Manager_OnAgentNotReachable(Job job, Agent agent)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

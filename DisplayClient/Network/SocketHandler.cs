@@ -61,6 +61,7 @@ namespace DisplayClient
         {
             try
             {
+                this.Stop();
                 this.socket.Dispose();
             }
             catch (Exception)
@@ -84,6 +85,8 @@ namespace DisplayClient
             }
             catch (Exception)
             {
+                this.Stop();
+
                 if (this.OnConnectionLost != null)
                 {
                     this.OnConnectionLost();
@@ -126,6 +129,8 @@ namespace DisplayClient
             }
             catch (Exception ex)
             {
+                this.Stop();
+
                 if (this.OnConnectionLost != null)
                 {
                     this.OnConnectionLost();
