@@ -69,6 +69,11 @@ namespace DisplayClient
             {
                 ((Image)this.currentDisplayControl).Source = null;
             }
+            else if (this.currentDisplayControl is MediaElement)
+            {
+                ((MediaElement)this.currentDisplayControl).Stop();
+                ((MediaElement)this.currentDisplayControl).AutoPlay = true;
+            }
             else if (this.currentDisplayControl is WebView)
             {
 
