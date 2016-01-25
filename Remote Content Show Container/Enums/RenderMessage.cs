@@ -1,6 +1,6 @@
 ﻿namespace Remote_Content_Show_Container
 {
-    public enum RenderMessage
+    public enum RenderMessage : int
     {
         NotSupported = 0,
         Supported = 1,

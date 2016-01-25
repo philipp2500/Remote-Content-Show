@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public enum MessageCode
+    public enum MessageCode : int
     {
         MC_Alive = 10,
 

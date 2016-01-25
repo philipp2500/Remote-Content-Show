@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Remote_Content_Show_Container
 {
-    public enum WindowLayout
+    public enum WindowLayout : int
     {
         SingleWindow = 0,
         DoubleWindowVertikalSplitted = 1,
