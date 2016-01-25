@@ -10,7 +10,7 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Render_Job_Message : Remote_Content_Show_Message
     {
-        public RCS_Render_Job_Message(RenderMessage errorDescription, Guid concernedRenderJobID)
+        public RCS_Render_Job_Message(RenderMessage errorDescription, Guid concernedRenderJobID, RemoteType remote) : base(remote)
         {
             this.Message = errorDescription;
             this.ConcernedRenderJobID = concernedRenderJobID;

@@ -9,7 +9,7 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Job : Remote_Content_Show_Message
     {
-        public RCS_Job(Job_Configuration configuration)
+        public RCS_Job(Job_Configuration configuration, RemoteType remote) : base(remote)
         {
             this.Configuration = configuration;
         }

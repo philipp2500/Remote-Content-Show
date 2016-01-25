@@ -10,7 +10,7 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Process_List_Response : Remote_Content_Show_Message
     {
-        public RCS_Process_List_Response(Process_List processeList, string clientName)
+        public RCS_Process_List_Response(Process_List processeList, string clientName, RemoteType remote) : base(remote)
         {
             this.ProcesseList = processeList;
             this.ClientName = clientName;

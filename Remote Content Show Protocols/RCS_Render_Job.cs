@@ -11,7 +11,7 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Render_Job : Remote_Content_Show_Message
     {
-        public RCS_Render_Job(RenderConfiguration configuration)
+        public RCS_Render_Job(RenderConfiguration configuration, RemoteType remote) : base(remote)
         {
             this.Configuration = configuration;
         }
