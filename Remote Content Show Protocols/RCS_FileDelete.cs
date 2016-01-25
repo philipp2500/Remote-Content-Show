@@ -12,5 +12,11 @@ namespace Remote_Content_Show_Protocol
         public RCS_FileDelete(RemoteType remote) : base(remote)
         {
         }
+
+        public string Name
+        {
+            get;
+            set;
+        }
     }
 }

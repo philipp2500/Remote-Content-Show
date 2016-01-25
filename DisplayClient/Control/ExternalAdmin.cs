@@ -38,11 +38,32 @@ namespace DisplayClient
 
         public event EventRequestReceived OnEventRequestReceived;
 
+        // file events
+
+        public delegate void LocalFileListRequestReceived(ExternalAdmin sender);
+
+        public delegate void LocalFileAddRequestReceived(byte[] content, string filename);
+
+        public delegate void LocalFileRemoveRequestReceived(string filename);
+
+        public event LocalFileListRequestReceived OnLocalFileListRequestReceived;
+
+        public event LocalFileAddRequestReceived OnLocalFileAddRequestReceived;
+
+        public event LocalFileRemoveRequestReceived OnLocalFileRemoveRequestReceived;
+
         public void SendEventsList(Event_List events)
         {
             RCS_Event_List_Response response = new RCS_Event_List_Response(events, RemoteType.Client);
 
             this.socketHandler.SendMessage(MessageCode.MC_Event_List_Response, Remote_Content_Show_MessageGenerator.GetMessageAsByte(response));
+
+            this.socketHandler.Close();
+        }
+
+        public void SendLocalFilesList(RCS_FileList msg)
+        {
+            this.socketHandler.SendMessage(MessageCode.MC_FileList, Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg));
 
             this.socketHandler.Close();
         }
@@ -89,6 +110,40 @@ namespace DisplayClient
                 if (this.OnEventRequestReceived != null)
                 {
                     this.OnEventRequestReceived(this);
+                }
+            }
+            else if (code == MessageCode.MC_FileAdd)
+            {
+                RCS_FileAdd newFile = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_FileAdd>(bytes);
+
+                this.socketHandler.Close();
+
+                if (this.OnLocalFileAddRequestReceived != null)
+                {
+                    // TODO
+
+                }
+
+            }
+            else if (code == MessageCode.MC_FileDelete)
+            {
+                RCS_FileDelete deleteFile = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_FileDelete>(bytes);
+
+                this.socketHandler.Close();
+
+                if (this.OnLocalFileRemoveRequestReceived != null)
+                {
+                    // TODO
+
+                }
+            }
+            else if (code == MessageCode.MC_GetFiles)
+            {
+                RCS_GetFiles listRequest = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_GetFiles>(bytes);
+
+                if (this.OnLocalFileListRequestReceived != null)
+                {
+                    this.OnLocalFileListRequestReceived(this);
                 }
             }
         }

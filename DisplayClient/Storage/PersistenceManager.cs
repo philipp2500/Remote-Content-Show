@@ -17,6 +17,8 @@ namespace DisplayClient.Storage
 
         public const string SavedJobConfigurationFilename = "job.config";
 
+        public const string SavedCustomFilesDirectoryName = "Files";
+
         public static string GetWriteablePath()
         {
             Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
@@ -39,30 +41,6 @@ namespace DisplayClient.Storage
             }
         }
 
-        public static void SaveConfigurationImage(byte[] bytes)
-        {
-            try
-            {
-                File.WriteAllBytes(Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename), bytes);
-            }
-            catch (Exception)
-            {
-                EventsManager.Log(Job_EventType.Error, null, "The configuration image could not be saved.");
-            }
-        }
-
-        public static void SaveBytes(byte[] bytes, string filename)
-        {
-            try
-            {
-                File.WriteAllBytes(Path.Combine(GetWriteablePath(), filename), bytes);
-            }
-            catch (Exception)
-            {
-                EventsManager.Log(Job_EventType.Error, null, "The file " + filename + " could not be written on the disk.");
-            }
-        }
-
         public static Job_Configuration GetJobConfiguration()
         {
             string path = Path.Combine(GetWriteablePath(), SavedJobConfigurationFilename);
@@ -80,6 +58,18 @@ namespace DisplayClient.Storage
             return null;
         }
 
+        public static void SaveConfigurationImage(byte[] bytes)
+        {
+            try
+            {
+                File.WriteAllBytes(Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename), bytes);
+            }
+            catch (Exception)
+            {
+                EventsManager.Log(Job_EventType.Error, null, "The configuration image could not be saved.");
+            }
+        }
+
         public static BitmapImage GetConfigurationImage()
         {
             string path = Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename);
@@ -94,9 +84,21 @@ namespace DisplayClient.Storage
             return null;
         }
 
-        public static byte[] GetBytes(string filename)
+        public static void SaveFile(byte[] bytes, string filename)
         {
-            string path = Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename);
+            try
+            {
+                File.WriteAllBytes(Path.Combine(GetWriteablePath(), SavedCustomFilesDirectoryName, filename), bytes);
+            }
+            catch (Exception)
+            {
+                EventsManager.Log(Job_EventType.Error, null, "The file " + filename + " could not be written on the disk.");
+            }
+        }
+
+        public static byte[] GetFile(string filename)
+        {
+            string path = Path.Combine(GetWriteablePath(), SavedCustomFilesDirectoryName, filename);
 
             if (File.Exists(path))
             {
@@ -106,6 +108,31 @@ namespace DisplayClient.Storage
             // no image
 
             return null;
+        }
+
+        public static void DeleteFile(string filename)
+        {
+            string path = Path.Combine(GetWriteablePath(), SavedCustomFilesDirectoryName, filename);
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
+        public static FileInfo[] GetLocalFilesList()
+        {
+            List<FileItem> items = new List<FileItem>();
+            string path = Path.Combine(GetWriteablePath(), SavedCustomFilesDirectoryName);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            DirectoryInfo info = new DirectoryInfo(path);
+
+            return info.GetFiles();
         }
     }
 }
