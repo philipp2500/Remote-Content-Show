@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -55,9 +56,10 @@ namespace DisplayClient
             Job_Configuration config = new Job_Configuration();
             config.Name = "testconfig1";
             config.Layout = WindowLayout.DoubleWindowVertikalSplitted;
+            config.Agents.Add(new Agent() { IP = IPAddress.Parse("10.101.150.11") });
 
             List<Job> jobs1 = new List<Job>();
-            jobs1.Add(new Job() { Duration = 50, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
+            jobs1.Add(new Job() { Duration = 50, OrderingNumber = 1, Resource = new FileResource() { Path = "http://aci2.ncat.edu/gvdozier/ACI_LectureNotes/ID3.ppt" } });
             jobs1.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.google.at" } });
 
             List<Job> jobs2 = new List<Job>();
