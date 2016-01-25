@@ -13,6 +13,11 @@ namespace Agent.Network
     public class ClientHandler
     {
         /// <summary>
+        /// The time in milliseconds between sending <see cref="RCS_Alive"/> messages.
+        /// </summary>
+		private const int KEEP_ALIVE_INTERVAL = 5000;
+
+        /// <summary>
         /// The size of the preview image contained in the <see cref="Remote_Content_Show_Protocol.RCS_Process_List_Response"/>.
         /// </summary>
         private Size previewImageSize = new Size(100, 100);
@@ -41,15 +46,13 @@ namespace Agent.Network
         }
 
         /// <summary>
-        /// Starts listening for messages and starts sending <see cref="RCS_Alive"/> messages.
+        /// Starts listening for messages.
         /// </summary>
         public void Start()
         {
             this.args = new ListenerThreadArgs();
             Thread listenerThread = new Thread(new ParameterizedThreadStart(this.HandleMessages));
             listenerThread.Start(this.args);
-
-            this.keepAliveTimer = new Timer(new TimerCallback(SendKeepAlive), null, 1000, 5000);
         }
 
         /// <summary>
@@ -65,8 +68,12 @@ namespace Agent.Network
                 job.StopCapture();
             }
 
-            this.keepAliveTimer.Dispose();
-
+            if (this.keepAliveTimer != null)
+            {
+                this.keepAliveTimer.Dispose();
+                this.keepAliveTimer = null;
+            }
+            
             try { this.stream.Close(); }
             catch { }
 
@@ -115,6 +122,12 @@ namespace Agent.Network
                     contentBuffer = new byte[header.Length];
                     this.stream.Read(contentBuffer, 0, (int)header.Length);
 
+                    // only send Keep Alive messages to client
+                    if (this.keepAliveTimer == null && header.Remote == RemoteType.Client)
+                    {
+                        this.keepAliveTimer = new Timer(new TimerCallback(this.SendKeepAlive), null, 0, KEEP_ALIVE_INTERVAL);
+                    }
+
                     switch (header.Code)
                     {
                         case MessageCode.MC_Process_List_Request:
@@ -141,7 +154,7 @@ namespace Agent.Network
 
                             break;
                         case MessageCode.MC_Alive:
-                            // no handling required.
+							// no further handling required
                             break;
                     }
                 }
@@ -175,11 +188,11 @@ namespace Agent.Network
         private void HandleProcessListRequest()
         {
             RCS_Process_List_Response response =
-                new RCS_Process_List_Response(this.GetProcessList(this.previewImageSize), Environment.MachineName);
+                new RCS_Process_List_Response(this.GetProcessList(this.previewImageSize), Environment.MachineName, RemoteType.Agent);
 
             byte[] responseMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(response);
             byte[] responseHeader =
-                new Remote_Content_Show_Header(MessageCode.MC_Process_List_Response, responseMsg.Length).ToByte;
+                new Remote_Content_Show_Header(MessageCode.MC_Process_List_Response, responseMsg.Length, RemoteType.Agent).ToByte;
 
             try
             {
@@ -253,11 +266,11 @@ namespace Agent.Network
 
             if (capable)
             {
-                msg = new RCS_Render_Job_Message(RenderMessage.Supported, renderJob.Id);
+                msg = new RCS_Render_Job_Message(RenderMessage.Supported, renderJob.Id, RemoteType.Agent);
             }
             else
             {
-                msg = new RCS_Render_Job_Message(RenderMessage.NotSupported, renderJob.Id);
+                msg = new RCS_Render_Job_Message(RenderMessage.NotSupported, renderJob.Id, RemoteType.Agent);
             }
             
             try
@@ -278,7 +291,7 @@ namespace Agent.Network
         {
             this.runningRenderJobs.Remove(e.RenderJobId);
 
-            var msg = new RCS_Render_Job_Message(RenderMessage.ProcessExited, e.RenderJobId);
+            var msg = new RCS_Render_Job_Message(RenderMessage.ProcessExited, e.RenderJobId, RemoteType.Agent);
 
             try
             {
@@ -303,7 +316,7 @@ namespace Agent.Network
         private void Capturer_OnImageCaptured(object sender, ImageEventArgs e)
         {
             byte[] img = ImageHandler.ImageHandler.ImageToBytes(e.Image);
-            var msg = new RCS_Render_Job_Result(e.ConcernedRenderJobID, img);
+            var msg = new RCS_Render_Job_Result(e.ConcernedRenderJobID, img, RemoteType.Agent);
 
             try
             {
@@ -354,7 +367,7 @@ namespace Agent.Network
         {
             try
             {
-                this.SendMessage(MessageCode.MC_Alive, new RCS_Alive());
+                this.SendMessage(MessageCode.MC_Alive, new RCS_Alive(RemoteType.Agent));
             }
             catch
             {
@@ -375,7 +388,7 @@ namespace Agent.Network
         private void SendMessage(MessageCode msgCode, Remote_Content_Show_Message msg)
         {
             byte[] byteMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg);
-            byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length).ToByte;
+            byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length, RemoteType.Agent).ToByte;
 
             this.stream.Write(header, 0, header.Length);
             this.stream.Write(byteMsg, 0, byteMsg.Length);
