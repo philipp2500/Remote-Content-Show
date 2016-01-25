@@ -2,12 +2,12 @@
 {
     public enum RenderMessage
     {
-        NotSupported,
-        Supported,
+        NotSupported = 0,
+        Supported = 1,
 
         /// <summary>
         /// Indicates that the captured process has exited while capturing.
         /// </summary>
-        ProcessExited
+        ProcessExited = 2
     }
 }
