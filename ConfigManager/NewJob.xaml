@@ -110,23 +110,29 @@
                             <Label Grid.Row="1" Grid.Column="0" FontWeight="Bold">Window: </Label>
                             <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1" Value="1" Minimum="1" Width="100" Name="ToShowWindowId"/>
 
-                            <ComboBox Name="SelectIResource" Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Right" Width="76" Height="84" SelectionChanged="ComboBox_SelectionChanged" >
+                            <ComboBox Name="SelectIResource" Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Right" Width="100" Height="84" SelectionChanged="ComboBox_SelectionChanged" >
                                 <ComboBoxItem>
                                     <StackPanel>
-                                        <Image Source="Resources/loadFromProcess.png"></Image>
+                                        <Image HorizontalAlignment="Left" Source="Resources/loadFromProcess.png"></Image>
                                         <Label>Process</Label>
                                     </StackPanel>
                                 </ComboBoxItem>
                                 <ComboBoxItem>
                                     <StackPanel>
-                                        <Image Source="Resources/loadFromweb.png"></Image>
+                                        <Image HorizontalAlignment="Left" Source="Resources/loadFromweb.png"></Image>
                                         <Label>Web</Label>
                                     </StackPanel>
                                 </ComboBoxItem>
                                 <ComboBoxItem>
                                     <StackPanel>
-                                        <Image Source="Resources/loadFromFile.png"></Image>
+                                        <Image HorizontalAlignment="Left" Source="Resources/loadFromFile.png"></Image>
                                         <Label>File</Label>
+                                    </StackPanel>
+                                </ComboBoxItem>
+                                <ComboBoxItem>
+                                    <StackPanel>
+                                        <Image HorizontalAlignment="Left" Source="Resources/localFiles.png"></Image>
+                                        <Label>File am Client</Label>
                                     </StackPanel>
                                 </ComboBoxItem>
                             </ComboBox>
