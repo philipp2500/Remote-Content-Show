@@ -30,6 +30,14 @@ namespace Remote_Content_Show_Container
 
         MC_Render_Job_Result = 53,
 
-        MC_Configuration_Image = 60
+        MC_Configuration_Image = 60,
+
+        MC_FileList = 70,
+
+        MC_GetFiles = 71,
+
+        MC_FileAdd = 72,
+
+        MC_FileDelete = 73
     }
 }

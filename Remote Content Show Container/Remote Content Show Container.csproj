@@ -48,6 +48,7 @@
     <Compile Include="Enums\RenderMessage.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Event_List.cs" />
+    <Compile Include="FileItem.cs" />
     <Compile Include="Interfaces\IResource.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="JobWindowList.cs" />
