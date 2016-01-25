@@ -169,7 +169,7 @@ namespace DisplayClient
             {
                 FileResource fr = (FileResource)job.Resource;
 
-                this.HandleFileResource(fr);
+                this.HandleFileResource(job, fr);
             }
             else if (job.Resource is WebResource)
             {
@@ -185,7 +185,7 @@ namespace DisplayClient
             }
         }
 
-        private async void HandleFileResource(FileResource resource)
+        private async void HandleFileResource(Job job, FileResource resource)
         {
             // Todo: handle powerpoint files
             /*if (resource.Path.EndsWith(".jpg"))
@@ -222,6 +222,14 @@ namespace DisplayClient
                         this.OnVideoDisplayRequested(new Uri(resource.Path));
                     });
                 }
+            }
+            else
+            {
+                RenderConfiguration config = this.GetNewRenderConfiguration(job);
+
+                WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgent(config);
+
+                this.HandleFoundWorkingAgent(worker);
             }
         }
 

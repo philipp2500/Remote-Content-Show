@@ -70,7 +70,7 @@ namespace DisplayClient
 
         public async void SendMessage(MessageCode msgCode, byte[] data)
         {
-            Remote_Content_Show_Header header = new Remote_Content_Show_Header(msgCode, data.Length);
+            Remote_Content_Show_Header header = new Remote_Content_Show_Header(msgCode, data.Length, RemoteType.Client);
             byte[] headerBytes = header.ToByte;
 
             try
