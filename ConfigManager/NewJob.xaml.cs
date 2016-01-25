@@ -180,9 +180,18 @@ namespace ConfigManager
                     {
                         if (!string.IsNullOrWhiteSpace(ofd.FileName))
                         {
-                            this.currenResource = new FileResource() { Path = ofd.FileName, Name = System.IO.Path.GetFileName(ofd.FileName) };
+                            this.currenResource = new FileResource() { Path = ofd.FileName, Name = System.IO.Path.GetFileName(ofd.FileName), Loacal = false };
                             this.SelectedName.Text = this.currenResource.Name;
                         }
+                    }
+                    break;
+                case 3:
+                    // Local File
+                    StringInput sI = new StringInput();
+                    if (sI.ShowDialog() == true)
+                    {
+                        this.currenResource = new FileResource() { Path = sI.Path, Name = sI.Name, Loacal = true };
+                        this.SelectedName.Text = this.currenResource.Name;
                     }
                     break;
             }            

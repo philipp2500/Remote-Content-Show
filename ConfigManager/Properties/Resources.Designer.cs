@@ -153,6 +153,16 @@ namespace ConfigManager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap localFiles {
+            get {
+                object obj = ResourceManager.GetObject("localFiles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap newJob {
             get {
                 object obj = ResourceManager.GetObject("newJob", resourceCulture);
@@ -206,6 +216,16 @@ namespace ConfigManager.Properties {
         internal static System.Drawing.Bitmap smallloadFromweb {
             get {
                 object obj = ResourceManager.GetObject("smallloadFromweb", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap smalllocalFiles {
+            get {
+                object obj = ResourceManager.GetObject("smalllocalFiles", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

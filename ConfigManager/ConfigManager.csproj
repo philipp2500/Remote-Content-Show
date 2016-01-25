@@ -95,6 +95,9 @@
     <Compile Include="CreateConfriguration.xaml.cs">
       <DependentUpon>CreateConfriguration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialog\StringInput.xaml.cs">
+      <DependentUpon>StringInput.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EventList.xaml.cs">
       <DependentUpon>EventList.xaml</DependentUpon>
     </Compile>
@@ -108,6 +111,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialog\ProcessDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialog\StringInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -248,13 +255,17 @@
     <None Include="Resources\smallloadFromProcess.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\smallloadFromweb.png" />
+    <Resource Include="Resources\smallloadFromweb.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\snallloadFromFile.png" />
+    <Resource Include="Resources\snallloadFromFile.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\localFiles.png" />
+    <Resource Include="Resources\smalllocalFiles.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

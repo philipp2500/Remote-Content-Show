@@ -62,7 +62,15 @@ namespace ConfigManager
                 }
                 else
                 {
-                    return ImageHandler.ImageHandler.BitmapToBitmapImage(ConfigManager.Properties.Resources.snallloadFromFile);
+                    FileResource fr = this.Resource as FileResource;
+                    if (!fr.Loacal)
+                    {
+                        return ImageHandler.ImageHandler.BitmapToBitmapImage(ConfigManager.Properties.Resources.snallloadFromFile);
+                    }
+                    else
+                    {
+                        return ImageHandler.ImageHandler.BitmapToBitmapImage(ConfigManager.Properties.Resources.smalllocalFiles);
+                    }                    
                 }
             }
         }
