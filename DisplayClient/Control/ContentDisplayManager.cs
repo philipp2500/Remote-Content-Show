@@ -169,13 +169,13 @@ namespace DisplayClient
             {
                 FileResource fr = (FileResource)job.Resource;
 
-                this.HandleFileResource(fr);
+                this.HandleFileResource(job, fr);
             }
             else if (job.Resource is WebResource)
             {
                 WebResource wr = (WebResource)job.Resource;
 
-                this.HandleWebResource(job, wr);
+                this.HandleWebResource(wr);
             }
             else if (job.Resource is ProcessResource)
             {
