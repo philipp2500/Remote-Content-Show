@@ -120,8 +120,7 @@ namespace DisplayClient
 
                 if (this.OnLocalFileAddRequestReceived != null)
                 {
-                    // TODO
-
+                    this.OnLocalFileAddRequestReceived(newFile.Data, newFile.Name);
                 }
 
             }
@@ -133,8 +132,7 @@ namespace DisplayClient
 
                 if (this.OnLocalFileRemoveRequestReceived != null)
                 {
-                    // TODO
-
+                    this.OnLocalFileRemoveRequestReceived(deleteFile.Name);
                 }
             }
             else if (code == MessageCode.MC_GetFiles)
