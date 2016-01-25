@@ -1,4 +1,5 @@
-﻿using Remote_Content_Show_Container;
+﻿using DisplayClient.Storage;
+using Remote_Content_Show_Container;
 //using Remote_Content_Show_Container.Resouces;
 using Remote_Content_Show_Protocol;
 using System;
@@ -170,7 +171,14 @@ namespace DisplayClient
             {
                 FileResource fr = (FileResource)job.Resource;
 
-                this.HandleFileResource(job, fr);
+                if (!fr.Local)
+                {
+                    this.HandleFileResource(job, fr);
+                }
+                else
+                {
+                    this.HandleFileResource(job, new FileResource() { Path = Path.Combine(PersistenceManager.GetWriteablePath(), fr.Path) });
+                }
             }
             else if (job.Resource is WebResource)
             {
@@ -319,10 +327,30 @@ namespace DisplayClient
         private void Worker_OnResultReceived(WorkingAgent agent, RCS_Render_Job_Result result)
         {
             this.HandleImageResult(result.Picture);
+            //PersistenceManager.SaveBytes(result.Picture, "test.jpg");
         }
 
         private async void HandleImageResult(byte[] bytes)
         {
+            BitmapImage image = null;
+
+            await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                image = new BitmapImage();
+
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    await image.SetSourceAsync(ms.AsRandomAccessStream());
+                }
+
+                if (this.OnImageDisplayRequested != null)
+                {
+                    this.OnImageDisplayRequested(image);
+                }
+            });
+
+            int f = 0;
+
             /*if (this.OnImageDisplayRequested != null)
             {
                 await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
