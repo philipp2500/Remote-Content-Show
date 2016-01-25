@@ -12,5 +12,17 @@ namespace Remote_Content_Show_Protocol
         public RCS_FileAdd(RemoteType remote) : base(remote)
         {
         }
+
+        public byte[] Data
+        {
+            get;
+            set;
+        }
+
+        public string Name
+        {
+            get;
+            set;
+        }
     }
 }

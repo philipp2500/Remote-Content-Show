@@ -128,6 +128,28 @@ namespace DisplayClient
             admin.OnJobConfigurationReceived += Admin_OnJobConfigurationReceived;
             admin.OnCancelRequestReceived += Admin_OnCancelRequestReceived;
             admin.OnEventRequestReceived += Admin_OnEventRequestReceived;
+
+            admin.OnLocalFileListRequestReceived += Admin_OnLocalFileListRequestReceived;
+            admin.OnLocalFileAddRequestReceived += Admin_OnLocalFileAddRequestReceived;
+            admin.OnLocalFileRemoveRequestReceived += Admin_OnLocalFileRemoveRequestReceived;
+        }
+
+        private void Admin_OnLocalFileAddRequestReceived(byte[] content, string filename)
+        {
+            PersistenceManager.SaveFile(content, filename);
+        }
+
+        private void Admin_OnLocalFileRemoveRequestReceived(string filename)
+        {
+            PersistenceManager.DeleteFile(filename);
+        }
+
+        private void Admin_OnLocalFileListRequestReceived(ExternalAdmin sender)
+        {
+            List<FileItem> items = PersistenceManager.GetLocalFilesList().Select(x => new FileItem() { Name = x.Name }).ToList();
+            RCS_FileList list = new RCS_FileList(items, RemoteType.Client);
+
+            sender.SendLocalFilesList(list);
         }
 
         private void Admin_OnConfigurationImageReceived(byte[] image)
