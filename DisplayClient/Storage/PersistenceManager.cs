@@ -51,6 +51,18 @@ namespace DisplayClient.Storage
             }
         }
 
+        public static void SaveBytes(byte[] bytes, string filename)
+        {
+            try
+            {
+                File.WriteAllBytes(Path.Combine(GetWriteablePath(), filename), bytes);
+            }
+            catch (Exception)
+            {
+                EventsManager.Log(Job_EventType.Error, null, "The file " + filename + " could not be written on the disk.");
+            }
+        }
+
         public static Job_Configuration GetJobConfiguration()
         {
             string path = Path.Combine(GetWriteablePath(), SavedJobConfigurationFilename);
@@ -77,6 +89,20 @@ namespace DisplayClient.Storage
                 return new BitmapImage(new Uri(Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename)));
             }
             
+            // no image
+
+            return null;
+        }
+
+        public static byte[] GetBytes(string filename)
+        {
+            string path = Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename);
+
+            if (File.Exists(path))
+            {
+                return File.ReadAllBytes(Path.Combine(GetWriteablePath(), filename));
+            }
+
             // no image
 
             return null;
