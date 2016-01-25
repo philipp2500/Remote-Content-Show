@@ -180,7 +180,7 @@ namespace ConfigManager
                     {
                         if (!string.IsNullOrWhiteSpace(ofd.FileName))
                         {
-                            this.currenResource = new FileResource() { Path = ofd.FileName, Name = System.IO.Path.GetFileName(ofd.FileName), Loacal = false };
+                            this.currenResource = new FileResource() { Path = ofd.FileName, Name = System.IO.Path.GetFileName(ofd.FileName), Local = false };
                             this.SelectedName.Text = this.currenResource.Name;
                         }
                     }
@@ -190,7 +190,7 @@ namespace ConfigManager
                     StringInput sI = new StringInput();
                     if (sI.ShowDialog() == true)
                     {
-                        this.currenResource = new FileResource() { Path = sI.Path, Name = sI.Name, Loacal = true };
+                        this.currenResource = new FileResource() { Path = sI.Path, Name = sI.Path, Local = true };
                         this.SelectedName.Text = this.currenResource.Name;
                     }
                     break;
