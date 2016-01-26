@@ -25,7 +25,12 @@ namespace Agent
         /// </summary>
         public event EventHandler<CaptureFinishEventArgs> OnProcessExited;
 
-        public bool IsRunning { get; private set; }
+        #region Constants
+
+        /// <summary>
+        /// The Z order position of the "bottommost" window.
+        /// </summary>
+        private static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
 
         /// <summary>
         /// The number of milliseconds between the update of the window handle of the captured process.
@@ -37,6 +42,19 @@ namespace Agent
         /// The number of milliseconds to wait for a process to startup before an exception is thrown.
         /// </summary>
         private const int PROCESS_STARTUP_WAIT_DURATION = 30000;
+
+        /// <summary>
+        /// Indicates that the moved window should not be resized.
+        /// </summary>
+        private const uint SWP_NOSIZE = 0x0001;
+        /// <summary>
+        /// Indicates that the moved window should not be moved in X, Y direction.
+        /// </summary>
+        private const uint SWP_NOMOVE = 0x0002;
+        /// <summary>
+        /// Indicates that the moved window should not be activated.
+        /// </summary>
+        private const uint SWP_NOACTIVATE = 0x0010;
         /// <summary>
         /// Indicates that a minimized window should be restored.
         /// </summary>
@@ -46,12 +64,23 @@ namespace Agent
         /// </summary>
         private const int SW_MINIMIZE = 6;
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
+
+        #endregion Constants
+
         /// <summary>
         /// Indicates whether the captured window's process was started by this instance.
         /// </summary>
         private bool selfStartedProcess = false;
+        /// <summary>
+        /// The arguments used to control the capturing thread.
+        /// </summary>
         private CaptureThreadArgs captureArgs = null;
-		
+
+        /// <summary>
+        /// Gets a value indicating whether a capturing thread is running.
+        /// </summary>
+        public bool IsRunning { get; private set; }
+
         /// <summary>
         /// Continuously captures images of the given resource and fires the <see cref="ScreenCapture.OnImageCaptured"/> event.
         /// <see cref="FileResource"/>s are opened with their default program.
@@ -125,6 +154,9 @@ namespace Agent
             {
                 throw new InvalidOperationException("Cannot capture images of a window-less process.");
             }
+
+            // bring the window to the "bottommost" position
+            SetWindowPos(proc.MainWindowHandle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             
             Thread capturer = new Thread(new ParameterizedThreadStart(this.Capture));
             this.captureArgs = new CaptureThreadArgs(proc, config);
@@ -146,7 +178,7 @@ namespace Agent
 
             if (this.selfStartedProcess)
             {
-                this.captureArgs.Process.Kill();
+                this.captureArgs.Process.Close();
             }
 
             this.captureArgs.Exit = true;
@@ -209,6 +241,10 @@ namespace Agent
             return bmp;
         }
         
+        /// <summary>
+        /// Continously captures images as configured in the given <see cref="CaptureThreadArgs"/>.
+        /// </summary>
+        /// <param name="data">The arguments of type <see cref="CaptureThreadArgs"/>.</param>
         private void Capture(object data)
         {
             CaptureThreadArgs args = data as CaptureThreadArgs;
@@ -312,6 +348,9 @@ namespace Agent
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        
         [DllImport("user32.dll")]
         private static extern bool IsIconic(IntPtr hWnd);
 
