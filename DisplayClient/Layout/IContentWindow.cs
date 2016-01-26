@@ -9,6 +9,8 @@ namespace DisplayClient.Layout
 {
     public interface IContentWindow
     {
+        Grid GetRoot();
+
         Grid[] GetAllDisplays();
     }
 }

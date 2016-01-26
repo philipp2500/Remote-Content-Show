@@ -13,13 +13,20 @@ namespace DisplayClient
     {
         private List<ContentDisplayManager> displayManagers;
 
-        public Show(Job_Configuration configuration)
+        public Show(Job_Configuration configuration, Size showSize)
         {
             this.Configuration = configuration;
 
             this.displayManagers = new List<ContentDisplayManager>();
 
-            switch (configuration.Layout)
+            CustomWindow window = new CustomWindow(this.Configuration.Layout);
+
+            window.Generate();
+            window.ApplySize(showSize);
+
+            this.ContentWindow = window;
+
+            /*switch (configuration.Layout)
             {
                 case WindowLayout.SingleWindow:
                     this.ContentWindow = new SingleWindow();
@@ -33,7 +40,7 @@ namespace DisplayClient
                 default:
                     this.ContentWindow = new SingleWindow();
                     break;
-            }
+            }*/
         }
 
         public Job_Configuration Configuration
@@ -46,6 +53,14 @@ namespace DisplayClient
         {
             get;
             private set;
+        }
+
+        public void UpdateSize(Size size)
+        {
+            if (this.ContentWindow is CustomWindow)
+            {
+                ((CustomWindow)this.ContentWindow).ApplySize(size);
+            }
         }
 
         public void Start()

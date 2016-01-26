@@ -9,27 +9,30 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
-        
-        <Grid Name="Display1">
-            
-        </Grid>
-
+    <Grid Name="mainroot">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
+            <Grid Name="Display1">
 
-            <Grid Name="Display2" Grid.Row="0" Grid.Column="0"></Grid>
-            <Grid Name="Display3" Grid.Row="0" Grid.Column="1"></Grid>
-            <Grid Name="Display4" Grid.Row="1" Grid.Column="0"></Grid>
-            <Grid Name="Display5" Grid.Row="1" Grid.Column="1"></Grid>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid Name="Display2" Grid.Row="0" Grid.Column="0"></Grid>
+                <Grid Name="Display3" Grid.Row="0" Grid.Column="1"></Grid>
+                <Grid Name="Display4" Grid.Row="1" Grid.Column="0"></Grid>
+                <Grid Name="Display5" Grid.Row="1" Grid.Column="1"></Grid>
+            </Grid>
         </Grid>
     </Grid>
+
 </UserControl>
