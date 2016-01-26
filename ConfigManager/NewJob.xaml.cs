@@ -30,6 +30,7 @@ namespace ConfigManager
         private List<TimeLineControl> timelines = new List<TimeLineControl>();
         private Job_Configuration job = new Job_Configuration();
         private IResource currenResource;
+        private WindowLayoutVM layoutVM;
         private ObservableCollection<WindowLayoutVM> layouts;
 
         public NewJob()
@@ -100,23 +101,33 @@ namespace ConfigManager
         {
             if (!string.IsNullOrWhiteSpace(this.JobName.Text))
             {
-                this.netmanager.CloseAllConnection();
-                this.Tab1.IsEnabled = false;
-                this.Tab2.IsSelected = true;
-                this.Tab2.IsEnabled = true;
-                // Change Lyout
-                this.LayoutImagOverwie.Source = ((Image)((ComboBoxItem)this.JobLayout.SelectedItem).Content).Source;
-
-                this.job.Name = this.JobName.Text;
-                this.job.Layout = (WindowLayout)this.JobLayout.SelectedIndex;
-                this.ToShowWindowId.Maximum = WindowLayoutHelper.GetWindows(this.job.Layout);
-
-                for (int i = 1; i <= WindowLayoutHelper.GetWindows(this.job.Layout); i++)
+                if (this.JobLayout.SelectedIndex >= 0)
                 {
-                    TimeLineControl tlc = new TimeLineControl(i);
-                    this.TimeLineContainer.Children.Add(tlc);
-                    this.timelines.Add(tlc);
+                    this.netmanager.CloseAllConnection();
+                    this.Tab1.IsEnabled = false;
+                    this.Tab2.IsSelected = true;
+                    this.Tab2.IsEnabled = true;
+
+
+                    this.job.Name = this.JobName.Text;
+                    this.job.Layout = this.layouts[this.JobLayout.SelectedIndex].Layout;
+                    this.layoutVM = this.layouts[this.JobLayout.SelectedIndex];
+                    this.ToShowWindowId.Maximum = this.job.Layout.Items.Count;
+
+                    for (int i = 1; i <= this.job.Layout.Items.Count; i++)
+                    {
+                        TimeLineControl tlc = new TimeLineControl(i);
+                        this.TimeLineContainer.Children.Add(tlc);
+                        this.timelines.Add(tlc);
+                    }
+
+                    // Change Lyout
+                    this.LayoutImagOverwie.Source = this.layoutVM.Image;
                 }
+                else
+                {
+                    MessageBox.Show("Wählen sie ein Layout aus!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }                    
             }
             else
             {
