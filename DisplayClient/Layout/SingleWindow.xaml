@@ -9,7 +9,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Name="Display1">
+    <Grid Name="mainroot">
+        <Grid Name="Display1">
 
+        </Grid>
     </Grid>
 </UserControl>
