@@ -68,10 +68,24 @@ namespace Agent
             if (resource is FileResource)
 			{
                 string path = ((FileResource)resource).Path;
+                string extension = System.IO.Path.GetExtension(path);
+
+                // TODO start PowerPoint files as fullscreen slideshow
+                if (extension == ".ppt" || extension == ".pptx")
+                {
+                    proc = new Process();
+                    proc.StartInfo.FileName = "powerpnt.exe";
+                    proc.StartInfo.Arguments = string.Format("/S \"{0}\"", path);
+                }
+                else
+                {
+                    proc = new Process();
+                    proc.StartInfo.FileName = path;
+                }
 
                 try
                 {
-                    proc = Process.Start(path);
+                    proc.Start();
                 }
                 catch
                 {
