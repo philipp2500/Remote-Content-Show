@@ -53,6 +53,7 @@
     <Compile Include="Job.cs" />
     <Compile Include="JobWindowList.cs" />
     <Compile Include="Job_Configuration.cs" />
+    <Compile Include="Layout\LayoutHelper.cs" />
     <Compile Include="Layout\LayoutItem.cs" />
     <Compile Include="ProcessDescription.cs" />
     <Compile Include="Process_List.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Resouces\ProcessResource.cs" />
     <Compile Include="Resouces\WebResource.cs" />
     <Compile Include="TypeOfTarget.cs" />
-    <Compile Include="Enums\WindowLayout.cs" />
+    <Compile Include="Layout\WindowLayout.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

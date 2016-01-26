@@ -16,6 +16,7 @@ using Remote_Content_Show_Protocol;
 using Remote_Content_Show_Container;
 using Microsoft.Win32;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace ConfigManager
 {
@@ -29,12 +30,15 @@ namespace ConfigManager
         private List<TimeLineControl> timelines = new List<TimeLineControl>();
         private Job_Configuration job = new Job_Configuration();
         private IResource currenResource;
+        private ObservableCollection<WindowLayoutVM> layouts;
 
         public NewJob()
         {
             InitializeComponent(); 
             this.netmanager.OnError += Netmanager_OnError;
             this.netmanager.OnMessageReceived += Netmanager_OnMessageReceived;
+            this.layouts = Layoutfactory.LoadBasicLayouts();
+            this.JobLayout.ItemsSource = this.layouts;
         }
 
         private void Netmanager_OnMessageReceived(object sender, MessageRecivedEventHandler e)
@@ -104,15 +108,15 @@ namespace ConfigManager
                 this.LayoutImagOverwie.Source = ((Image)((ComboBoxItem)this.JobLayout.SelectedItem).Content).Source;
 
                 this.job.Name = this.JobName.Text;
-                this.job.Layout = (WindowLayout)this.JobLayout.SelectedIndex;
-                this.ToShowWindowId.Maximum = WindowLayoutHelper.GetWindows(this.job.Layout);
+                //this.job.Layout = (WindowLayout)this.JobLayout.SelectedIndex;
+                //this.ToShowWindowId.Maximum = WindowLayoutHelper.GetWindows(this.job.Layout);
 
-                for (int i = 1; i <= WindowLayoutHelper.GetWindows(this.job.Layout); i++)
-                {
-                    TimeLineControl tlc = new TimeLineControl(i);
-                    this.TimeLineContainer.Children.Add(tlc);
-                    this.timelines.Add(tlc);
-                }
+                //for (int i = 1; i <= WindowLayoutHelper.GetWindows(this.job.Layout); i++)
+                //{
+                //    TimeLineControl tlc = new TimeLineControl(i);
+                //    this.TimeLineContainer.Children.Add(tlc);
+                //    this.timelines.Add(tlc);
+                //}
             }
             else
             {

@@ -136,15 +136,6 @@
   <data name="sendJob" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sendJob.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DoubleWindowHorizontalSplitted" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DoubleWindowHorizontalSplitted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DoubleWindowVertikalSplitted" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DoubleWindowVertikalSplitted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SingleWindow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SingleWindow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="loadFromFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\loadFromFile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

@@ -39,7 +39,6 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\WindowLayoutHelper.cs" />
     <Compile Include="Interfaces\IRemote_Content_Show_MessageContent.cs" />
     <Compile Include="Interfaces\IRemote_Content_Show_MessageContentDisplay.cs" />
     <Compile Include="Interfaces\IRemote_Content_Show_MessageContentProtocol.cs" />

@@ -83,26 +83,6 @@ namespace ConfigManager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap DoubleWindowHorizontalSplitted {
-            get {
-                object obj = ResourceManager.GetObject("DoubleWindowHorizontalSplitted", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DoubleWindowVertikalSplitted {
-            get {
-                object obj = ResourceManager.GetObject("DoubleWindowVertikalSplitted", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap getEventList {
             get {
                 object obj = ResourceManager.GetObject("getEventList", resourceCulture);
@@ -216,16 +196,6 @@ namespace ConfigManager.Properties {
         internal static System.Drawing.Bitmap sendJob {
             get {
                 object obj = ResourceManager.GetObject("sendJob", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap SingleWindow {
-            get {
-                object obj = ResourceManager.GetObject("SingleWindow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
