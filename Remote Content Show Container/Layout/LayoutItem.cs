@@ -26,25 +26,24 @@ namespace Remote_Content_Show_Container
         public double MarginLeft
         {
             get;
-            private set;
+            set;
         }
 
         public double MarginTop
         {
             get;
-            private set;
+            set;
         }
         public double Width
         {
             get;
-            private set;
+            set;
         }
 
         public double Height
         {
             get;
-            private set;
+            set;
         }
-
     }
 }

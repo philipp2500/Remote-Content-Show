@@ -48,7 +48,7 @@ namespace ConfigManager
                     Graphics g = Graphics.FromImage(erg);                    
                     g.DrawRectangle(new Pen(Color.Black, (float)thicknes), (float)LayoutHelper.GetActuelValue(l.MarginLeft, with), (float)LayoutHelper.GetActuelValue(l.MarginTop, height), (float)LayoutHelper.GetActuelValue(l.Width, with), (float)LayoutHelper.GetActuelValue(l.Height, height));
                     g.FillRectangle(Brushes.White, (float)LayoutHelper.GetActuelValue(l.MarginLeft, with) + (float)thicknes, (float)LayoutHelper.GetActuelValue(l.MarginTop, height) + (float)thicknes, (float)LayoutHelper.GetActuelValue(l.Width, with) - (float)thicknes * 2, (float)LayoutHelper.GetActuelValue(l.Height, height) - (float)thicknes * 2);
-                    g.DrawString(l.Number.ToString(), new Font("Tahoma", 8), Brushes.Black, (float)LayoutHelper.GetActuelValue(l.MarginLeft, with) + (float)thicknes, (float)LayoutHelper.GetActuelValue(l.MarginTop, height) + (float)thicknes);
+                    g.DrawString(l.Number.ToString(), new Font("Tahoma", 10), Brushes.Black, (float)LayoutHelper.GetActuelValue(l.MarginLeft, with) + (float)thicknes, (float)LayoutHelper.GetActuelValue(l.MarginTop, height) + (float)thicknes);
                 }
                 return ImageHandler.ImageHandler.BitmapToBitmapImage(erg);
             }

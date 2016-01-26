@@ -113,6 +113,7 @@
       <DependentUpon>SendJob.xaml</DependentUpon>
     </Compile>
     <Compile Include="VM\EventItemVM.cs" />
+    <Compile Include="VM\LayoutItemVM.cs" />
     <Compile Include="VM\TimeLineItemVM.cs" />
     <Page Include="CreateConfriguration.xaml">
       <SubType>Designer</SubType>
