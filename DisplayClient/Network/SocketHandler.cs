@@ -7,6 +7,7 @@ using Windows.Networking.Sockets;
 using Remote_Content_Show_Protocol;
 using Windows.Storage.Streams;
 using Remote_Content_Show_Container;
+using System.Threading;
 
 namespace DisplayClient
 {
@@ -16,6 +17,8 @@ namespace DisplayClient
 
         private DataReader reader;
         private DataWriter writer;
+
+        private object lockingObject = new object();
 
         public struct SocketMessage
         {
@@ -76,12 +79,14 @@ namespace DisplayClient
 
             try
             {
-                this.writer.WriteBytes(headerBytes);
-                this.writer.WriteBytes(data);
+               
+                    this.writer.WriteBytes(headerBytes);
+                    this.writer.WriteBytes(data);
 
-                await this.writer.StoreAsync();
+                    await this.writer.StoreAsync();
 
-                await this.writer.FlushAsync();
+                    await this.writer.FlushAsync();
+                
             }
             catch (Exception)
             {

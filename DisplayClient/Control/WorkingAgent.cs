@@ -15,6 +15,8 @@ namespace DisplayClient
 
         private bool alive;
 
+        private long lastKeepAlive;
+
         public WorkingAgent(RenderConfiguration configuration)
         {
             this.Configuration = configuration;
@@ -89,7 +91,8 @@ namespace DisplayClient
                 this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
                 this.socketHandler.Start();
 
-                this.alive = true;
+                this.lastKeepAlive = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                this.KeepAlive();
             }
             else
             {
@@ -118,17 +121,16 @@ namespace DisplayClient
             this.socketHandler.Close();
 
             this.socketHandler.OnMessageBytesReceived -= this.SocketHandler_OnMessageBytesReceived;
+            this.socketHandler.OnConnectionLost -= this.SocketHandler_OnConnectionLost;
         }
         
         private void KeepAlive()
         {
             Task.Factory.StartNew(() =>
             {
-                this.alive = false;
-
                 Task.Delay(1000 * 5);
 
-                if (this.alive)
+                if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive <= 5000)
                 {
                     RCS_Alive alive = new RCS_Alive(RemoteType.Client);
 
@@ -152,7 +154,7 @@ namespace DisplayClient
             {
                 RCS_Alive result = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Alive>(bytes);
 
-                this.alive = true;
+                this.lastKeepAlive = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;                
             }
             else if (code == MessageCode.MC_Render_Job_Result)
             {

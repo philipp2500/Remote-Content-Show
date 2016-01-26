@@ -10,7 +10,8 @@
     d:DesignWidth="400">
 
     <Grid Background="LightGray">
-        <Image Name="DisplayingImage" Visibility="Collapsed"></Image>
+        <Image Grid.Row="0" Name="DisplayingJobResult" Visibility="Collapsed"></Image>
+        <Image Grid.Row="1" Name="DisplayingImage" Visibility="Collapsed"></Image>
         <WebView Name="DisplayingWebView" Visibility="Collapsed"></WebView>
         <MediaElement Name="DisplayingVideo" Visibility="Collapsed" AutoPlay="True" IsLooping="True" AreTransportControlsEnabled="True"></MediaElement>
     </Grid>
