@@ -238,7 +238,7 @@ namespace DisplayClient
 
                 WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgent(config);
 
-                this.HandleFoundWorkingAgent(worker);
+                this.HandleFoundWorkingAgent(job, worker);
             }
         }
 
@@ -263,7 +263,7 @@ namespace DisplayClient
                 RenderConfiguration config = this.GetNewRenderConfiguration(job);
                 WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgentFromList(config, foundAgents);
 
-                this.HandleFoundWorkingAgent(worker);
+                this.HandleFoundWorkingAgent(job, worker);
             }
             else
             {
@@ -293,17 +293,17 @@ namespace DisplayClient
                 RenderConfiguration config = this.GetNewRenderConfiguration(todo);
                 WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(config, excluded);
 
-                this.HandleFoundWorkingAgent(worker);
+                this.HandleFoundWorkingAgent(todo, worker);
             }
         }
 
-        private void HandleFoundWorkingAgent(WorkingAgent worker)
+        private void HandleFoundWorkingAgent(Job job, WorkingAgent worker)
         {
             if (worker == null)
             {
                 if (this.OnNoResourceCompatibleAgentFound != null)
                 {
-                    this.OnNoResourceCompatibleAgentFound(worker.Configuration.JobToDo);
+                    this.OnNoResourceCompatibleAgentFound(job);
                 }
             }
             else

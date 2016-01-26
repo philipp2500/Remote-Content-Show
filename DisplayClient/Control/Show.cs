@@ -28,7 +28,7 @@ namespace DisplayClient
                     this.ContentWindow = new DoubleWindowHorizontalSplittedWindow();
                     break;
                 case WindowLayout.DoubleWindowVertikalSplitted:
-                    this.ContentWindow = new DoubleWindowVerticalSplittedWindow();
+                    this.ContentWindow = new PiPWindow(); // new DoubleWindowVerticalSplittedWindow();
                     break;
                 default:
                     this.ContentWindow = new SingleWindow();
