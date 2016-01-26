@@ -6,6 +6,7 @@ using Remote_Content_Show_Protocol;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -59,17 +60,19 @@ namespace DisplayClient
             config.Agents.Add(new Agent() { IP = "10.101.150.11" });
 
             List<Job> jobs1 = new List<Job>();
-            jobs1.Add(new Job() { Duration = 50, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
-            //jobs1.Add(new Job() { Duration = 5000, OrderingNumber = 1, Resource = new FileResource() { Path = @"C:\Temp\test.pptx" } });
-            jobs1.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.google.at" } });
+            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
+            //jobs1.Add(new Job() { Duration = 5000, OrderingNumber = 2, Resource = new FileResource() { Path = @"C:\Temp\test.pptx" } });
+            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
 
             List<Job> jobs2 = new List<Job>();
-            jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
-            //jobs2.Add(new Job() { Duration = 5000, OrderingNumber = 1, Resource = new FileResource() { Path = @"C:\Temp\excel.xlsx" } });
-            jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
+            //jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
+            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new FileResource() { Path = @"C:\Temp\excel.xlsx" } });
+            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 3, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
 
             config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
             config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
+
+            PersistenceManager.SaveJobConfiguration(config);
 
             this.currentShow = new Show(config, new Size(200, 200));
 
@@ -176,11 +179,17 @@ namespace DisplayClient
 
             await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Show show = new Show(configuration, new Size(rootGrid.ActualWidth, rootGrid.ActualHeight));
+                if (this.currentShow != null)
+                {
+                    this.currentShow.Cancel();
+                    this.currentShow = new Show(configuration, new Size(rootGrid.ActualWidth, rootGrid.ActualHeight));
 
-                this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
+                    this.LayoutContainer.Children.Clear();                    
+                }
 
-                show.Start();
+                this.LayoutContainer.Children.Add(this.currentShow.ContentWindow.GetRoot());
+
+                this.currentShow.Start();
             });
         }
 
@@ -189,6 +198,9 @@ namespace DisplayClient
             if (this.currentShow != null)
             {
                 this.currentShow.Cancel();
+
+                this.currentShow = null;
+                this.LayoutContainer.Children.Clear();
             }
         }
 

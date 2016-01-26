@@ -9,6 +9,7 @@ namespace Agent.Network
     {
         public event EventHandler OnClientConnected;
         public event EventHandler OnClientDisconnected;
+        public event EventHandler OnClientKeepAliveOmitted;
 
         private List<ClientHandler> clients = new List<ClientHandler>();
         private TcpListener listener = null;
@@ -71,6 +72,7 @@ namespace Agent.Network
 
                 this.clients.Add(client);
                 client.OnClientDisconnected += this.Client_OnClientDisconnected;
+                client.OnKeepAliveOmitted += this.Client_OnKeepAliveOmitted;
                 client.Start();
 
                 if (this.OnClientConnected != null)
@@ -86,7 +88,7 @@ namespace Agent.Network
             {
             }
         }
-
+        
         private void Client_OnClientDisconnected(object sender, EventArgs e)
         {
             this.clients.Remove((ClientHandler)sender);
@@ -94,6 +96,14 @@ namespace Agent.Network
             if (this.OnClientDisconnected != null)
             {
                 this.OnClientDisconnected(this, EventArgs.Empty);
+            }
+        }
+
+        private void Client_OnKeepAliveOmitted(object sender, EventArgs e)
+        {
+            if (this.OnClientKeepAliveOmitted != null)
+            {
+                this.OnClientKeepAliveOmitted(this, EventArgs.Empty);
             }
         }
     }
