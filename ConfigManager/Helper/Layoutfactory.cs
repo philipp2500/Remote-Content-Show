@@ -40,6 +40,16 @@ namespace ConfigManager
             wl4.Color = new byte[] { 255, 0, 0, 0 };
             erg.Add(new WindowLayoutVM(wl4));
 
+            WindowLayout wl5 = new WindowLayout();
+            wl5.Name = "Test";
+            wl5.Items.Add(new LayoutItem(0.1, 0.1, 0.2, 0.35, 1));
+            wl5.Items.Add(new LayoutItem(0.1, 0.55, 0.2, 0.35, 2));
+            wl5.Items.Add(new LayoutItem(0.4, 0.1, 0.2, 0.7, 3));
+            wl5.Items.Add(new LayoutItem(0.7, 0.1, 0.2, 0.8, 4));
+            wl5.Color = new byte[] { 255, 0, 0, 0 };
+            erg.Add(new WindowLayoutVM(wl5));
+
+
             return erg;
         }
     }

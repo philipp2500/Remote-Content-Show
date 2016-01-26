@@ -45,6 +45,5 @@ namespace Remote_Content_Show_Container
             get;
             private set;
         }
-
     }
 }
