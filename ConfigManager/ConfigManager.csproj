@@ -104,6 +104,9 @@
     <Compile Include="FileManeger.xaml.cs">
       <DependentUpon>FileManeger.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LayoutDesigner.xaml.cs">
+      <DependentUpon>LayoutDesigner.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SendJob.xaml.cs">
       <DependentUpon>SendJob.xaml</DependentUpon>
     </Compile>
@@ -142,6 +145,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FileManeger.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LayoutDesigner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -259,7 +266,7 @@
     <Resource Include="Resources\loadFromweb.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\smallloadFromProcess.png" />
+    <Resource Include="Resources\smallloadFromProcess.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\smallloadFromweb.png" />
@@ -279,6 +286,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\delet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\layoutdisigner.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

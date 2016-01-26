@@ -54,5 +54,11 @@ namespace ConfigManager
             FileManeger fm = new FileManeger();
             fm.ShowDialog();
         }
+
+        private void CreateLyout_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutDesigner ld = new LayoutDesigner();
+            ld.ShowDialog();
+        }
     }
 }

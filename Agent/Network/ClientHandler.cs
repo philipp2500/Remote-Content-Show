@@ -111,6 +111,11 @@ namespace Agent.Network
             {
                 while (!args.Exit)
                 {
+                    if (!this.stream.DataAvailable) //TODO test
+                    {
+                        Thread.Sleep(10);
+                    }
+
                     this.stream.Read(headerBuffer, 0, Remote_Content_Show_Header.HeaderLength);
 
                     if (!Remote_Content_Show_Header.IsValidHeader(headerBuffer))
@@ -231,7 +236,8 @@ namespace Agent.Network
             }
             catch (Exception ex)
             when (ex is InvalidOperationException ||
-                  ex is ArgumentException)
+                  ex is ArgumentException ||
+                  ex is ProcessStartupException)
             {
             }
         }
@@ -404,9 +410,13 @@ namespace Agent.Network
         {
             byte[] byteMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg);
             byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length, RemoteType.Agent).ToByte;
-            this.stream.Write(header, 0, header.Length);
-            this.stream.Write(byteMsg, 0, byteMsg.Length);
-            this.stream.Flush();
+
+            lock (this.stream)
+            {
+                this.stream.Write(header, 0, header.Length);
+                this.stream.Write(byteMsg, 0, byteMsg.Length);
+                this.stream.Flush();
+            }
         }
     }
 }
