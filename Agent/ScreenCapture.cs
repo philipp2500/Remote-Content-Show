@@ -41,6 +41,10 @@ namespace Agent
         /// Indicates that a minimized window should be restored.
         /// </summary>
         private const int SW_RESTORE = 9;
+        /// <summary>
+        /// Indicates that a window should be minimized.
+        /// </summary>
+        private const int SW_MINIMIZE = 6;
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
         private CaptureThreadArgs captureArgs = null;
 		
@@ -68,10 +72,24 @@ namespace Agent
             if (resource is FileResource)
 			{
                 string path = ((FileResource)resource).Path;
+                string extension = System.IO.Path.GetExtension(path);
+
+                // TODO start PowerPoint files as fullscreen slideshow
+                if (extension == ".ppt" || extension == ".pptx")
+                {
+                    proc = new Process();
+                    proc.StartInfo.FileName = "powerpnt.exe";
+                    proc.StartInfo.Arguments = string.Format("/S \"{0}\"", path);
+                }
+                else
+                {
+                    proc = new Process();
+                    proc.StartInfo.FileName = path;
+                }
 
                 try
                 {
-                    proc = Process.Start(path);
+                    proc.Start();
                 }
                 catch
                 {
@@ -119,10 +137,36 @@ namespace Agent
 
         /// <summary>
         /// Captures an image of the given window.
+        /// If the window is minimized, it is restored, the image is captured and the window is minimized again.
+        /// </summary>
+        /// <param name="handle">The window handle of the window to capture.</param>
+        /// <returns>A bitmap image of the captured window or null if the window has no UI.</returns>
+        public Bitmap SnapshotWindow(IntPtr handle)
+        {
+            bool wasMinimized = false;
+
+            if (IsIconic(handle))
+            {
+                wasMinimized = true;
+                ShowWindow(handle, SW_RESTORE);
+            }
+
+            Bitmap image = this.CaptureWindow(handle);
+
+            if (wasMinimized)
+            {
+                ShowWindow(handle, SW_MINIMIZE);
+            }
+
+            return image;
+        }
+
+        /// <summary>
+        /// Captures an image of the given window.
         /// </summary>
         /// <param name="handle">The window handle of the window to capture.</param>
         /// <returns>A bitmap image of the captured window or null if the window is not visible (e.g. minimized).</returns>
-        public Bitmap CaptureWindow(IntPtr handle)
+        private Bitmap CaptureWindow(IntPtr handle)
         {
             var rect = new Rect();
             GetClientRect(handle, ref rect);

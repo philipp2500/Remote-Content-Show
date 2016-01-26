@@ -54,26 +54,26 @@ namespace DisplayClient
 
             Job_Configuration config = new Job_Configuration();
             config.Name = "testconfig1";
-            config.Layout = WindowLayout.DoubleWindowVertikalSplitted;
+            config.Layout = CustomWindow.GetTestLayout(); // WindowLayout.DoubleWindowVertikalSplitted;
             config.Agents.Add(new Agent() { IP = "10.101.100.33" });
             config.Agents.Add(new Agent() { IP = "10.101.150.11" });
 
             List<Job> jobs1 = new List<Job>();
-            //jobs1.Add(new Job() { Duration = 50, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
-            jobs1.Add(new Job() { Duration = 5000, OrderingNumber = 1, Resource = new FileResource() { Path = @"C:\Temp\test.pptx" } });
+            jobs1.Add(new Job() { Duration = 50, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
+            //jobs1.Add(new Job() { Duration = 5000, OrderingNumber = 1, Resource = new FileResource() { Path = @"C:\Temp\test.pptx" } });
             jobs1.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.google.at" } });
 
             List<Job> jobs2 = new List<Job>();
-            //jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
-            jobs2.Add(new Job() { Duration = 5000, OrderingNumber = 1, Resource = new FileResource() { Path = @"C:\Temp\excel.xlsx" } });
+            jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
+            //jobs2.Add(new Job() { Duration = 5000, OrderingNumber = 1, Resource = new FileResource() { Path = @"C:\Temp\excel.xlsx" } });
             jobs2.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
 
             config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
             config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
 
-            this.currentShow = new Show(config);
+            this.currentShow = new Show(config, new Size(200, 200));
 
-            this.LayoutContainer.Children.Add((UserControl)this.currentShow.ContentWindow);
+            this.LayoutContainer.Children.Add(this.currentShow.ContentWindow.GetRoot());
 
             this.currentShow.Start();
 
@@ -90,6 +90,12 @@ namespace DisplayClient
             this.DataContext = this;
 
             this.Loaded += MainPage_Loaded;
+            this.SizeChanged += MainPage_SizeChanged;
+        }
+
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.currentShow.UpdateSize(new Size(this.rootGrid.ActualWidth, this.rootGrid.ActualHeight));
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -170,7 +176,7 @@ namespace DisplayClient
 
             await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Show show = new Show(configuration);
+                Show show = new Show(configuration, new Size(rootGrid.ActualWidth, rootGrid.ActualHeight));
 
                 this.LayoutContainer.Children.Add((UserControl)show.ContentWindow);
 

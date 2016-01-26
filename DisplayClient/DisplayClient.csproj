@@ -107,6 +107,7 @@
       <DependentUpon>ContentDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\ContentDisplayManager.cs" />
+    <Compile Include="Layout\CustomWindow.cs" />
     <Compile Include="Layout\DoubleWindowHorizontalSplittedWindow.xaml.cs">
       <DependentUpon>DoubleWindowHorizontalSplittedWindow.xaml</DependentUpon>
     </Compile>

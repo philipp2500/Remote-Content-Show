@@ -36,5 +36,10 @@ namespace DisplayClient.Layout
 
             return array.ToArray();
         }
+
+        public Grid GetRoot()
+        {
+            return this.mainroot;
+        }
     }
 }

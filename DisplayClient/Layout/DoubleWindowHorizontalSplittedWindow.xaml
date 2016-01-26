@@ -9,13 +9,16 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
+    <Grid Name="mainroot">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Name="Display1"></Grid>
-        <Grid Grid.Row="1" Name="Display2"></Grid>
+            <Grid Grid.Row="0" Name="Display1"></Grid>
+            <Grid Grid.Row="1" Name="Display2"></Grid>
+        </Grid>
     </Grid>
+
 </UserControl>
