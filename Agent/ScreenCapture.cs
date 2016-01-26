@@ -63,6 +63,7 @@ namespace Agent
         /// Indicates that a window should be minimized.
         /// </summary>
         private const int SW_MINIMIZE = 6;
+        private const int SW_SHOWNOACTIVATE = 4;
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
 
         #endregion Constants
@@ -199,7 +200,7 @@ namespace Agent
             if (IsIconic(handle))
             {
                 wasMinimized = true;
-                ShowWindow(handle, SW_RESTORE);
+                ShowWindow(handle, SW_SHOWNOACTIVATE);
             }
 
             Bitmap image = this.CaptureWindow(handle);
@@ -310,7 +311,7 @@ namespace Agent
                     }
 
                     image = (Bitmap)ImageHandler.ImageHandler.Resize(image, imageSize);
-                    this.OnImageCaptured(this, new ImageEventArgs(config.JobID, image));
+                    this.OnImageCaptured(this, new ImageEventArgs(config.RenderJobID, image));
                 }
 
                 prevImage.Dispose();
@@ -321,12 +322,12 @@ namespace Agent
 
             if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
             {
-                this.OnCaptureFinished(this, new CaptureFinishEventArgs(config.JobID));
+                this.OnCaptureFinished(this, new CaptureFinishEventArgs(config.RenderJobID));
             }
 
             if (proc.HasExited && this.OnProcessExited != null)
             {
-                this.OnProcessExited(this, new CaptureFinishEventArgs(config.JobID));
+                this.OnProcessExited(this, new CaptureFinishEventArgs(config.RenderJobID));
             }
         }
         

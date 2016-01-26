@@ -32,6 +32,9 @@ namespace Agent
             this.notifyIcon.MouseDoubleClick += this.NotifyIcon_MouseDoubleClick;
 
             this.StartServer();
+
+            ScreenCapture c = new ScreenCapture();
+            c.StartCapture(new Remote_Content_Show_Container.RenderConfiguration() { IgnoreEqualImages = true, RenderHeight = 100, RenderWidth = 1000, UpdateInterval = 30, JobToDo = new Remote_Content_Show_Container.Job() { Duration = 30, Resource = new Remote_Content_Show_Container.FileResource() { Local = true, Path = @"C:\Temp\test.pptx" } } });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
