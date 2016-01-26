@@ -46,13 +46,17 @@ namespace Agent
         /// </summary>
         private const int SW_MINIMIZE = 6;
         private const int PW_CLIENTONLY = 1; // 1 => only window content; 0 => window incl. border
+        /// <summary>
+        /// Indicates whether the captured window's process was started by this instance.
+        /// </summary>
+        private bool selfStartedProcess = false;
         private CaptureThreadArgs captureArgs = null;
 		
         /// <summary>
         /// Continuously captures images of the given resource and fires the <see cref="ScreenCapture.OnImageCaptured"/> event.
         /// <see cref="FileResource"/>s are opened with their default program.
         /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown if the process has no UI.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if a already capturing a window or if the process has no UI.</exception>
         /// <exception cref="ProcessStartupException">Thrown if the process took to long to start up (<seealso cref="ScreenCapture.PROCESS_STARTUP_WAIT_DURATION"/>).</exception>
         /// <exception cref="ArgumentException">
         /// Thrown if config's update interval is less than 0
@@ -63,6 +67,11 @@ namespace Agent
         {
 			Process proc = null;
             IResource resource = config.JobToDo.Resource;
+
+            if (this.IsRunning)
+            {
+                throw new InvalidOperationException("A capturing process is already started.");
+            }
 
             if (config.UpdateInterval < 0)
             {
@@ -90,6 +99,7 @@ namespace Agent
                 try
                 {
                     proc.Start();
+                    this.selfStartedProcess = true;
                 }
                 catch
                 {
@@ -120,19 +130,28 @@ namespace Agent
             this.captureArgs = new CaptureThreadArgs(proc, config);
             capturer.IsBackground = true;
             capturer.Start(this.captureArgs);
+            this.IsRunning = true;
         }
 
         /// <summary>
         /// Stops the previously started capturing of a process' window.
+        /// Returns immediately if capturing was not started before.
         /// </summary>
         public void StopCapture()
         {
-            if (this.captureArgs == null)
+            if (!this.IsRunning)
             {
                 return;
             }
 
+            if (this.selfStartedProcess)
+            {
+                this.captureArgs.Process.Kill();
+            }
+
             this.captureArgs.Exit = true;
+            this.IsRunning = false;
+            this.selfStartedProcess = false;
         }
 
         /// <summary>

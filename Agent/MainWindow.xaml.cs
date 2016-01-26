@@ -20,14 +20,18 @@ namespace Agent
         public MainWindow()
         {
             this.InitializeComponent();
-
+            
             this.chbNotification.DataContext = this;
             this.NotificationsEnabled = true;
             
             this.notifyIcon = new System.Windows.Forms.NotifyIcon();
             this.notifyIcon.Icon = Properties.Resources.Icon1;
-            this.notifyIcon.MouseDoubleClick += this.NotifyIcon_MouseDoubleClick;
+            this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.notifyIcon.Text = "RCS Agent";
             this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += this.NotifyIcon_MouseDoubleClick;
+
+            this.StartServer();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -52,7 +56,7 @@ namespace Agent
             }
         }
 
-        private void btnListen_Click(object sender, RoutedEventArgs e)
+        private void StartServer()
         {
             if (this.server != null && this.server.IsRunning)
             {
@@ -68,20 +72,42 @@ namespace Agent
 
                 this.btnListen.Content = "Warte auf Verbindungsanfragen...";
                 this.btnListen.IsEnabled = false;
-                
+
                 this.lstOutput.Items.Add($"{DateTime.Now.ToString(TIME_FORMAT)} - Agent gestartet.");
 
-                this.ShowNotification("Agent gestartet", "Warte auf Verbindungsanfragen...");
+                this.ShowNotification("RCS Agent gestartet", "Warte auf Verbindungsanfragen...");
             }
             catch
             {
                 MessageBox.Show(
                     "Konnte Agent nicht starten.\n" +
                     $"Bitte überprüfen Sie, ob Port {Remote_Content_Show_Protocol.NetworkConfiguration.PortAgent} zum Binden bereit ist.",
-                    "Start fehlgeschlagen",
+                    "RCS Agent : Start fehlgeschlagen",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+        }
+
+        /// <summary>
+        /// Shows a taskbar notification popup if <see cref="MainWindow.NotificationsEnabled"/> is true.
+        /// </summary>
+        /// <param name="title">The notification's title.</param>
+        /// <param name="text">The notification's text.</param>
+        private void ShowNotification(string title, string text)
+        {
+            if (!this.NotificationsEnabled)
+            {
+                return;
+            }
+
+            this.notifyIcon.BalloonTipTitle = title;
+            this.notifyIcon.BalloonTipText = text;
+            this.notifyIcon.ShowBalloonTip(NOTIFICATION_POPUP_DURATION);
+        }
+
+        private void btnListen_Click(object sender, RoutedEventArgs e)
+        {
+            this.StartServer();
         }
         
         private void Server_OnClientDisconnected(object sender, EventArgs e)
@@ -107,24 +133,7 @@ namespace Agent
 
             this.ShowNotification("Neuer Client", $"{time} - Ein Client hat eine Verbindung hergestellt.");
         }
-
-        /// <summary>
-        /// Shows a taskbar notification popup if <see cref="MainWindow.NotificationsEnabled"/> is true.
-        /// </summary>
-        /// <param name="title">The notification's title.</param>
-        /// <param name="text">The notification's text.</param>
-        private void ShowNotification(string title, string text)
-        {
-            if (!this.NotificationsEnabled)
-            {
-                return;
-            }
-
-            this.notifyIcon.BalloonTipTitle = title;
-            this.notifyIcon.BalloonTipText = text;
-            this.notifyIcon.ShowBalloonTip(NOTIFICATION_POPUP_DURATION);
-        }
-
+        
         /// <summary>
         /// Restores the window from the taskbar.
         /// </summary>
