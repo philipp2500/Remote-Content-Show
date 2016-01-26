@@ -16,12 +16,5 @@
 
         <Grid Grid.Row="0" Name="LayoutContainer" Background="{Binding ConfigImage}">
         </Grid>
-
-        <Grid Grid.Row="1">
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Start config listener" Name="StartConfigListenerButton" Click="StartConfigListenerButton_Click"></Button>
-                <Button Content="refresh image" Click="Button_Click"></Button>
-            </StackPanel>
-        </Grid>
     </Grid>
 </Page>

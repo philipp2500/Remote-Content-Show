@@ -1,4 +1,5 @@
 ﻿using DisplayClient.Layout;
+using DisplayClient.Log;
 using Remote_Content_Show_Container;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace DisplayClient
                 manager.OnResourceNotAvailable += Manager_OnResourceNotAvailable;
                 manager.OnAgentWithProcessNotFound += Manager_OnAgentWithProcessNotFound;
                 manager.OnNoResourceCompatibleAgentFound += Manager_OnNoResourceCompatibleAgentFound;
+                manager.OnAgentAborted += Manager_OnAgentAborted;
 
                 display.DisplayManager = manager;
 
@@ -113,24 +115,58 @@ namespace DisplayClient
             }
         }
 
-        private void Manager_OnResourceNotAvailable(IResource resource)
+        private void Manager_OnAgentAborted(Job job, Agent agent)
+        {
+            string errorText = string.Empty;
+
+            errorText += "Error while handling job " + job.OrderingNumber + " (" + job.Resource.Name + "): ";
+            errorText += "The agent aborted the execution of the given resource.";
+
+            EventsManager.Log(Job_EventType.Error, this.Configuration, errorText);
+        }
+
+        private void Manager_OnResourceNotAvailable(Job job)
         {
             //throw new NotImplementedException();
+            string errorText = string.Empty;
+
+            errorText += "Error while handling job " + job.OrderingNumber + " (" + job.Resource.Name + "): ";
+            errorText += "The resource is not available.";
+
+            EventsManager.Log(Job_EventType.Error, this.Configuration, errorText);
         }
 
         private void Manager_OnNoResourceCompatibleAgentFound(Job job)
         {
             //throw new NotImplementedException();
+            string errorText = string.Empty;
+
+            errorText += "Error while handling job " + job.OrderingNumber + " (" + job.Resource.Name + "): ";
+            errorText += "No agent is able to handle the given resource.";
+
+            EventsManager.Log(Job_EventType.Error, this.Configuration, errorText);
         }
 
         private void Manager_OnAgentWithProcessNotFound(Job job)
         {
             //throw new NotImplementedException();
+            string errorText = string.Empty;
+
+            errorText += "Error while handling job " + job.OrderingNumber + " (" + job.Resource.Name + "): ";
+            errorText += "There is no agent running the process " + ((ProcessResource)job.Resource).ProcessID + ".";
+
+            EventsManager.Log(Job_EventType.Error, this.Configuration, errorText);
         }
 
         private void Manager_OnAgentNotReachable(Job job, Agent agent)
         {
             //throw new NotImplementedException();
+            string errorText = string.Empty;
+
+            errorText += "Error while handling job " + job.OrderingNumber + " (" + job.Resource.Name + "): ";
+            errorText += "The agent " + agent.IP.ToString() + " is offline.";
+
+            EventsManager.Log(Job_EventType.Error, this.Configuration, errorText);
         }
     }
 }

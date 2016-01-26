@@ -88,11 +88,13 @@ namespace DisplayClient
 
         public delegate void NoResourceCompatibleAgentFound(Job job);
 
-        public delegate void ResourceNotAvailable(IResource resource);
+        public delegate void ResourceNotAvailable(Job job);
 
         public delegate void AgentNotReachable(Job job, Agent agent);
 
         public delegate void AgentWithProcessNotFound(Job job);
+
+        public delegate void AgentAborted(Job job, Agent agent);
 
         public event NoResourceCompatibleAgentFound OnNoResourceCompatibleAgentFound;
 
@@ -101,6 +103,8 @@ namespace DisplayClient
         public event AgentNotReachable OnAgentNotReachable;
 
         public event AgentWithProcessNotFound OnAgentWithProcessNotFound;
+
+        public event AgentAborted OnAgentAborted;
 
         public void SetRenderSize(Size size)
         {
@@ -283,6 +287,13 @@ namespace DisplayClient
             // TODO: handling a process, which has been exited suddenly.
             if (message.Message == RenderMessage.ProcessExited)
             {
+                Job todo = agent.Configuration.JobToDo;
+
+                if (this.OnAgentAborted != null)
+                {
+                    this.OnAgentAborted(todo, agent.Agent);
+                }
+
                 // Solution 1: Fuck it. We just say that the resource is not available anymore.
                 /*if (this.OnResourceNotAvailable != null)
                 {
@@ -293,7 +304,6 @@ namespace DisplayClient
                 //this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
                 this.workingAgents.Remove(agent);
 
-                Job todo = agent.Configuration.JobToDo;
                 List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList();
 
                 RenderConfiguration config = this.GetNewRenderConfiguration(todo);
