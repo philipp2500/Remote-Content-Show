@@ -47,11 +47,6 @@ namespace DisplayClient
 
                 this.agentSelectors[job] = selector;
             }
-
-            /*this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.google.at" } });
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 2, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24sadfasdfbd3f8.jpg" } });
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
-            this.jobForWindow.Jobs.Add(new Job() { Duration = 5, OrderingNumber = 4, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/20/341c9285b24bd3f8.jpg" } });*/
         }
 
         private void Selector_OnAgentNotReachable(AgentSelector sender, Agent agent)
@@ -154,15 +149,6 @@ namespace DisplayClient
 
         private async void CancelJob(Job job)
         {
-            // TODO
-            if (this.OnDisplayAbortRequested != null)
-            {
-                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    this.OnDisplayAbortRequested();
-                });
-            }
-
             List<WorkingAgent> jobTreatingAgents = this.workingAgents.Where(x => x.Configuration.JobToDo.OrderingNumber == job.OrderingNumber).ToList();
 
             foreach (WorkingAgent agent in jobTreatingAgents)
@@ -171,6 +157,14 @@ namespace DisplayClient
             }
             
             this.workingAgents.RemoveAll(x => jobTreatingAgents.Contains(x));
+
+            if (this.OnDisplayAbortRequested != null)
+            {
+                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    this.OnDisplayAbortRequested();
+                });
+            }
         }
 
         private void RunJob(Job job)
@@ -185,7 +179,10 @@ namespace DisplayClient
                 }
                 else
                 {
-                    this.HandleFileResource(job, new FileResource() { Path = Path.Combine(PersistenceManager.GetWriteablePath(), fr.Path) });
+                    this.HandleFileResource(job, new FileResource() { Path = Path.Combine(
+                        PersistenceManager.GetWriteablePath(), 
+                        PersistenceManager.SavedCustomFilesDirectoryName, 
+                        fr.Path) });
                 }
             }
             else if (job.Resource is WebResource)
@@ -204,20 +201,6 @@ namespace DisplayClient
 
         private async void HandleFileResource(Job job, FileResource resource)
         {
-            // Todo: handle powerpoint files
-            /*if (resource.Path.EndsWith(".jpg"))
-            {
-                if (this.OnImageDisplayRequested != null)
-                {
-                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        BitmapImage img = new BitmapImage(new Uri(resource.Path));
-
-                        this.OnImageDisplayRequested(img);
-                    });
-                }
-            }*/
-
             if (CompatibilityManager.IsCompatibleImage(resource))
             {
                 if (this.OnImageDisplayRequested != null)
@@ -267,7 +250,6 @@ namespace DisplayClient
 
             if (foundAgents.Count == 1)
             {
-                //this.LookForResourceCompatibleAgent(foundAgents, resource);
                 RenderConfiguration config = this.GetNewRenderConfiguration(job);
                 WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgentFromList(config, foundAgents);
 
@@ -279,37 +261,6 @@ namespace DisplayClient
                 {
                     this.OnAgentWithProcessNotFound(job);
                 }
-            }
-        }
-
-        private async void Worker_OnMessageReceived(WorkingAgent agent, RCS_Render_Job_Message message)
-        {
-            // TODO: handling a process, which has been exited suddenly.
-            if (message.Message == RenderMessage.ProcessExited)
-            {
-                Job todo = agent.Configuration.JobToDo;
-
-                if (this.OnAgentAborted != null)
-                {
-                    this.OnAgentAborted(todo, agent.Agent);
-                }
-
-                // Solution 1: Fuck it. We just say that the resource is not available anymore.
-                /*if (this.OnResourceNotAvailable != null)
-                {
-                    this.OnResourceNotAvailable(agent.Configuration.JobToDo.Resource);
-                }*/
-
-                // Solution 2: try it with another agent, except the current.
-                //this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
-                this.workingAgents.Remove(agent);
-
-                List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList();
-
-                RenderConfiguration config = this.GetNewRenderConfiguration(todo);
-                WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(config, excluded);
-
-                this.HandleFoundWorkingAgent(todo, worker);
             }
         }
 
@@ -332,6 +283,35 @@ namespace DisplayClient
             }
         }
 
+        private async void Worker_OnMessageReceived(WorkingAgent agent, RCS_Render_Job_Message message)
+        {
+            if (message.Message == RenderMessage.ProcessExited)
+            {
+                Job todo = agent.Configuration.JobToDo;
+
+                if (this.OnAgentAborted != null)
+                {
+                    this.OnAgentAborted(todo, agent.Agent);
+                }
+
+                // Solution 1: Fuck it. We just say that the resource is not available anymore.
+                /*if (this.OnResourceNotAvailable != null)
+                {
+                    this.OnResourceNotAvailable(agent.Configuration.JobToDo.Resource);
+                }*/
+
+                // Solution 2: try it with another agent, except the current.
+                this.CancelJob(todo);
+
+                List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList();
+
+                RenderConfiguration config = this.GetNewRenderConfiguration(todo);
+                WorkingAgent worker = await this.agentSelectors[todo].GetCompatibleAgentFromList(config, excluded);
+
+                this.HandleFoundWorkingAgent(todo, worker);
+            }
+        }
+
         private void Worker_OnAgentGotUnreachable(WorkingAgent agent)
         {
             if (this.OnAgentNotReachable != null)
@@ -342,11 +322,7 @@ namespace DisplayClient
 
         private void Worker_OnResultReceived(WorkingAgent agent, RCS_Render_Job_Result result)
         {
-            //if (this.workingAgents.Contains(agent))
-            //{
-                this.HandleImageResult(result.ConcernedRenderJobID, result.Picture);
-            //}
-            //PersistenceManager.SaveBytes(result.Picture, "test.jpg");
+            this.HandleImageResult(result.ConcernedRenderJobID, result.Picture);
         }
 
         private async void HandleImageResult(Guid renderID, byte[] bytes)
@@ -370,26 +346,6 @@ namespace DisplayClient
                     }
                 }
             });
-
-            int f = 0;
-
-            /*if (this.OnImageDisplayRequested != null)
-            {
-                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                {
-                    BitmapImage image = new BitmapImage();
-                    IRandomAccessStream iras = null;
-
-                    using (MemoryStream ms = new MemoryStream(bytes))
-                    {
-                        iras = ms.AsRandomAccessStream();
-                    }
-
-                    await image.SetSourceAsync(iras);
-
-                    this.OnImageDisplayRequested(image);
-                });
-            }*/
         } 
 
         private RenderConfiguration GetNewRenderConfiguration(Job jobToDo)

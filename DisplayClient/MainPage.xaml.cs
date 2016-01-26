@@ -209,9 +209,9 @@ namespace DisplayClient
             }
         }
 
-        private void Admin_OnEventRequestReceived(ExternalAdmin sender)
+        private async void Admin_OnEventRequestReceived(ExternalAdmin sender)
         {
-            List<LoggedEvent> events = EventsManager.GetLoggedEvents();
+            List<LoggedEvent> events = await EventsManager.GetLoggedEvents();
 
             List<Event> convEvents = events.Select(x => new Event() { Type = x.Type, Description = x.Description, NameOfConcernedJob = x.ConcernedJob.Name, Time = x.Time }).ToList();
 
