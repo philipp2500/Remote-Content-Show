@@ -35,9 +35,22 @@
         <Label FontWeight="Bold" Grid.Row="0"  Grid.Column="2" HorizontalAlignment="Right">Farbe: </Label>
         <xctk:ColorPicker Grid.Row="0"  Grid.Column="3" Name="ColorPi" Width="80" ColorMode="ColorCanvas" UsingAlphaChannel="False" ShowAdvancedButton="False" SelectedColor="White" SelectedColorChanged="ColorPi_SelectedColorChanged"></xctk:ColorPicker>
 
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="3" Name="Layoutwindow" MouseLeftButtonDown="Layoutwindow_MouseLeftButtonDown" MouseLeftButtonUp="Layoutwindow_MouseLeftButtonUp">
-            
-        </Grid>
+        <ItemsControl ItemsSource="{Binding}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="3" Name="Layoutwindow" Background="White" MouseLeftButtonDown="Layoutwindow_MouseLeftButtonDown" MouseLeftButtonUp="Layoutwindow_MouseLeftButtonUp" MouseMove="Layoutwindow_MouseMove" SizeChanged="Layoutwindow_SizeChanged" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Name="LayoutWindowForTemp"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <!-- render each bound item using a TextBlock-->
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="{Binding DrawBorder}" Width="{Binding Width}" Height="{Binding Height}" Tag="{Binding .}" BorderBrush="Black" BorderThickness="3" Background="White">
+                        <TextBlock Text="{Binding Number}"/>
+                    </Border>                    
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
 
         <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Name="ListofItems">
             
