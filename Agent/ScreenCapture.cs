@@ -179,7 +179,7 @@ namespace Agent
 
             if (this.selfStartedProcess)
             {
-                this.captureArgs.Process.Close();
+                this.captureArgs.Process.Kill();
             }
 
             this.captureArgs.Exit = true;
