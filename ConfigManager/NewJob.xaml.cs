@@ -108,15 +108,15 @@ namespace ConfigManager
                 this.LayoutImagOverwie.Source = ((Image)((ComboBoxItem)this.JobLayout.SelectedItem).Content).Source;
 
                 this.job.Name = this.JobName.Text;
-                //this.job.Layout = (WindowLayout)this.JobLayout.SelectedIndex;
-                //this.ToShowWindowId.Maximum = WindowLayoutHelper.GetWindows(this.job.Layout);
+                this.job.Layout = (WindowLayout)this.JobLayout.SelectedIndex;
+                this.ToShowWindowId.Maximum = WindowLayoutHelper.GetWindows(this.job.Layout);
 
-                //for (int i = 1; i <= WindowLayoutHelper.GetWindows(this.job.Layout); i++)
-                //{
-                //    TimeLineControl tlc = new TimeLineControl(i);
-                //    this.TimeLineContainer.Children.Add(tlc);
-                //    this.timelines.Add(tlc);
-                //}
+                for (int i = 1; i <= WindowLayoutHelper.GetWindows(this.job.Layout); i++)
+                {
+                    TimeLineControl tlc = new TimeLineControl(i);
+                    this.TimeLineContainer.Children.Add(tlc);
+                    this.timelines.Add(tlc);
+                }
             }
             else
             {
