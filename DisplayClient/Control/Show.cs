@@ -115,17 +115,17 @@ namespace DisplayClient
 
         private void Manager_OnResourceNotAvailable(IResource resource)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void Manager_OnNoResourceCompatibleAgentFound(Job job)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void Manager_OnAgentWithProcessNotFound(Job job)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void Manager_OnAgentNotReachable(Job job, Agent agent)

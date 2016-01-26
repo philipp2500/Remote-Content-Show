@@ -1,6 +1,7 @@
 ﻿using Remote_Content_Show_Container;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -46,18 +47,42 @@ namespace DisplayClient
                 this.manager.OnVideoDisplayRequested += Manager_OnVideoDisplayRequested;
                 this.manager.OnWebsiteDisplayRequested += Manager_OnWebsiteDisplayRequested;
                 this.manager.OnDisplayAbortRequested += Manager_OnDisplayAbortRequested;
+                this.manager.OnJobResultDisplayRequested += Manager_OnJobResultDisplayRequested;
             }
+        }
+
+        private void Manager_OnJobResultDisplayRequested(Windows.UI.Xaml.Media.Imaging.BitmapImage image)
+        {
+            if (this.currentDisplayControl != this.DisplayingJobResult)
+            {
+                if (this.currentDisplayControl != null)
+                {
+                    this.currentDisplayControl.Visibility = Visibility.Collapsed;
+                }
+
+                this.currentDisplayControl = this.DisplayingJobResult;
+                this.currentDisplayControl.Visibility = Visibility.Visible;
+
+                Debug.WriteLine("Display job result");
+            }
+
+            this.DisplayingJobResult.Source = image;
         }
 
         private void Manager_OnVideoDisplayRequested(Uri videoPath)
         {
-            if (this.currentDisplayControl != null)
+            if (this.currentDisplayControl != this.DisplayingVideo)
             {
-                this.currentDisplayControl.Visibility = Visibility.Collapsed;
-            }
+                if (this.currentDisplayControl != null)
+                {
+                    this.currentDisplayControl.Visibility = Visibility.Collapsed;
+                }
 
-            this.currentDisplayControl = this.DisplayingVideo;
-            this.currentDisplayControl.Visibility = Visibility.Visible;
+                this.currentDisplayControl = this.DisplayingVideo;
+                this.currentDisplayControl.Visibility = Visibility.Visible;
+
+                Debug.WriteLine("Displaying video");
+            }
 
             this.DisplayingVideo.Source = videoPath;
             this.DisplayingVideo.Play();
@@ -83,17 +108,24 @@ namespace DisplayClient
 
                 this.currentDisplayControl.Visibility = Visibility.Collapsed;
             }
+
+            Debug.WriteLine("abort display");
         }
 
         private void Manager_OnWebsiteDisplayRequested(Uri uri)
         {
-            if (this.currentDisplayControl != null)
+            if (this.currentDisplayControl != this.DisplayingWebView)
             {
-                this.currentDisplayControl.Visibility = Visibility.Collapsed;
-            }
+                if (this.currentDisplayControl != null)
+                {
+                    this.currentDisplayControl.Visibility = Visibility.Collapsed;
+                }
 
-            this.currentDisplayControl = this.DisplayingWebView;
-            this.currentDisplayControl.Visibility = Visibility.Visible;
+                this.currentDisplayControl = this.DisplayingWebView;
+                this.currentDisplayControl.Visibility = Visibility.Visible;
+
+                Debug.WriteLine("Displaying web view");
+            }
 
             this.DisplayingWebView.Navigate(uri);
         }
@@ -102,6 +134,8 @@ namespace DisplayClient
         {
             //Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             //{
+            if (this.currentDisplayControl != this.DisplayingImage)
+            {
                 if (this.currentDisplayControl != null)
                 {
                     this.currentDisplayControl.Visibility = Visibility.Collapsed;
@@ -110,7 +144,11 @@ namespace DisplayClient
                 this.currentDisplayControl = this.DisplayingImage;
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
-                this.DisplayingImage.Source = image;
+                Debug.WriteLine("Displaying image");
+            }
+
+            this.DisplayingImage.Source = image;
+
             //});
         }
     }

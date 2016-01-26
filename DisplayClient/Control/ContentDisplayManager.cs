@@ -66,6 +66,8 @@ namespace DisplayClient
 
         public delegate void ImageDisplayRequested(BitmapImage image);
 
+        public delegate void JobResultDisplayRequested(BitmapImage image);
+
         public delegate void VideoDisplayRequested(Uri videoPath);
 
         public delegate void WebsiteDisplayRequested(Uri uri);
@@ -73,6 +75,8 @@ namespace DisplayClient
         public delegate void DisplayAbortRequested();
 
         public event ImageDisplayRequested OnImageDisplayRequested;
+
+        public event JobResultDisplayRequested OnJobResultDisplayRequested;
 
         public event VideoDisplayRequested OnVideoDisplayRequested;
 
@@ -287,6 +291,8 @@ namespace DisplayClient
 
                 // Solution 2: try it with another agent, except the current.
                 //this.LookForResourceCompatibleAgent(this.availableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList(), agent.Configuration.JobToDo.Resource);
+                this.workingAgents.Remove(agent);
+
                 Job todo = agent.Configuration.JobToDo;
                 List<Agent> excluded = this.agentSelectors[todo].AvailableAgents.Where(x => !x.IP.Equals(agent.Agent.IP)).ToList();
 
@@ -326,11 +332,14 @@ namespace DisplayClient
 
         private void Worker_OnResultReceived(WorkingAgent agent, RCS_Render_Job_Result result)
         {
-            this.HandleImageResult(result.Picture);
+            //if (this.workingAgents.Contains(agent))
+            //{
+                this.HandleImageResult(result.ConcernedRenderJobID, result.Picture);
+            //}
             //PersistenceManager.SaveBytes(result.Picture, "test.jpg");
         }
 
-        private async void HandleImageResult(byte[] bytes)
+        private async void HandleImageResult(Guid renderID, byte[] bytes)
         {
             BitmapImage image = null;
 
@@ -343,9 +352,12 @@ namespace DisplayClient
                     await image.SetSourceAsync(ms.AsRandomAccessStream());
                 }
 
-                if (this.OnImageDisplayRequested != null)
+                if (this.workingAgents.Exists(x => x.Configuration.RenderJobID.Equals(renderID)))
                 {
-                    this.OnImageDisplayRequested(image);
+                    if (this.OnJobResultDisplayRequested != null)
+                    {
+                        this.OnJobResultDisplayRequested(image);
+                    }
                 }
             });
 
