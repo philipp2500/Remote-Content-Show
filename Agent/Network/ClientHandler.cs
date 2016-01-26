@@ -16,6 +16,10 @@ namespace Agent.Network
         /// The time in milliseconds between sending <see cref="RCS_Alive"/> messages.
         /// </summary>
 		private const int KEEP_ALIVE_INTERVAL = 5000;
+        /// <summary>
+        /// The number of <see cref="ClientHandler.KEEP_ALIVE_INTERVAL"/>s before the connection is aborted.
+        /// </summary>
+        private const int ALLOWED_KEEP_ALIVE_MISSES = 5;
 
         /// <summary>
         /// The size of the preview image contained in the <see cref="Remote_Content_Show_Protocol.RCS_Process_List_Response"/>.
@@ -25,12 +29,20 @@ namespace Agent.Network
         private NetworkStream stream = null;
         private ListenerThreadArgs args = null;
         private Dictionary<Guid, ScreenCapture> runningRenderJobs = null;
-        private Timer keepAliveTimer = null;
+        private Timer keepAliveSendTimer = null;
+        private Timer keepAliveCheckTimer = null;
+        private DateTime lastKeepAliveTime;
 
         /// <summary>
         /// The event fired when the connected client disconnects or this <see cref="ClientHandler"/> is stopped.
         /// </summary>
         public event EventHandler OnClientDisconnected;
+
+        /// <summary>
+        /// The event fired when no <see cref="RCS_Alive"/> messages were received and the connection was cut.
+        /// <seealso cref="ClientHandler.ALLOWED_KEEP_ALIVE_MISSES"/>.
+        /// </summary>
+        public event EventHandler OnKeepAliveOmitted;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientHandler"/> class.
@@ -68,10 +80,16 @@ namespace Agent.Network
                 job.StopCapture();
             }
 
-            if (this.keepAliveTimer != null)
+            if (this.keepAliveSendTimer != null)
             {
-                this.keepAliveTimer.Dispose();
-                this.keepAliveTimer = null;
+                this.keepAliveSendTimer.Dispose();
+                this.keepAliveSendTimer = null;
+            }
+
+            if (this.keepAliveCheckTimer != null)
+            {
+                this.keepAliveCheckTimer.Dispose();
+                this.keepAliveCheckTimer = null;
             }
             
             try { this.stream.Close(); }
@@ -129,9 +147,11 @@ namespace Agent.Network
                     this.stream.Read(contentBuffer, 0, (int)header.Length);
 
                     // only send Keep Alive messages to client
-                    if (this.keepAliveTimer == null && header.Remote == RemoteType.Client)
+                    if (this.keepAliveSendTimer == null && header.Remote == RemoteType.Client)
                     {
-                        this.keepAliveTimer = new Timer(new TimerCallback(this.SendKeepAlive), null, 0, KEEP_ALIVE_INTERVAL);
+                        this.keepAliveSendTimer = new Timer(new TimerCallback(this.SendKeepAlive), null, 0, KEEP_ALIVE_INTERVAL);
+                        this.keepAliveCheckTimer = new Timer(new TimerCallback(this.CheckKeepAlive), null, 0, KEEP_ALIVE_INTERVAL);
+                        this.lastKeepAliveTime = DateTime.Now;
                     }
 
                     switch (header.Code)
@@ -402,6 +422,19 @@ namespace Agent.Network
             when (ex is IOException ||
                   ex is ObjectDisposedException)
             {
+                this.Stop();
+            }
+        }
+
+        private void CheckKeepAlive(object state)
+        {
+            if (this.lastKeepAliveTime.AddMilliseconds(KEEP_ALIVE_INTERVAL * ALLOWED_KEEP_ALIVE_MISSES) < DateTime.Now)
+            {
+                if (this.OnKeepAliveOmitted != null)
+                {
+                    this.OnKeepAliveOmitted(this, EventArgs.Empty);
+                }
+
                 this.Stop();
             }
         }

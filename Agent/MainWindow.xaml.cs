@@ -68,6 +68,7 @@ namespace Agent
                 this.server = new Server(Remote_Content_Show_Protocol.NetworkConfiguration.PortAgent);
                 this.server.OnClientConnected += this.Server_OnClientConnected;
                 this.server.OnClientDisconnected += this.Server_OnClientDisconnected;
+                this.server.OnClientKeepAliveOmitted += this.Server_OnClientKeepAliveOmitted;
                 this.server.Start();
 
                 this.btnListen.Content = "Warte auf Verbindungsanfragen...";
@@ -87,7 +88,7 @@ namespace Agent
                     MessageBoxImage.Warning);
             }
         }
-
+        
         /// <summary>
         /// Shows a taskbar notification popup if <see cref="MainWindow.NotificationsEnabled"/> is true.
         /// </summary>
@@ -109,18 +110,6 @@ namespace Agent
         {
             this.StartServer();
         }
-        
-        private void Server_OnClientDisconnected(object sender, EventArgs e)
-        {
-            string time = DateTime.Now.ToString(TIME_FORMAT);
-
-            this.lstOutput.Dispatcher.Invoke(() =>
-            {
-                this.lstOutput.Items.Add($"{time} - Ein Client hat die Verbindung getrennt.");
-            });
-
-            this.ShowNotification("Client getrennt", $"{time} - Ein Client hat die Verbindung getrennt.");
-        }
 
         private void Server_OnClientConnected(object sender, EventArgs e)
         {
@@ -133,7 +122,31 @@ namespace Agent
 
             this.ShowNotification("Neuer Client", $"{time} - Ein Client hat eine Verbindung hergestellt.");
         }
-        
+
+        private void Server_OnClientDisconnected(object sender, EventArgs e)
+        {
+            string time = DateTime.Now.ToString(TIME_FORMAT);
+
+            this.lstOutput.Dispatcher.Invoke(() =>
+            {
+                this.lstOutput.Items.Add($"{time} - Die Verbindung zu einem Client wurde getrennt.");
+            });
+
+            this.ShowNotification("Client getrennt", $"{time} - Die Verbindung zu einem Client wurde getrennt.");
+        }
+
+        private void Server_OnClientKeepAliveOmitted(object sender, EventArgs e)
+        {
+            string time = DateTime.Now.ToString(TIME_FORMAT);
+
+            this.lstOutput.Dispatcher.Invoke(() =>
+            {
+                this.lstOutput.Items.Add($"{time} - Ein Client hat zu lange keine Keep-Alive-Nachrichten gesendet. Die Verbindung wird abgebrochen.");
+            });
+
+            this.ShowNotification("Client getrennt", $"{time} - Ein Client hat zu lange keine Keep-Alives gesendet.");
+        }
+
         /// <summary>
         /// Restores the window from the taskbar.
         /// </summary>
