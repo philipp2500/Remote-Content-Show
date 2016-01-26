@@ -398,8 +398,11 @@ namespace Agent.Network
             {
                 this.SendMessage(MessageCode.MC_Alive, new RCS_Alive(RemoteType.Agent));
             }
-            catch
+            catch (Exception ex)
+            when (ex is IOException ||
+                  ex is ObjectDisposedException)
             {
+                this.Stop();
             }
         }
 
