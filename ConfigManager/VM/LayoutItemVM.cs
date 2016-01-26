@@ -16,7 +16,6 @@ namespace ConfigManager
         public event PropertyChangedEventHandler PropertyChanged;
         private double heightParent;
         private double widthParent;
-        private LayoutItem item;
 
         public double HeightParent
         {
@@ -27,8 +26,8 @@ namespace ConfigManager
             set
             {
                 this.heightParent = value;
-                OnPropertyChanged("Width");
-                OnPropertyChanged("Height");
+                this.OnPropertyChanged("Width");
+                this.OnPropertyChanged("Height");
             }
         }
 
@@ -41,22 +40,70 @@ namespace ConfigManager
             set
             {
                 this.widthParent = value;
-                OnPropertyChanged("Width");
-                OnPropertyChanged("Height");
+                this.OnPropertyChanged("Width");
+                this.OnPropertyChanged("Height");
             }
         }
 
         public LayoutItem Item
         {
-            get
-            {
-                return this.item;
-            }
+            get;
+            set;
+        }
+
+        public double ItemHeight
+        {
             set
             {
-                this.item = value;
-                OnPropertyChanged("Width");
-                OnPropertyChanged("Height");
+                this.Item.Height = value;
+                this.OnPropertyChanged("Height");
+                this.OnPropertyChanged();
+            }
+            get
+            {
+                return Math.Truncate(this.Item.Height * 100);
+            }
+        }
+
+        public double ItemWidth
+        {
+            set
+            {
+                this.Item.Width = value;
+                this.OnPropertyChanged("Width");
+                this.OnPropertyChanged();
+            }
+            get
+            {
+                return Math.Truncate(this.Item.Width * 100);
+            }
+        }
+
+        public double ItemMarginLeft
+        {
+            set
+            {
+                this.Item.MarginLeft = value;
+                this.OnPropertyChanged("DrawBorder");
+                this.OnPropertyChanged();
+            }
+            get
+            {
+                return Math.Truncate(this.Item.MarginLeft * 100);
+            }
+        }
+
+        public double ItemMarginTop
+        {
+            set
+            {
+                this.Item.MarginTop = value;
+                this.OnPropertyChanged("DrawBorder");
+                this.OnPropertyChanged();
+            }
+            get
+            {
+                return Math.Truncate(this.Item.MarginTop * 100);
             }
         }
 

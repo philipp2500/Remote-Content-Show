@@ -39,7 +39,7 @@
                         <TextBox Margin="5,0" Grid.Row="0" Grid.Column="1" Name="JobName"></TextBox>
 
                         <Label Grid.Row="1" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Right" FontWeight="Bold">Layout:</Label>
-                        <ComboBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Width="200" Height="160" Name="JobLayout" ItemsSource="{Binding Collection}">
+                        <ComboBox AllowDrop="true" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Width="200" Height="160" Name="JobLayout" ItemsSource="{Binding Collection}" ToolTip="Ziehen Sie eine *.rcl Datei herein um ein Layout hinzuzufügen!" Drop="JobLayout_Drop">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="5">

@@ -289,5 +289,29 @@ namespace ConfigManager
                 }
             }
         }
+
+        private void JobLayout_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach(string file in files)
+                {
+                    try
+                    {
+                        FileStream fs = new FileStream(file, FileMode.Open);
+                        fs.Seek(0, SeekOrigin.Begin);
+                        byte[] data = new byte[fs.Length];
+                        fs.Read(data, 0, data.Length);
+
+                        this.layouts.Add(new WindowLayoutVM(Remote_Content_Show_MessageGenerator.GetMessageFromByte<WindowLayout>(data)));
+                    }
+                    catch
+                    {
+                        MessageBox.Show(file + " : konnte nicht geladen werden!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
     }
 }
