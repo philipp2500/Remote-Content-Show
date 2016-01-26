@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 using Remote_Content_Show_Container;
+using System.Text;
 
 namespace Agent
 {
@@ -27,9 +28,15 @@ namespace Agent
         public bool IsRunning { get; private set; }
 
         /// <summary>
-        /// 
+        /// The number of milliseconds between the update of the window handle of the captured process.
+        /// (Some applications like PowerPoint show a startup window which is closed later on when the actual window is ready,
+        /// and therefore the new window would never be captured.)
         /// </summary>
-        private const int PROCESS_STARTUP_WAIT_DURATION = 15000;
+        private const int PROCESS_WINDOW_UPDATE_INTERVAL = 10000;
+        /// <summary>
+        /// The number of milliseconds to wait for a process to startup before an exception is thrown.
+        /// </summary>
+        private const int PROCESS_STARTUP_WAIT_DURATION = 30000;
         /// <summary>
         /// Indicates that a minimized window should be restored.
         /// </summary>
@@ -70,27 +77,27 @@ namespace Agent
                 {
                     throw new ArgumentException("Failed to start the process for the FileResource.");
                 }
-                
-                if (!proc.WaitForInputIdle(PROCESS_STARTUP_WAIT_DURATION))
-                {
-                    throw new ProcessStartupException();
-                }
             }
 			else if (resource is ProcessResource)
 			{
 				int pid = ((ProcessResource)resource).ProcessID;
-				proc = Process.GetProcessById(pid);
-			}
+                proc = Process.GetProcessById(pid);
+            }
 			else
 			{
                 throw new NotSupportedException("Only capturing of jobs with FileResource and ProcessResource is supported.");
 			}
             
+            if (!proc.WaitForInputIdle(PROCESS_STARTUP_WAIT_DURATION))
+            {
+                throw new ProcessStartupException();
+            }
+
             if (proc.MainWindowHandle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Cannot capture images of a window-less process.");
             }
-
+            
             Thread capturer = new Thread(new ParameterizedThreadStart(this.Capture));
             this.captureArgs = new CaptureThreadArgs(proc, config);
             capturer.IsBackground = true;
@@ -152,6 +159,7 @@ namespace Agent
 						
 			Size imageSize = new Size(config.RenderWidth, config.RenderHeight);
 			Process proc = args.Process;
+            DateTime windowHandleUpdateTime = DateTime.Now;
             IntPtr windowHandle = proc.MainWindowHandle;
             DateTime endTime = DateTime.Now.AddSeconds(config.JobToDo.Duration); //TODO sicherstellen, dass duration in sekunden!!!!!!!!!!!!
             Bitmap prevImage = new Bitmap(1, 1);
@@ -168,6 +176,14 @@ namespace Agent
                 if (IsIconic(windowHandle))
                 {
                     ShowWindow(windowHandle, SW_RESTORE);
+                }
+
+                // update the window handle if needed
+                if (DateTime.Now > windowHandleUpdateTime)
+                {
+                    proc = Process.GetProcessById(proc.Id);
+                    windowHandle = proc.MainWindowHandle;
+                    windowHandleUpdateTime.AddMilliseconds(PROCESS_WINDOW_UPDATE_INTERVAL);
                 }
 
                 Thread.Sleep((int)config.UpdateInterval); //TODO warum ist update interval Double???????????

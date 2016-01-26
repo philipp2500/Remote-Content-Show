@@ -11,6 +11,7 @@ namespace Agent
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private const string TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
+        private const int NOTIFICATION_POPUP_DURATION = 1000;
         private bool notificationsEnabled = false;
         private Server server = null;
         private System.Windows.Forms.NotifyIcon notifyIcon = null;
@@ -69,13 +70,8 @@ namespace Agent
                 this.btnListen.IsEnabled = false;
                 
                 this.lstOutput.Items.Add($"{DateTime.Now.ToString(TIME_FORMAT)} - Agent gestartet.");
-                
-                if (this.NotificationsEnabled)
-                {
-                    this.notifyIcon.BalloonTipTitle = "Agent gestartet";
-                    this.notifyIcon.BalloonTipText = "Warte auf Verbindungsanfragen...";
-                    this.notifyIcon.ShowBalloonTip(400);
-                }
+
+                this.ShowNotification("Agent gestartet", "Warte auf Verbindungsanfragen...");
             }
             catch
             {
@@ -87,7 +83,7 @@ namespace Agent
                     MessageBoxImage.Warning);
             }
         }
-
+        
         private void Server_OnClientDisconnected(object sender, EventArgs e)
         {
             string time = DateTime.Now.ToString(TIME_FORMAT);
@@ -97,12 +93,7 @@ namespace Agent
                 this.lstOutput.Items.Add($"{time} - Ein Client hat die Verbindung getrennt.");
             });
 
-            if (this.NotificationsEnabled)
-            {
-                this.notifyIcon.BalloonTipTitle = "Client getrennt";
-                this.notifyIcon.BalloonTipText = $"{time} - Ein Client hat die Verbindung getrennt.";
-                this.notifyIcon.ShowBalloonTip(400);
-            }
+            this.ShowNotification("Client getrennt", $"{time} - Ein Client hat die Verbindung getrennt.");
         }
 
         private void Server_OnClientConnected(object sender, EventArgs e)
@@ -114,12 +105,25 @@ namespace Agent
                 this.lstOutput.Items.Add($"{time} - Ein Client hat eine Verbindung hergestellt.");
             });
 
-            if (this.NotificationsEnabled)
+            this.ShowNotification("Neuer Client", $"{time} - Ein Client hat eine Verbindung hergestellt.");
+        }
+
+        /// <summary>
+        /// Shows a taskbar notification popup if <see cref="MainWindow.NotificationsEnabled"/> is true.
+        /// </summary>
+        /// <param name="title">The notification's title.</param>
+        /// <param name="text">The notification's text.</param>
+        private void ShowNotification(string title, string text)
+        {
+            if (!this.NotificationsEnabled)
             {
-                this.notifyIcon.BalloonTipTitle = "Neuer Client";
-                this.notifyIcon.BalloonTipText = $"{time} - Ein Client hat eine Verbindung hergestellt.";
-                this.notifyIcon.ShowBalloonTip(400);
+                return;
+
             }
+
+            this.notifyIcon.BalloonTipTitle = title;
+            this.notifyIcon.BalloonTipText = text;
+            this.notifyIcon.ShowBalloonTip(NOTIFICATION_POPUP_DURATION);
         }
 
         /// <summary>

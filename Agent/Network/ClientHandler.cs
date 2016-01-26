@@ -111,6 +111,12 @@ namespace Agent.Network
             {
                 while (!args.Exit)
                 {
+                    if (!this.stream.DataAvailable)
+                    {
+                        Thread.Sleep(10);
+                        continue;
+                    }
+
                     this.stream.Read(headerBuffer, 0, Remote_Content_Show_Header.HeaderLength);
 
                     if (!Remote_Content_Show_Header.IsValidHeader(headerBuffer))
@@ -142,6 +148,13 @@ namespace Agent.Network
                         case MessageCode.MC_Render_Job:
                             RCS_Render_Job jobRequest =
                                 Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job>(contentBuffer);
+
+                            if (jobRequest == null)
+                            {
+                                //TODO when other Agent is not able to render, we receive a correct job request and
+                                // another job request header which is not followed by a correct job.
+                                break;
+                            }
                             
                             this.HandleJobRequest(jobRequest);
 
@@ -231,7 +244,8 @@ namespace Agent.Network
             }
             catch (Exception ex)
             when (ex is InvalidOperationException ||
-                  ex is ArgumentException)
+                  ex is ArgumentException ||
+                  ex is ProcessStartupException)
             {
             }
         }
@@ -404,9 +418,13 @@ namespace Agent.Network
         {
             byte[] byteMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg);
             byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length, RemoteType.Agent).ToByte;
-            this.stream.Write(header, 0, header.Length);
-            this.stream.Write(byteMsg, 0, byteMsg.Length);
-            this.stream.Flush();
+
+            lock (this.stream)
+            {
+                this.stream.Write(header, 0, header.Length);
+                this.stream.Write(byteMsg, 0, byteMsg.Length);
+                this.stream.Flush();
+            }
         }
     }
 }
