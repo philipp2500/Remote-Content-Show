@@ -405,9 +405,13 @@ namespace Agent.Network
         {
             byte[] byteMsg = Remote_Content_Show_MessageGenerator.GetMessageAsByte(msg);
             byte[] header = new Remote_Content_Show_Header(msgCode, byteMsg.Length, RemoteType.Agent).ToByte;
-            this.stream.Write(header, 0, header.Length);
-            this.stream.Write(byteMsg, 0, byteMsg.Length);
-            this.stream.Flush();
+
+            lock (this.stream)
+            {
+                this.stream.Write(header, 0, header.Length);
+                this.stream.Write(byteMsg, 0, byteMsg.Length);
+                this.stream.Flush();
+            }
         }
     }
 }
