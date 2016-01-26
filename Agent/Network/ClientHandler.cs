@@ -375,7 +375,7 @@ namespace Agent.Network
                     continue;
                 }
 
-                Bitmap bmp = capturer.CaptureWindow(proc.MainWindowHandle);
+                Bitmap bmp = capturer.SnapshotWindow(proc.MainWindowHandle);
                 if (bmp == null)
                 {
                     // only give access to processes which provide a window

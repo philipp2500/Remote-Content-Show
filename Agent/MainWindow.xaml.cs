@@ -118,7 +118,6 @@ namespace Agent
             if (!this.NotificationsEnabled)
             {
                 return;
-
             }
 
             this.notifyIcon.BalloonTipTitle = title;
