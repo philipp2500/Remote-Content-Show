@@ -16,6 +16,7 @@ using Remote_Content_Show_Protocol;
 using Remote_Content_Show_Container;
 using Microsoft.Win32;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace ConfigManager
 {
@@ -29,12 +30,15 @@ namespace ConfigManager
         private List<TimeLineControl> timelines = new List<TimeLineControl>();
         private Job_Configuration job = new Job_Configuration();
         private IResource currenResource;
+        private ObservableCollection<WindowLayoutVM> layouts;
 
         public NewJob()
         {
             InitializeComponent(); 
             this.netmanager.OnError += Netmanager_OnError;
             this.netmanager.OnMessageReceived += Netmanager_OnMessageReceived;
+            this.layouts = Layoutfactory.LoadBasicLayouts();
+            this.JobLayout.ItemsSource = this.layouts;
         }
 
         private void Netmanager_OnMessageReceived(object sender, MessageRecivedEventHandler e)

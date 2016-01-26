@@ -104,6 +104,8 @@
     <Compile Include="FileManeger.xaml.cs">
       <DependentUpon>FileManeger.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Layoutfactory.cs" />
+    <Compile Include="Helper\WindowLayoutVM.cs" />
     <Compile Include="LayoutDesigner.xaml.cs">
       <DependentUpon>LayoutDesigner.xaml</DependentUpon>
     </Compile>
@@ -250,15 +252,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\DoubleWindowHorizontalSplitted.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\DoubleWindowVertikalSplitted.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\SingleWindow.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\loadFromFile.png" />

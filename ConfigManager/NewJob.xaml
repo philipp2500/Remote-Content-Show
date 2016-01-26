@@ -39,16 +39,23 @@
                         <TextBox Margin="5,0" Grid.Row="0" Grid.Column="1" Name="JobName"></TextBox>
 
                         <Label Grid.Row="1" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Right" FontWeight="Bold">Layout:</Label>
-                        <ComboBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Width="94" Height="70" Name="JobLayout">
-                            <ComboBoxItem Margin="2" IsSelected="True">
-                                <Image Source="Resources/SingleWindow.png"></Image>
-                            </ComboBoxItem>
-                            <ComboBoxItem Margin="2">
-                                <Image Source="Resources/DoubleWindowVertikalSplitted.png"></Image>
-                            </ComboBoxItem>
-                            <ComboBoxItem Margin="2">
-                                <Image Source="Resources/DoubleWindowHorizontalSplitted.png"></Image>
-                            </ComboBoxItem>
+                        <ComboBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Width="200" Height="160" Name="JobLayout" ItemsSource="{Binding Collection}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="5">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Image Grid.Row="0" Grid.Column="0" Source="{Binding Image}" HorizontalAlignment="Left"></Image>
+                                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Name}" HorizontalAlignment="Left"></Label>                                        
+                                    </Grid>            
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>                            
                         </ComboBox>                        
                     </Grid>
 
