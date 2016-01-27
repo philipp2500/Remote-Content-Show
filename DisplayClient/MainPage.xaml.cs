@@ -134,6 +134,14 @@ namespace DisplayClient
             }
         }
 
+        public BitmapImage EmptyImage
+        {
+            get
+            {
+                return PersistenceManager.GetConfigurationImage();
+            }
+        }
+
         private void AdminListener_OnConnectionReceived(Windows.Networking.Sockets.StreamSocket socket)
         {
             ExternalAdmin admin = new ExternalAdmin(socket);

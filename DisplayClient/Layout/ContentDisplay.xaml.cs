@@ -1,4 +1,5 @@
-﻿using Remote_Content_Show_Container;
+﻿using DisplayClient.Storage;
+using Remote_Content_Show_Container;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,6 +49,17 @@ namespace DisplayClient
                 this.manager.OnWebsiteDisplayRequested += Manager_OnWebsiteDisplayRequested;
                 this.manager.OnDisplayAbortRequested += Manager_OnDisplayAbortRequested;
                 this.manager.OnJobResultDisplayRequested += Manager_OnJobResultDisplayRequested;
+            }
+        }
+
+        public ImageBrush ConfigImage
+        {
+            get
+            {
+                ImageBrush brush = new ImageBrush();
+                brush.ImageSource = PersistenceManager.GetConfigurationImage();
+
+                return brush;
             }
         }
 

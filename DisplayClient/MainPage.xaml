@@ -7,14 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Name="rootGrid" Background="White">
+    <Grid Name="rootGrid" Background="Black">
         <!--<Button Content="aölksdfasfd" Width="200" Height="50"></Button>-->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="0"></RowDefinition>
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Name="LayoutContainer" Background="{Binding ConfigImage}">
+        <Image Source="{Binding EmptyImage}"></Image>
+        <Grid  Name="LayoutContainer" Background="{Binding ConfigImage}">
         </Grid>
     </Grid>
 </Page>

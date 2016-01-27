@@ -332,7 +332,7 @@ namespace DisplayClient
             await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 image = new BitmapImage();
-
+                
                 using (MemoryStream ms = new MemoryStream(bytes))
                 {
                     await image.SetSourceAsync(ms.AsRandomAccessStream());
