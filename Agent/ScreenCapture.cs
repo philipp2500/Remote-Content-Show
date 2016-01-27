@@ -167,7 +167,8 @@ namespace Agent
         }
 
         /// <summary>
-        /// Stops the previously started capturing of a process' window.
+        /// Stops the previously started capturing of a process' window and
+        /// kills the captured process if it was started by this instance.
         /// Returns immediately if capturing was not started before.
         /// </summary>
         public void StopCapture()
@@ -317,8 +318,8 @@ namespace Agent
                 prevImage.Dispose();
                 prevImage = image;                
             }
-            
-            this.IsRunning = false;
+
+            this.StopCapture();
 
             if (DateTime.Now > endTime && !proc.HasExited && this.OnCaptureFinished != null)
             {

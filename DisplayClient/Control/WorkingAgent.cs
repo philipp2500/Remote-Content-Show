@@ -75,34 +75,38 @@ namespace DisplayClient
             socketMsg.Content = new byte[] { };
             socketMsg.Empty = true;
 
-            while (socketMsg.Code != MessageCode.MC_Render_Job_Message)
+            socketMsg = await this.socketHandler.WaitForMessage();
+
+            // if he sends some invalid data, give him another chance.
+            if (!socketMsg.Empty && socketMsg.Code != MessageCode.MC_Render_Job_Message)
             {
                 socketMsg = await this.socketHandler.WaitForMessage();
             }
 
-            RCS_Render_Job_Message jobResponse = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Message>(socketMsg.Content);
-
-            if (jobResponse.Message == RenderMessage.Supported)
+            if (!socketMsg.Empty)
             {
-                this.Agent = agent;
-                //this.socketHandler = new SocketHandler(socket);
+                RCS_Render_Job_Message jobResponse = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Message>(socketMsg.Content);
 
-                this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
-                this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
-                this.socketHandler.Start();
+                if (jobResponse.Message == RenderMessage.Supported)
+                {
+                    this.Agent = agent;
+                    //this.socketHandler = new SocketHandler(socket);
 
-                this.lastKeepAlive = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                this.KeepAlive();
+                    this.socketHandler.OnMessageBytesReceived += SocketHandler_OnMessageBytesReceived;
+                    this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
+                    this.socketHandler.Start();
+
+                    this.lastKeepAlive = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                    this.KeepAlive();
+                }
+
+                return jobResponse.Message;
             }
-            else
-            {
-                //this.socketHandler.Close();
-                this.socketHandler.Close();
-            }
 
-            return jobResponse.Message;
+            // okay, he is not able to communicate.
+            this.socketHandler.Close();
 
-            //throw new AgentNotReachableException("The agent could not be found!");
+            return RenderMessage.NotSupported;
         }
 
         private void SocketHandler_OnConnectionLost()

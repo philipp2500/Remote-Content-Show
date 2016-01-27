@@ -1,6 +1,7 @@
 ﻿using Agent.Network;
 using System;
 using System.ComponentModel;
+using System.Net.Sockets;
 using System.Windows;
 
 namespace Agent
@@ -78,7 +79,7 @@ namespace Agent
 
                 this.ShowNotification("RCS Agent gestartet", "Warte auf Verbindungsanfragen...");
             }
-            catch
+            catch (SocketException)
             {
                 MessageBox.Show(
                     "Konnte Agent nicht starten.\n" +
