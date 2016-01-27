@@ -13,7 +13,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -32,11 +34,9 @@ namespace DisplayClient
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page, INotifyPropertyChanged
+    public sealed partial class MainPage : Page
     {
         private Server adminListener;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private Show currentShow;
 
@@ -45,34 +45,8 @@ namespace DisplayClient
             this.InitializeComponent();
 
             string path = PersistenceManager.GetWriteablePath();
-            EventsManager.ClearLog();
 
-            /*ContentDisplay display1 = new ContentDisplay();
-            //display1.Width = 800;
-            //display1.Height = 800;
-
-            display1.DisplayManager = new ContentDisplayManager(new JobWindowList(), new List<Agent>()) { DisplayDispatcher = display1.Dispatcher };
-
-            this.LayoutContainer.Children.Add(display1);*/
-
-            Job_Configuration config = new Job_Configuration();
-            config.Name = "testconfig1";
-            config.Layout = CustomWindow.GetTestLayout(); // WindowLayout.DoubleWindowVertikalSplitted;
-            config.Agents.Add(new Agent() { IP = "10.101.100.33" });
-            config.Agents.Add(new Agent() { IP = "10.101.150.11" });
-
-            List<Job> jobs1 = new List<Job>();
-            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
-            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new FileResource() { Name = "test.pptx", Path = @"C:\Temp\test.pptx" } });
-            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
-
-            List<Job> jobs2 = new List<Job>();
-            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
-            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new FileResource() { Name ="excel.xlsx", Path = @"C:\Temp\excel.xlsx" } });
-            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 3, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
-
-            config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
-            config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
+            Job_Configuration config = this.GetTestConfiguration();
 
             PersistenceManager.SaveJobConfiguration(config);
 
@@ -97,6 +71,30 @@ namespace DisplayClient
             this.SizeChanged += MainPage_SizeChanged;
         }
 
+        private Job_Configuration GetTestConfiguration()
+        {
+            Job_Configuration config = new Job_Configuration();
+            config.Name = "testconfig1";
+            config.Layout = CustomWindow.GetTestLayout(); // WindowLayout.DoubleWindowVertikalSplitted;
+            config.Agents.Add(new Agent() { IP = "10.101.150.19" });
+            config.Agents.Add(new Agent() { IP = "10.101.150.11" });
+
+            List<Job> jobs1 = new List<Job>();
+            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 1, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
+            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new FileResource() { Name = "test.pptx", Path = @"C:\Temp\test.pptx" } });
+            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 3, Resource = new WebResource() { Path = "http://www.google.at" } });
+
+            List<Job> jobs2 = new List<Job>();
+            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 1, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
+            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new FileResource() { Name = "excel.xlsx", Path = @"C:\Temp\excel.xlsx" } });
+            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 3, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
+
+            config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
+            config.JobLists.Add(2, new JobWindowList() { Looping = true, WindowLayoutNumber = 2, Jobs = jobs2 });
+
+            return config;
+        }
+
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (this.currentShow != null)
@@ -107,19 +105,28 @@ namespace DisplayClient
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            // check image
             BitmapImage img = await PersistenceManager.GetConfigurationImage();
 
-            if (img != null)
+            if (img == null)
             {
-                this.rootGrid.Background = new ImageBrush() { ImageSource = img };
+                string noconfPath = Path.Combine(await PersistenceManager.GetAssetsPath(), "NoConf.PNG");
+
+                img = new BitmapImage(new Uri(noconfPath));
+
+                PersistenceManager.SaveConfigurationImage(PersistenceManager.GetFile(noconfPath));
             }
-            
+
+            this.rootGrid.Background = new ImageBrush() { ImageSource = img };
+
+            // start listener
             this.adminListener = new Server(NetworkConfiguration.PortPi);
             this.adminListener.OnConnectionReceived += AdminListener_OnConnectionReceived;
 
             this.adminListener.Start();
 
-            Job_Configuration configuration = null;// = PersistenceManager.GetJobConfiguration();
+            // check saved configuration
+            Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
 
             if (configuration != null)
             {
@@ -139,16 +146,11 @@ namespace DisplayClient
             }
         }
 
-        public ImageBrush ConfigImage
+        public  ImageBrush ConfigImage
         {
             get
             {
                 ImageBrush brush = new ImageBrush();
-
-                //BitmapImage bmg = PersistenceManager.GetConfigurationImage();
-                
-                //brush.ImageSource = PersistenceManager.GetConfigurationImage();
-
                 return brush;
             }
         }
@@ -233,7 +235,7 @@ namespace DisplayClient
 
                     this.LayoutContainer.Children.Clear();
 
-                    EventsManager.Log(Job_EventType.Aborted, null, "Job " + jobID.ToString() + " has been cancelled. Reason: " + reason.ToString());
+                    EventsManager.Log(Job_EventType.Aborted, null, "Job " + jobID.ToString() + " has been canceled. Reason: " + reason.ToString());
                 }
             });
         }

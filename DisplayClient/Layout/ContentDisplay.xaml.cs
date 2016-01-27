@@ -134,6 +134,7 @@ namespace DisplayClient
                 }
 
                 this.currentDisplayControl.Visibility = Visibility.Collapsed;
+                this.currentDisplayControl = null;
             }
 
             Debug.WriteLine("abort display");

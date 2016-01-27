@@ -37,7 +37,7 @@ namespace Agent
         /// (Some applications like PowerPoint show a startup window which is closed later on when the actual window is ready,
         /// and therefore the new window would never be captured.)
         /// </summary>
-        private const int PROCESS_WINDOW_UPDATE_INTERVAL = 10000;
+        private const int PROCESS_WINDOW_UPDATE_INTERVAL = 2500;
         /// <summary>
         /// The number of milliseconds to wait for a process to startup before an exception is thrown.
         /// </summary>

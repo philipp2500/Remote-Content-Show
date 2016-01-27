@@ -2,6 +2,7 @@
 using Remote_Content_Show_Protocol;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,12 @@ namespace DisplayClient
         }
 
         public Agent Agent
+        {
+            get;
+            private set;
+        }
+
+        public bool Working
         {
             get;
             private set;
@@ -96,6 +103,8 @@ namespace DisplayClient
                     this.socketHandler.OnConnectionLost += SocketHandler_OnConnectionLost;
                     this.socketHandler.Start();
 
+                    this.Working = true;
+
                     this.lastKeepAlive = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                     this.KeepAlive();
                 }
@@ -111,6 +120,8 @@ namespace DisplayClient
 
         private void SocketHandler_OnConnectionLost()
         {
+            this.Working = false;
+
             if (this.OnAgentGotUnreachable != null)
             {
                 this.OnAgentGotUnreachable(this);
@@ -119,6 +130,8 @@ namespace DisplayClient
 
         public void CancelRenderJob()
         {
+            this.Working = false;
+
             RCS_Render_Job_Cancel cancelRequest = new RCS_Render_Job_Cancel(CancelRenderJobReason.Manually, Configuration.RenderJobID, RemoteType.Client);
 
             this.socketHandler.SendMessage(MessageCode.MC_Render_Job_Cancel, Remote_Content_Show_MessageGenerator.GetMessageAsByte(cancelRequest));
@@ -132,21 +145,25 @@ namespace DisplayClient
         {
             Task.Factory.StartNew(() =>
             {
-                Task.Delay(1000 * 5);
-
-                if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive <= 5000)
+                while (this.Working)
                 {
-                    RCS_Alive alive = new RCS_Alive(RemoteType.Client);
+                    Task.Delay(1000 * 10);
 
-                    this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
-                }
-                else
-                {
-                    this.socketHandler.Close();
-
-                    if (this.OnAgentGotUnreachable != null)
+                    if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive <= 10000)
                     {
-                        this.OnAgentGotUnreachable(this);
+                        RCS_Alive alive = new RCS_Alive(RemoteType.Client);
+
+                        this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
+                    }
+                    else
+                    {
+                        this.Working = false;
+                        this.socketHandler.Close();
+
+                        if (this.OnAgentGotUnreachable != null)
+                        {
+                            this.OnAgentGotUnreachable(this);
+                        }
                     }
                 }
             });
@@ -163,6 +180,8 @@ namespace DisplayClient
             else if (code == MessageCode.MC_Render_Job_Result)
             {
                 RCS_Render_Job_Result result = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Render_Job_Result>(bytes);
+
+                //Debug.Write("result size: " + bytes.Length);
 
                 if (this.OnResultReceived != null)
                 {
