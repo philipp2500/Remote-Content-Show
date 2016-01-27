@@ -7,9 +7,9 @@ namespace Agent.Network
 {
     public class Server
     {
-        public event EventHandler OnClientConnected;
-        public event EventHandler OnClientDisconnected;
-        public event EventHandler OnClientKeepAliveOmitted;
+        public event EventHandler<ConnectionEventArgs> OnClientConnected;
+        public event EventHandler<ConnectionEventArgs> OnClientDisconnected;
+        public event EventHandler<ConnectionEventArgs> OnClientKeepAliveOmitted;
 
         private List<ClientHandler> clients = new List<ClientHandler>();
         private TcpListener listener = null;
@@ -84,7 +84,7 @@ namespace Agent.Network
 
                 if (this.OnClientConnected != null)
                 {
-                    this.OnClientConnected(this, EventArgs.Empty);
+                    this.OnClientConnected(this, new ConnectionEventArgs(client.RemoteEndPoint));
                 }
 
                 this.listener.BeginAcceptTcpClient(this.AcceptTcpClientCallback, null);
@@ -96,24 +96,26 @@ namespace Agent.Network
             }
         }
         
-        private void Client_OnClientDisconnected(object sender, EventArgs e)
+        private void Client_OnClientDisconnected(object sender, ConnectionEventArgs e)
         {
-            lock(this.clients)
+            ClientHandler client = (ClientHandler)sender;
+
+            lock (this.clients)
             {
-                this.clients.Remove((ClientHandler)sender);
+                this.clients.Remove(client);
             }
 
             if (this.OnClientDisconnected != null)
             {
-                this.OnClientDisconnected(this, EventArgs.Empty);
+                this.OnClientDisconnected(this, e);
             }
         }
 
-        private void Client_OnKeepAliveOmitted(object sender, EventArgs e)
+        private void Client_OnKeepAliveOmitted(object sender, ConnectionEventArgs e)
         {
             if (this.OnClientKeepAliveOmitted != null)
             {
-                this.OnClientKeepAliveOmitted(this, EventArgs.Empty);
+                this.OnClientKeepAliveOmitted(this, e);
             }
         }
     }

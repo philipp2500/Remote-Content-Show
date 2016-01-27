@@ -16,6 +16,10 @@ namespace Agent
         private bool notificationsEnabled = false;
         private Server server = null;
         private System.Windows.Forms.NotifyIcon notifyIcon = null;
+
+        /// <summary>
+        /// The size of the process preview images.
+        /// </summary>
         private System.Drawing.Size pictureSize = new System.Drawing.Size(100, 100);
         
         public MainWindow()
@@ -75,7 +79,7 @@ namespace Agent
                 this.btnListen.Content = "Warte auf Verbindungsanfragen...";
                 this.btnListen.IsEnabled = false;
 
-                this.lstOutput.Items.Add($"{DateTime.Now.ToString(TIME_FORMAT)} - Agent gestartet.");
+                this.lstOutput.Items.Add($"{DateTime.Now.ToString(TIME_FORMAT)} - Agent gestartet (Port {Remote_Content_Show_Protocol.NetworkConfiguration.PortAgent}).");
 
                 this.ShowNotification("RCS Agent gestartet", "Warte auf Verbindungsanfragen...");
             }
@@ -112,37 +116,37 @@ namespace Agent
             this.StartServer();
         }
 
-        private void Server_OnClientConnected(object sender, EventArgs e)
+        private void Server_OnClientConnected(object sender, ConnectionEventArgs e)
         {
             string time = DateTime.Now.ToString(TIME_FORMAT);
 
             this.lstOutput.Dispatcher.Invoke(() =>
             {
-                this.lstOutput.Items.Add($"{time} - Ein Client hat eine Verbindung hergestellt.");
+                this.lstOutput.Items.Add($"{time} - Ein Client hat eine Verbindung hergestellt ({e.RemoteEndPoint}).");
             });
 
             this.ShowNotification("Neuer Client", $"{time} - Ein Client hat eine Verbindung hergestellt.");
         }
 
-        private void Server_OnClientDisconnected(object sender, EventArgs e)
+        private void Server_OnClientDisconnected(object sender, ConnectionEventArgs e)
         {
             string time = DateTime.Now.ToString(TIME_FORMAT);
 
             this.lstOutput.Dispatcher.Invoke(() =>
             {
-                this.lstOutput.Items.Add($"{time} - Die Verbindung zu einem Client wurde getrennt.");
+                this.lstOutput.Items.Add($"{time} - Die Verbindung zu einem Client wurde getrennt ({e.RemoteEndPoint}).");
             });
 
             this.ShowNotification("Client getrennt", $"{time} - Die Verbindung zu einem Client wurde getrennt.");
         }
 
-        private void Server_OnClientKeepAliveOmitted(object sender, EventArgs e)
+        private void Server_OnClientKeepAliveOmitted(object sender, ConnectionEventArgs e)
         {
             string time = DateTime.Now.ToString(TIME_FORMAT);
 
             this.lstOutput.Dispatcher.Invoke(() =>
             {
-                this.lstOutput.Items.Add($"{time} - Ein Client hat zu lange keine Keep-Alive-Nachrichten gesendet. Die Verbindung wird abgebrochen.");
+                this.lstOutput.Items.Add($"{time} - Ein Client ({e.RemoteEndPoint}) hat zu lange keine Keep-Alive-Nachrichten gesendet. Die Verbindung wird abgebrochen.");
             });
 
             this.ShowNotification("Client getrennt", $"{time} - Ein Client hat zu lange keine Keep-Alives gesendet.");
