@@ -106,11 +106,6 @@ namespace Agent.Network
 
             try { this.client.Close(); }
             catch { }
-
-            if (this.OnClientDisconnected != null)
-            {
-                this.OnClientDisconnected(this, new ConnectionEventArgs(this.RemoteEndPoint));
-            }
         }
 
         /// <summary>
@@ -204,6 +199,11 @@ namespace Agent.Network
             catch (IOException)
             {
                 this.Stop();
+            }
+
+            if (this.OnClientDisconnected != null)
+            {
+                this.OnClientDisconnected(this, new ConnectionEventArgs(this.RemoteEndPoint));
             }
         }
 
@@ -443,7 +443,7 @@ namespace Agent.Network
                 {
                     this.OnKeepAliveOmitted(this, new ConnectionEventArgs(this.RemoteEndPoint));
                 }
-
+                
                 this.Stop();
             }
         }
