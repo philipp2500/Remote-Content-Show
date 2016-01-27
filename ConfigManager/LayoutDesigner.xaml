@@ -30,12 +30,12 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0" FontWeight="Bold">Name: </Label>
-        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="NamedesLayouts"></TextBox>
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Name="NamedesLayouts"></TextBox>
         
         <Label FontWeight="Bold" Grid.Row="0"  Grid.Column="2" HorizontalAlignment="Right">Farbe: </Label>
         <xctk:ColorPicker Grid.Row="0"  Grid.Column="3" Name="ColorPi" Width="80" ColorMode="ColorCanvas" UsingAlphaChannel="False" ShowAdvancedButton="False" SelectedColor="White" SelectedColorChanged="ColorPi_SelectedColorChanged"></xctk:ColorPicker>
 
-        <ItemsControl Cursor="Cross" ItemsSource="{Binding}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="3" Name="Layoutwindow" Background="White" MouseLeftButtonDown="Layoutwindow_MouseLeftButtonDown" MouseLeftButtonUp="Layoutwindow_MouseLeftButtonUp" MouseMove="Layoutwindow_MouseMove" SizeChanged="Layoutwindow_SizeChanged" >
+        <ItemsControl Cursor="Cross" ItemsSource="{Binding}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="3" Name="Layoutwindow" Background="White" MouseLeftButtonDown="Layoutwindow_MouseLeftButtonDown" MouseMove="Layoutwindow_MouseMove" SizeChanged="Layoutwindow_SizeChanged" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas />

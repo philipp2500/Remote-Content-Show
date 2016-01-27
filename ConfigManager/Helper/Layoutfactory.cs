@@ -41,13 +41,22 @@ namespace ConfigManager
             erg.Add(new WindowLayoutVM(wl4));
 
             WindowLayout wl5 = new WindowLayout();
-            wl5.Name = "Test";
-            wl5.Items.Add(new LayoutItem(0.1, 0.1, 0.2, 0.35, 1));
-            wl5.Items.Add(new LayoutItem(0.1, 0.55, 0.2, 0.35, 2));
-            wl5.Items.Add(new LayoutItem(0.4, 0.1, 0.2, 0.7, 3));
-            wl5.Items.Add(new LayoutItem(0.7, 0.1, 0.2, 0.8, 4));
+            wl5.Name = "Four Fields";
+            wl5.Items.Add(new LayoutItem(0, 0, 0.5, 0.5, 1));
+            wl5.Items.Add(new LayoutItem(0.5, 0, 0.5, 0.5, 2));
+            wl5.Items.Add(new LayoutItem(0, 0.5, 0.5, 0.5, 3));
+            wl5.Items.Add(new LayoutItem(0.5, 0.5, 0.5, 0.5, 4));
             wl5.Color = new byte[] { 255, 0, 0, 0 };
             erg.Add(new WindowLayoutVM(wl5));
+
+            WindowLayout wl6 = new WindowLayout();
+            wl6.Name = "Complex Layout";
+            wl6.Items.Add(new LayoutItem(0.1, 0.1, 0.2, 0.35, 1));
+            wl6.Items.Add(new LayoutItem(0.1, 0.55, 0.2, 0.35, 2));
+            wl6.Items.Add(new LayoutItem(0.4, 0.1, 0.2, 0.8, 3));
+            wl6.Items.Add(new LayoutItem(0.7, 0.1, 0.2, 0.8, 4));
+            wl6.Color = new byte[] { 255, 0, 0, 0 };
+            erg.Add(new WindowLayoutVM(wl6));
 
 
             return erg;

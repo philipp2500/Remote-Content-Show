@@ -104,10 +104,6 @@ namespace ConfigManager
         {
             this.startPoint = e.GetPosition(this.Layoutwindow);
             this.items.Add(new LayoutItemVM() { Item = new LayoutItem(0, 0, 0, 0, index), HeightParent = this.Layoutwindow.ActualHeight, WidthParent = this.Layoutwindow.ActualWidth });
-        }
-
-        private void Layoutwindow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
             index++;
         }
 

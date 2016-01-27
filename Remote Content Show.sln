@@ -15,6 +15,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigManager", "ConfigMana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageHandler", "ImageHandler\ImageHandler.csproj", "{425647EA-49D0-47C2-B680-FADE47D46A90}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website IT Services", "Website IT Services\", "{45B0E540-A525-4BFC-917A-043F6BE7176B}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_16139"
+		Debug.AspNetCompiler.PhysicalPath = "Website IT Services\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_16139\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_16139"
+		Release.AspNetCompiler.PhysicalPath = "Website IT Services\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_16139\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "16139"
+		SlnRelativePath = "Website IT Services\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +148,22 @@ Global
 		{425647EA-49D0-47C2-B680-FADE47D46A90}.Release|x64.Build.0 = Release|Any CPU
 		{425647EA-49D0-47C2-B680-FADE47D46A90}.Release|x86.ActiveCfg = Release|Any CPU
 		{425647EA-49D0-47C2-B680-FADE47D46A90}.Release|x86.Build.0 = Release|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|ARM.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|x64.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Debug|x86.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|ARM.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|ARM.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|x64.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|x64.Build.0 = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|x86.ActiveCfg = Debug|Any CPU
+		{45B0E540-A525-4BFC-917A-043F6BE7176B}.Release|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
