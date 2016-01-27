@@ -113,9 +113,12 @@ namespace DisplayClient
         private void Display_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             ContentDisplay display = (ContentDisplay)sender;
-
-            display.DisplayManager.SetRenderSize(new Size(display.ActualWidth, display.ActualHeight));
-            display.DisplayManager.Start();
+            
+            if (!display.DisplayManager.Running)
+            {
+                display.DisplayManager.SetRenderSize(new Size(display.ActualWidth, display.ActualHeight));
+                display.DisplayManager.Start();
+            }
         }
 
         public void Cancel()

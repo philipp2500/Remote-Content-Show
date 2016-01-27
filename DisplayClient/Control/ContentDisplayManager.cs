@@ -30,8 +30,6 @@ namespace DisplayClient
 
         private Dictionary<Job, AgentSelector> agentSelectors;
 
-        private bool canceled;
-
         // TODO: remove it
         private Guid jobID;
 
@@ -51,7 +49,13 @@ namespace DisplayClient
                 this.agentSelectors[job] = selector;
             }
 
-            this.canceled = false;
+            this.Running = false;
+        }
+
+        public bool Running
+        {
+            get;
+            private set;
         }
 
         private void Selector_OnAgentNotReachable(AgentSelector sender, Agent agent)
@@ -120,7 +124,9 @@ namespace DisplayClient
         }
 
         public void Start()
-        {            
+        {
+            this.Running = true;
+
             if (jobForWindow != null)
             {
                 Task.Factory.StartNew(async () =>
@@ -133,21 +139,24 @@ namespace DisplayClient
                         {
                             this.currentlyTreatedJob = job;
 
-                            this.RunJob(job);
+                            await Task.Factory.StartNew(() =>
+                            {
+                                this.RunJob(job);
+                            });
 
                             await Task.Delay(job.Duration * 1000);
 
                             this.CancelJob(job);
                         }
                     }
-                    while (jobForWindow.Looping && !this.canceled);
+                    while (jobForWindow.Looping && this.Running);
                 });
             }
         }
 
         public void Cancel()
         {
-            this.canceled = true;
+            this.Running = false;
             this.CancelJob(this.currentlyTreatedJob);
 
             this.currentlyTreatedJob = null;
@@ -281,11 +290,20 @@ namespace DisplayClient
             }
             else
             {
-                worker.OnResultReceived += Worker_OnResultReceived;
-                worker.OnMessageReceived += Worker_OnMessageReceived;
-                worker.OnAgentGotUnreachable += Worker_OnAgentGotUnreachable;
+                Debug.WriteLine("Found agent for job " + job.Resource.Name);
 
-                this.workingAgents.Add(worker);
+                if (worker.Configuration.JobToDo.OrderingNumber == this.currentlyTreatedJob.OrderingNumber)
+                {
+                    worker.OnResultReceived += Worker_OnResultReceived;
+                    worker.OnMessageReceived += Worker_OnMessageReceived;
+                    worker.OnAgentGotUnreachable += Worker_OnAgentGotUnreachable;
+
+                    this.workingAgents.Add(worker);
+                }
+                else
+                {
+                    worker.CancelRenderJob();
+                }
             }
         }
 

@@ -147,15 +147,21 @@ namespace DisplayClient
             {
                 while (this.Working)
                 {
+                    RCS_Alive alive = new RCS_Alive(RemoteType.Client);
+
+                    this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
+
+                    Task.Delay(1000 * 5);
+                }
+            });
+
+            Task.Factory.StartNew(() =>
+            {
+                while (this.Working)
+                {
                     Task.Delay(1000 * 10);
 
-                    if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive <= 10000)
-                    {
-                        RCS_Alive alive = new RCS_Alive(RemoteType.Client);
-
-                        this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
-                    }
-                    else
+                    if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive > 10000)
                     {
                         this.Working = false;
                         this.socketHandler.Close();

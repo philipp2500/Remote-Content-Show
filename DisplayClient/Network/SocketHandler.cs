@@ -8,6 +8,7 @@ using Remote_Content_Show_Protocol;
 using Windows.Storage.Streams;
 using Remote_Content_Show_Container;
 using System.Threading;
+using System.Diagnostics;
 
 namespace DisplayClient
 {
