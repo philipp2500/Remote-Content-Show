@@ -4,6 +4,7 @@ using Remote_Content_Show_Container;
 using Remote_Content_Show_Protocol;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,8 @@ namespace DisplayClient
 
         private Dictionary<Job, AgentSelector> agentSelectors;
 
+        private bool canceled;
+
         // TODO: remove it
         private Guid jobID;
 
@@ -47,6 +50,8 @@ namespace DisplayClient
 
                 this.agentSelectors[job] = selector;
             }
+
+            this.canceled = false;
         }
 
         private void Selector_OnAgentNotReachable(AgentSelector sender, Agent agent)
@@ -135,13 +140,14 @@ namespace DisplayClient
                             this.CancelJob(job);
                         }
                     }
-                    while (jobForWindow.Looping);
+                    while (jobForWindow.Looping && !this.canceled);
                 });
             }
         }
 
         public void Cancel()
         {
+            this.canceled = true;
             this.CancelJob(this.currentlyTreatedJob);
 
             this.currentlyTreatedJob = null;

@@ -58,6 +58,10 @@ namespace DisplayClient
 
             this.socketHandler.SendMessage(MessageCode.MC_Event_List_Response, Remote_Content_Show_MessageGenerator.GetMessageAsByte(response));
 
+            byte[] deppen = Remote_Content_Show_MessageGenerator.GetMessageAsByte(response);
+
+            RCS_Event_List_Response deppen2 = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Event_List_Response>(deppen);
+
             this.socketHandler.Close();
         }
 
