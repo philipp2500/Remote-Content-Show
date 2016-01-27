@@ -194,7 +194,7 @@ namespace Agent.Network
 
                             break;
                         case MessageCode.MC_Alive:
-							// no further handling required
+                            this.lastKeepAliveTime = DateTime.Now;
                             break;
                     }
                 }
