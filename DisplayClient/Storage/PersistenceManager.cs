@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace DisplayClient.Storage
@@ -24,6 +25,15 @@ namespace DisplayClient.Storage
             Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
             return storageFolder.Path;
+        }
+
+        public async static Task<string> GetAssetsPath()
+        {
+            StorageFolder appInstalledFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFolder assets = await appInstalledFolder.GetFolderAsync("Assets");
+            var files = await assets.GetFilesAsync();
+
+            return assets.Path;
         }
 
         public static void SaveJobConfiguration(Job_Configuration configuration)
