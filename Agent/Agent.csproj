@@ -67,6 +67,7 @@
     </ApplicationDefinition>
     <Compile Include="CaptureFinishEventArgs.cs" />
     <Compile Include="Network\ClientHandler.cs" />
+    <Compile Include="Network\ConnectionEventArgs.cs" />
     <Compile Include="Network\ListenerThreadArgs.cs" />
     <Compile Include="Network\Server.cs" />
     <Compile Include="ProcessStartupException.cs" />

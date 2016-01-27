@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Agent.Network
 {
@@ -36,13 +37,13 @@ namespace Agent.Network
         /// <summary>
         /// The event fired when the connected client disconnects or this <see cref="ClientHandler"/> is stopped.
         /// </summary>
-        public event EventHandler OnClientDisconnected;
+        public event EventHandler<ConnectionEventArgs> OnClientDisconnected;
 
         /// <summary>
         /// The event fired when no <see cref="RCS_Alive"/> messages were received and the connection was cut.
         /// <seealso cref="ClientHandler.ALLOWED_KEEP_ALIVE_MISSES"/>.
         /// </summary>
-        public event EventHandler OnKeepAliveOmitted;
+        public event EventHandler<ConnectionEventArgs> OnKeepAliveOmitted;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientHandler"/> class.
@@ -54,7 +55,15 @@ namespace Agent.Network
         {
             this.client = client;
             this.stream = this.client.GetStream();
+            this.RemoteEndPoint = this.client.Client.RemoteEndPoint;
+            
             this.runningRenderJobs = new Dictionary<Guid, ScreenCapture>();
+        }
+
+        public EndPoint RemoteEndPoint
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -97,11 +106,6 @@ namespace Agent.Network
 
             try { this.client.Close(); }
             catch { }
-
-            if (this.OnClientDisconnected != null)
-            {
-                this.OnClientDisconnected(this, EventArgs.Empty);
-            }
         }
 
         /// <summary>
@@ -195,6 +199,11 @@ namespace Agent.Network
             catch (IOException)
             {
                 this.Stop();
+            }
+
+            if (this.OnClientDisconnected != null)
+            {
+                this.OnClientDisconnected(this, new ConnectionEventArgs(this.RemoteEndPoint));
             }
         }
 
@@ -432,9 +441,9 @@ namespace Agent.Network
             {
                 if (this.OnKeepAliveOmitted != null)
                 {
-                    this.OnKeepAliveOmitted(this, EventArgs.Empty);
+                    this.OnKeepAliveOmitted(this, new ConnectionEventArgs(this.RemoteEndPoint));
                 }
-
+                
                 this.Stop();
             }
         }
