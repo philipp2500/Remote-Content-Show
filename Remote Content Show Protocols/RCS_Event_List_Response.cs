@@ -11,12 +11,12 @@ namespace Remote_Content_Show_Protocol
 {
     public class RCS_Event_List_Response : Remote_Content_Show_Message
     {
-        public RCS_Event_List_Response(Event_List event_List, RemoteType remote) : base(remote)
+        public RCS_Event_List_Response(Event_List eventList, RemoteType remote) : base(remote)
         {
-            this.Event_List = event_List;
+            this.EventList = eventList;
         }
 
-        public Event_List Event_List
+        public Event_List EventList
         {
             get;
             private set;

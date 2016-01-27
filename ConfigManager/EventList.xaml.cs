@@ -47,7 +47,7 @@ namespace ConfigManager
                     RCS_Event_List_Response rcsELR = Remote_Content_Show_MessageGenerator.GetMessageFromByte<RCS_Event_List_Response>(e.MessageData);
                     this.Dispatcher.Invoke(() =>
                         {
-                            foreach (Event ev in rcsELR.Event_List.List)
+                            foreach (Event ev in rcsELR.EventList.List)
                             {
                                 this.eventItems.Add(new EventItemVM(ev));
                             }
@@ -77,11 +77,11 @@ namespace ConfigManager
                     }
                     else
                     {
-                        NetworkConnection netC = this.netmanager.ConnectTo(ips[0], NetworkConfiguration.PortPi);
+                        NetworkConnection netC = this.netmanager.ConnectToRead(ips[0], NetworkConfiguration.PortPi);
                         byte[] messageData = Remote_Content_Show_MessageGenerator.GetMessageAsByte(new RCS_Event_List_Request(RemoteType.Configurator));
                         netC.Write(messageData, MessageCode.MC_Event_List_Request);
 
-                        this.ErrorListBox.Items.Clear();
+                        this.eventItems.Clear();
                         this.IpInput.Text = string.Empty;
                         eventItems = new ObservableCollection<EventItemVM>();
                     }

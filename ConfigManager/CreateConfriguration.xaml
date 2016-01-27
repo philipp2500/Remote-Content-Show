@@ -26,7 +26,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBox Name="IptosendJob" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"></TextBox>
-        <Button Grid.Row="0" Grid.Column="2" Margin="5" Name="SendJobB" Click="SendJobB_Click" >Send Job</Button>
+        <Button Grid.Row="0" Grid.Column="2" Margin="5" Name="SendJobB" Click="SendJobB_Click" >Bild Senden</Button>
         <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="ToPiSendList">
         </ListView>
 

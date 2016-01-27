@@ -47,6 +47,7 @@ namespace ConfigManager
             if (!string.IsNullOrWhiteSpace(this.NamedesLayouts.Text))
             {
                 SaveFileDialog sfd = new SaveFileDialog();
+                sfd.FileName = this.NamedesLayouts.Text;
                 sfd.AddExtension = true;
                 sfd.DefaultExt = "rcs";
                 sfd.Filter = "Remote Control Layout (*.rcl)|*.rcl|All files (*.*)|*.*";

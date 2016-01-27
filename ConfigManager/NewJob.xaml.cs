@@ -237,6 +237,7 @@ namespace ConfigManager
         private void SpeicherDenJob_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = this.job.Name;
             sfd.AddExtension = true;
             sfd.DefaultExt = "rcs";
             sfd.Filter = "Remote Control Show Job (*.rcs)|*.rcs|All files (*.*)|*.*";
