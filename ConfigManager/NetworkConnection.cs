@@ -102,13 +102,19 @@ namespace ConfigManager
             {
                 if (this.run)
                 {
+                    List<byte> erg = new List<byte>();
                     byte[] data = new byte[Remote_Content_Show_Header.HeaderLength];
                     this.stream.Read(data, 0, data.Length);
                     Remote_Content_Show_Header header = Remote_Content_Show_Header.FromByte(data);
 
-                    data = new byte[header.Length];
-                    this.stream.Read(data, 0, data.Length);
-                    this.FireOnMessageReceived(data, header.Code, this.Ip);
+                    while (erg.Count() < header.Length)
+                    {
+                        data = new byte[header.Length];
+                        int selected = this.stream.Read(data, 0, data.Length);
+                        erg.AddRange(data.Where((x, i) => i < selected));
+                    }
+
+                    this.FireOnMessageReceived(erg.ToArray(), header.Code, this.Ip);
                 }                
             }
             catch

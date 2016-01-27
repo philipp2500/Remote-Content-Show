@@ -84,9 +84,12 @@ namespace Agent.Network
         {
             this.args.Exit = true;
 
-            foreach (var job in this.runningRenderJobs.Values)
+            lock (this.runningRenderJobs)
             {
-                job.StopCapture();
+                foreach (var job in this.runningRenderJobs.Values)
+                {
+                    job.StopCapture();
+                }
             }
 
             if (this.keepAliveSendTimer != null)
@@ -191,7 +194,7 @@ namespace Agent.Network
 
                             break;
                         case MessageCode.MC_Alive:
-							// no further handling required
+                            this.lastKeepAliveTime = DateTime.Now;
                             break;
                     }
                 }
@@ -213,15 +216,24 @@ namespace Agent.Network
         /// <param name="cancelRequest">The message containing the canceled render job's GUID.</param>
         private void HandleCancelRequest(RCS_Render_Job_Cancel cancelRequest)
         {
-            if (!this.runningRenderJobs.ContainsKey(cancelRequest.ConcernedRenderJobID))
+            ScreenCapture capturer = null;
+
+            lock (this.runningRenderJobs)
             {
-                return;
+                if (!this.runningRenderJobs.ContainsKey(cancelRequest.ConcernedRenderJobID))
+                {
+                    return;
+                }
+
+                capturer = this.runningRenderJobs[cancelRequest.ConcernedRenderJobID];
             }
 
-            ScreenCapture capturer = this.runningRenderJobs[cancelRequest.ConcernedRenderJobID];
-
             capturer.StopCapture();
-            this.runningRenderJobs.Remove(cancelRequest.ConcernedRenderJobID);
+
+            lock (this.runningRenderJobs)
+            {
+                this.runningRenderJobs.Remove(cancelRequest.ConcernedRenderJobID);
+            }
         }
 
         /// <summary>
@@ -265,7 +277,10 @@ namespace Agent.Network
             capturer.OnCaptureFinished += Capturer_OnCaptureFinished;
             capturer.OnProcessExited += Capturer_OnProcessExited;
 
-            this.runningRenderJobs.Add(jobRequest.Configuration.RenderJobID, capturer);
+            lock (this.runningRenderJobs)
+            {
+                this.runningRenderJobs.Add(jobRequest.Configuration.RenderJobID, capturer);
+            }
 
             try
             {
@@ -347,7 +362,10 @@ namespace Agent.Network
         /// </summary>
         private void Capturer_OnProcessExited(object sender, CaptureFinishEventArgs e)
         {
-            this.runningRenderJobs.Remove(e.RenderJobId);
+            lock (this.runningRenderJobs)
+            {
+                this.runningRenderJobs.Remove(e.RenderJobId);
+            }
 
             var msg = new RCS_Render_Job_Message(RenderMessage.ProcessExited, e.RenderJobId, RemoteType.Agent);
 
@@ -365,7 +383,10 @@ namespace Agent.Network
         /// </summary>
         private void Capturer_OnCaptureFinished(object sender, CaptureFinishEventArgs e)
         {
-            this.runningRenderJobs.Remove(e.RenderJobId);
+            lock (this.runningRenderJobs)
+            {
+                this.runningRenderJobs.Remove(e.RenderJobId);
+            }
         }
 
         /// <summary>

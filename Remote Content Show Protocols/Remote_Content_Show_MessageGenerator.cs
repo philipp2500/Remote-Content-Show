@@ -10,6 +10,10 @@ namespace Remote_Content_Show_Protocol
 {
     public static class Remote_Content_Show_MessageGenerator
     {
+        public static string toJason(object message)
+        {
+            return JsonConvert.SerializeObject(message);
+        }
 
         public static byte[] GetMessageAsByte(object message)
         {
