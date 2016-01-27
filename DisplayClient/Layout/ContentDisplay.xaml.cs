@@ -2,10 +2,12 @@
 using Remote_Content_Show_Container;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Core;
@@ -21,17 +23,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace DisplayClient
 {
-    public partial class ContentDisplay : UserControl
+    public partial class ContentDisplay : UserControl, INotifyPropertyChanged
     {
         private ContentDisplayManager manager;
 
         private FrameworkElement currentDisplayControl;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ContentDisplay()
         {
             this.InitializeComponent();
 
             this.currentDisplayControl = null;
+            this.DataContext = this;
+            this.Loaded += ContentDisplay_Loaded;
         }
 
         public ContentDisplayManager DisplayManager
@@ -57,10 +63,19 @@ namespace DisplayClient
             get
             {
                 ImageBrush brush = new ImageBrush();
-                brush.ImageSource = PersistenceManager.GetConfigurationImage();
 
                 return brush;
             }
+        }
+
+        private async void ContentDisplay_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.rootGrid.Background = new ImageBrush() { ImageSource = await PersistenceManager.GetConfigurationImage() };
+        }
+
+        public async void UpdateConfigImage()
+        {
+            this.rootGrid.Background = new ImageBrush() { ImageSource = await PersistenceManager.GetConfigurationImage() };
         }
 
         private void Manager_OnJobResultDisplayRequested(Windows.UI.Xaml.Media.Imaging.BitmapImage image)

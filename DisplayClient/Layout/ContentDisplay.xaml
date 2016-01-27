@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Background="{Binding ConfigImage}">
+    <Grid Name="rootGrid">
         <Image Grid.Row="0" Name="DisplayingJobResult" Visibility="Collapsed"></Image>
         <Image Grid.Row="1" Name="DisplayingImage" Visibility="Collapsed"></Image>
         <WebView Name="DisplayingWebView" Visibility="Collapsed"></WebView>

@@ -7,10 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Name="rootGrid" Background="Black">
+    <Grid Name="rootGrid">
         <!--<Button Content="aölksdfasfd" Width="200" Height="50"></Button>-->
-        <Image Source="{Binding EmptyImage}"></Image>
-        <Grid  Name="LayoutContainer" Background="{Binding ConfigImage}">
+        <Grid  Name="LayoutContainer">
         </Grid>
     </Grid>
 </Page>
