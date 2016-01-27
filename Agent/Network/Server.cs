@@ -51,13 +51,16 @@ namespace Agent.Network
             try { this.listener.Stop(); }
             catch { }
             
-            foreach (ClientHandler client in this.clients)
+            lock (this.clients)
             {
-                client.OnClientDisconnected -= this.Client_OnClientDisconnected;
-                client.Stop();
-            }
+                foreach (ClientHandler client in this.clients)
+                {
+                    client.OnClientDisconnected -= this.Client_OnClientDisconnected;
+                    client.Stop();
+                }
 
-            this.clients.Clear();
+                this.clients.Clear();
+            }
         }
         
         /// <summary>
@@ -70,7 +73,11 @@ namespace Agent.Network
                 TcpClient tcpClient = this.listener.EndAcceptTcpClient(ar);
                 ClientHandler client = new ClientHandler(tcpClient);
 
-                this.clients.Add(client);
+                lock (this.clients)
+                { 
+                    this.clients.Add(client);
+                }
+
                 client.OnClientDisconnected += this.Client_OnClientDisconnected;
                 client.OnKeepAliveOmitted += this.Client_OnKeepAliveOmitted;
                 client.Start();
@@ -91,7 +98,10 @@ namespace Agent.Network
         
         private void Client_OnClientDisconnected(object sender, EventArgs e)
         {
-            this.clients.Remove((ClientHandler)sender);
+            lock(this.clients)
+            {
+                this.clients.Remove((ClientHandler)sender);
+            }
 
             if (this.OnClientDisconnected != null)
             {
