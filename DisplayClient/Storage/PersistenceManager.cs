@@ -70,13 +70,29 @@ namespace DisplayClient.Storage
             }
         }
 
-        public static BitmapImage GetConfigurationImage()
+        /// <summary>
+        /// This method must run on the UI thread!!!!!!!!!!!!!!!!!
+        /// </summary>
+        /// <returns></returns>
+        public async static Task<BitmapImage> GetConfigurationImage()
         {
-            string path = Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename);
+            string a = GetWriteablePath();
+            string b = SavedConfigurationImageFilename;
+
+            string path = Path.Combine(a, b);
 
             if (File.Exists(path))
             {
-                return new BitmapImage(new Uri(Path.Combine(GetWriteablePath(), SavedConfigurationImageFilename)));
+                BitmapImage image = new BitmapImage();
+
+                using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(path)))
+                {
+                    await image.SetSourceAsync(ms.AsRandomAccessStream());
+                }
+
+                return image;
+
+                //return new BitmapImage(new Uri(path));
             }
             
             // no image

@@ -12,13 +12,16 @@ namespace DisplayClient
 {
     public class Show
     {
-        private List<ContentDisplayManager> displayManagers;
+        //private List<ContentDisplayManager> displayManagers;
+
+        private List<ContentDisplay> displays;
 
         public Show(Job_Configuration configuration, Size showSize)
         {
             this.Configuration = configuration;
 
-            this.displayManagers = new List<ContentDisplayManager>();
+            //this.displayManagers = new List<ContentDisplayManager>();
+            this.displays = new List<ContentDisplay>();
 
             CustomWindow window = new CustomWindow(this.Configuration.Layout);
 
@@ -64,9 +67,17 @@ namespace DisplayClient
             }
         }
 
+        public void UpdateConfigImage()
+        {
+            foreach (ContentDisplay display in this.displays)
+            {
+                display.UpdateConfigImage();
+            }
+        }
+
         public void Start()
         {
-            this.displayManagers.Clear();
+            this.displays.Clear();
 
             foreach (int windowLayoutID in this.Configuration.JobLists.Keys)
             {
@@ -90,7 +101,7 @@ namespace DisplayClient
                 
                 this.ContentWindow.GetAllDisplays()[windowLayoutID - 1].Children.Add(display);
                 
-                this.displayManagers.Add(manager);
+                this.displays.Add(display);
             }
 
             /*foreach (ContentDisplayManager manager in this.displayManagers)
@@ -109,9 +120,9 @@ namespace DisplayClient
 
         public void Cancel()
         {
-            foreach (ContentDisplayManager manager in this.displayManagers)
+            foreach (ContentDisplay display in this.displays)
             {
-                manager.Cancel();
+                display.DisplayManager.Cancel();
             }
         }
 

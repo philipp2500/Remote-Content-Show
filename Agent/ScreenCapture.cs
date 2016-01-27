@@ -180,7 +180,14 @@ namespace Agent
 
             if (this.selfStartedProcess)
             {
-                this.captureArgs.Process.Kill();
+                try
+                {
+                    this.captureArgs.Process.Kill();
+                }
+                catch
+                {
+                    // process has already exited
+                }
             }
 
             this.captureArgs.Exit = true;
@@ -262,7 +269,7 @@ namespace Agent
 			Process proc = args.Process;
             DateTime windowHandleUpdateTime = DateTime.Now;
             IntPtr windowHandle = proc.MainWindowHandle;
-            DateTime endTime = DateTime.Now.AddSeconds(config.JobToDo.Duration); //TODO sicherstellen, dass duration in sekunden!!!!!!!!!!!!
+            DateTime endTime = DateTime.Now.AddSeconds(config.JobToDo.Duration);
             Bitmap prevImage = new Bitmap(1, 1);
             double actualImageRatio = 0;
             double configImageRatio = config.RenderWidth / (double)config.RenderHeight;

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -104,23 +105,38 @@ namespace DisplayClient
             }
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            BitmapImage img = await PersistenceManager.GetConfigurationImage();
+
+            if (img != null)
+            {
+                this.rootGrid.Background = new ImageBrush() { ImageSource = img };
+            }
+            
             this.adminListener = new Server(NetworkConfiguration.PortPi);
             this.adminListener.OnConnectionReceived += AdminListener_OnConnectionReceived;
 
             this.adminListener.Start();
 
-            Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
+            Job_Configuration configuration = null;// = PersistenceManager.GetJobConfiguration();
 
-            /*if (configuration != null)
+            if (configuration != null)
             {
-                this.currentShow = new Show(configuration);
+                if (this.currentShow != null)
+                {
+                    this.currentShow.Cancel();
+                    this.currentShow = null;
 
-                this.LayoutContainer.Children.Add((UserControl)this.currentShow.ContentWindow);
+                    this.LayoutContainer.Children.Clear();
+                }
+
+                this.currentShow = new Show(configuration, new Size(rootGrid.ActualWidth, rootGrid.ActualHeight));
+
+                this.LayoutContainer.Children.Add(this.currentShow.ContentWindow.GetRoot());
 
                 this.currentShow.Start();
-            }*/
+            }
         }
 
         public ImageBrush ConfigImage
@@ -128,17 +144,12 @@ namespace DisplayClient
             get
             {
                 ImageBrush brush = new ImageBrush();
-                brush.ImageSource = PersistenceManager.GetConfigurationImage();
+
+                //BitmapImage bmg = PersistenceManager.GetConfigurationImage();
+                
+                //brush.ImageSource = PersistenceManager.GetConfigurationImage();
 
                 return brush;
-            }
-        }
-
-        public BitmapImage EmptyImage
-        {
-            get
-            {
-                return PersistenceManager.GetConfigurationImage();
             }
         }
 
@@ -174,14 +185,19 @@ namespace DisplayClient
             sender.SendLocalFilesList(list);
         }
 
-        private void Admin_OnConfigurationImageReceived(byte[] image)
+        private async void Admin_OnConfigurationImageReceived(byte[] image)
         {
             PersistenceManager.SaveConfigurationImage(image);
 
-            if (this.PropertyChanged != null)
+            await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs("ConfigImage"));
-            }
+                this.rootGrid.Background = new ImageBrush() { ImageSource = await PersistenceManager.GetConfigurationImage() };
+                
+                if (this.currentShow != null)
+                {
+                    this.currentShow.UpdateConfigImage();
+                }
+            });
         }
 
         private async void Admin_OnJobConfigurationReceived(Job_Configuration configuration)
@@ -206,15 +222,20 @@ namespace DisplayClient
             });
         }
 
-        private void Admin_OnCancelRequestReceived(Guid jobID, CancelJobReason reason)
+        private async void Admin_OnCancelRequestReceived(Guid jobID, CancelJobReason reason)
         {
-            if (this.currentShow != null)
+            await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                this.currentShow.Cancel();
-                this.currentShow = null;
+                if (this.currentShow != null)
+                {
+                    this.currentShow.Cancel();
+                    this.currentShow = null;
 
-                this.LayoutContainer.Children.Clear();
-            }
+                    this.LayoutContainer.Children.Clear();
+
+                    EventsManager.Log(Job_EventType.Aborted, null, "Job " + jobID.ToString() + " has been cancelled. Reason: " + reason.ToString());
+                }
+            });
         }
 
         private async void Admin_OnEventRequestReceived(ExternalAdmin sender)

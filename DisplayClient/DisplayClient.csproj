@@ -91,6 +91,8 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\clientLogo.png" />
+    <Content Include="Assets\clientLogo.scale-100.png" />
+    <Content Include="Assets\clientLogo.scale-400.png" />
     <Content Include="Assets\mov_bbb2.mp4" />
     <None Include="project.json" />
   </ItemGroup>
