@@ -30,7 +30,6 @@ body
     top:-moz-calc((100% - 600px) / 2);
     width:800px;
     height:600px;    
-    background-color:aqua;
     z-index:2;
 }
 
@@ -58,12 +57,132 @@ body
     box-shadow: 0px 0px 68px 12px rgba(0,0,0,0.75);
 }
 
+.timeOrDate 
+{
+    text-align:right;
+}
+
 .statusBarTable
 {
-    width:580px;
+    width:570px;
     padding-top:5px;
     padding-bottom:5px;
-    padding-left:20px;
+    padding-left:30px;
     height:100%;
     
+}
+
+.saal 
+{
+    text-decoration: none;
+    line-height:20px;
+    font-weight:bold;
+    font-size:40px;
+}
+
+.saalbezeichnung
+{
+    text-decoration: none;
+    line-height:20px;
+    font-weight:bold;
+    font-size:20px;
+}
+
+.uhrzeit
+{
+    text-decoration: none;
+    line-height:20px;
+    font-weight:bold;
+    font-size:20px;
+}
+
+.datum
+{
+    text-decoration: none;
+    line-height:20px;
+    font-weight:bold;
+    font-size:30px;
+}
+
+.contentTable
+{
+    margin-top:50px;
+    width:750px;
+    margin-left:25px;
+}
+
+.currenLecture 
+{
+    height:100px;
+    width:730px;
+    margin-bottom:50px;
+    background-color:#5ED5EF;
+    -webkit-box-shadow: 0px 0px 68px 12px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 68px 12px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 68px 12px rgba(0,0,0,0.75);
+    padding:10px;
+}
+
+.currenLecturelvbezeichnung
+{
+    text-decoration: none;
+    line-height:20px;
+    font-weight:bold;
+    font-size:40px;
+}
+
+.currenLectureVonBis 
+{
+    font-weight:bold;
+}
+
+.currenLecturelvart 
+{
+    font-weight:bold;
+    text-align:right;
+    font-size:20px;
+}
+
+.lectureTable 
+{
+    width:100%;
+    height:100%;
+}
+
+.nextLecture 
+{
+    height:50px;
+    width:730px;
+    padding:10px;
+    margin-bottom:20px;
+    background-color:#5AE5D8;
+    -webkit-box-shadow: 0px 0px 30px 6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 30px 6px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 30px 6px rgba(0,0,0,0.75);
+}
+
+.nextLecturebezeichnung
+{
+    text-decoration: none;
+    line-height:20px;
+    font-weight:bold;
+    font-size:30px;
+    width:500px;
+}
+
+.nextLectureVonBis
+{
+    font-weight:bold;
+}
+
+.nextLectureDateum 
+{
+    font-weight:bold;
+    width:100px;
+}
+
+.nextLecturelvart
+{
+    font-weight:bold;
+    width:100px;
 }
