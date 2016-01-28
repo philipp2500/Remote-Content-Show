@@ -13,9 +13,13 @@ namespace DisplayClient
 {
     public class WorkingAgent
     {
-        private SocketHandler socketHandler;
+        public static readonly int CONNECT_TIMEOUT = 4000;
 
-        private bool alive;
+        public static readonly int KEEP_ALIVE_SEND_INTERVAL = 5000;
+
+        public static readonly int KEEP_ALIVE_WAIT_INTERVAL = 10000;
+
+        private SocketHandler socketHandler;
 
         private long lastKeepAlive;
 
@@ -61,7 +65,7 @@ namespace DisplayClient
 
             try
             {
-                socket = await c.Connect(agent.IP, NetworkConfiguration.PortAgent);
+                socket = await c.Connect(agent.IP, NetworkConfiguration.PortAgent, CONNECT_TIMEOUT);
             }
             catch (Exception)
             {
@@ -152,7 +156,7 @@ namespace DisplayClient
 
                     this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
 
-                    await Task.Delay(1000 * 5);
+                    await Task.Delay(KEEP_ALIVE_SEND_INTERVAL);
                 }
             });
 
@@ -160,7 +164,7 @@ namespace DisplayClient
             {
                 while (this.Working)
                 {
-                    await Task.Delay(1000 * 10);
+                    await Task.Delay(KEEP_ALIVE_WAIT_INTERVAL);
 
                     if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive > 10000)
                     {
