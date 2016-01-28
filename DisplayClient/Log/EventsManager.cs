@@ -113,6 +113,10 @@ namespace DisplayClient.Log
                 {
                     return new List<LoggedEvent>() { };
                 }
+                else if (File.ReadAllLines(path).Length < 1)
+                {
+                    return new List<LoggedEvent>() { };
+                }
 
                 using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
                 {

@@ -12,10 +12,14 @@ $(document).ready(function ()
         setInterval(function () {
             window.location.reload();
         }, 5 * 60000);
-    });function getData(sParam){
+    }
+);
+
+function getData(sParam)
+{
     $.ajax({
         type: 'GET',
-        url: 'http://127.0.0.1:1053/room=' + sParam,
+        url: 'http://10.100.105.27:1053/room=' + sParam,
         success: 
         function(data)
         {
