@@ -29,9 +29,16 @@ namespace ITServicesDataServer
         
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-            this.server = new Server(1053);
-            this.server.OnRequest += Server_OnRequest;
-            this.Start.IsEnabled = false;
+            try
+            {
+                this.server = new Server(1053);
+                this.server.OnRequest += Server_OnRequest;
+                this.Start.IsEnabled = false;
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Fehler beim Starten des Servers!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Server_OnRequest(object sender, RequestHandler e)
@@ -45,7 +52,10 @@ namespace ITServicesDataServer
 
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
-
+            if (this.server != null)
+            {
+                this.server.Stop();
+            }
         }
         
         /// <summary>

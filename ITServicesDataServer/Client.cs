@@ -56,7 +56,12 @@ namespace ITServicesDataServer
                         {
                             this.FireOnRequest(line, IPAddress.Parse(((IPEndPoint)this.client.Client.RemoteEndPoint).Address.ToString()));
                             string paramether = input[1].Remove(0, 6);
-                            SqlCommand command = new SqlCommand("SELECT TOP(3) * FROM v_stuplan WHERE SAAL = '" + paramether + "' ORDER BY DATUM, VON", connetion);
+                            SqlCommand command = new SqlCommand("SELECT TOP(3) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM " +
+                                "(" +
+                                    "SELECT TOP(3) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM = GETDATE() AND SAAL = '" + paramether + "'  AND CONVERT(TIME, GETDATE())BETWEEN VON AND BIS" +
+                                    " UNION " +
+                                    "SELECT TOP(3) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM > GETDATE() AND SAAL = '" + paramether + "' " +
+                                ") RESULT ORDER BY DATUM, VON", connetion);
                             this.connetion.Open();
                             SqlDataReader sqlResult = command.ExecuteReader();
                             List<ReslutItem> erg = new List<ReslutItem>();
