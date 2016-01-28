@@ -174,7 +174,9 @@ namespace Agent
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            // make the notify icon disappear from taskbar
             this.notifyIcon.Visible = false;
+            this.notifyIcon.Icon = null;
             this.notifyIcon.Dispose();
 
             if (this.server != null)
