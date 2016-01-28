@@ -1,4 +1,5 @@
-﻿using DisplayClient.Storage;
+﻿using DisplayClient.Log;
+using DisplayClient.Storage;
 using Remote_Content_Show_Container;
 //using Remote_Content_Show_Container.Resouces;
 using Remote_Content_Show_Protocol;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
@@ -31,12 +33,12 @@ namespace DisplayClient
         private Dictionary<Job, AgentSelector> agentSelectors;
 
         // TODO: remove it
-        private Guid jobID;
+        private Job_Configuration configuration;
 
-        public ContentDisplayManager(JobWindowList jobForWindow, List<Agent> availableAgents, Guid jobID)
+        public ContentDisplayManager(JobWindowList jobForWindow, List<Agent> availableAgents, Job_Configuration configuration)
         {
             this.jobForWindow = jobForWindow;
-            this.jobID = jobID;
+            this.configuration = configuration;
 
             this.workingAgents = new List<WorkingAgent>();
             this.agentSelectors = new Dictionary<Job, AgentSelector>();
@@ -144,7 +146,11 @@ namespace DisplayClient
                                 this.RunJob(job);
                             });
 
+                            Debug.WriteLine("--> start delaying...");
+
                             await Task.Delay(job.Duration * 1000);
+
+                            Debug.WriteLine("--> start canceling...");
 
                             this.CancelJob(job);
                         }
@@ -194,10 +200,12 @@ namespace DisplayClient
                 }
                 else
                 {
-                    this.HandleFileResource(job, new FileResource() { Path = Path.Combine(
-                        PersistenceManager.GetWriteablePath(), 
-                        PersistenceManager.SavedCustomFilesDirectoryName, 
-                        fr.Path) });
+                    this.HandleFileResource(job, new FileResource() {
+                        Local = fr.Local,
+                        Path = Path.Combine(
+                            PersistenceManager.GetWriteablePath(), 
+                            PersistenceManager.SavedCustomFilesDirectoryName, 
+                            fr.Path) });
                 }
             }
             else if (job.Resource is WebResource)
@@ -216,26 +224,61 @@ namespace DisplayClient
 
         private async void HandleFileResource(Job job, FileResource resource)
         {
-            if (CompatibilityManager.IsCompatibleImage(resource))
-            {
-                if (this.OnImageDisplayRequested != null)
-                {
-                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        BitmapImage img = new BitmapImage(new Uri(resource.Path));
+            bool accessable = false;
 
-                        this.OnImageDisplayRequested(img);
-                    });
+            try
+            {
+                // Try to access file at the given path
+                StorageFile file = await StorageFile.GetFileFromPathAsync(resource.Path);
+
+                accessable = true;
+            }
+            catch (Exception ex)
+            {
+                // It is a file, but it could not be accessed
+                if (ex is FileNotFoundException)
+                {
+                    if (this.OnResourceNotAvailable != null)
+                    {
+                        this.OnResourceNotAvailable(job);
+                    }
+                }
+                else if (ex is UnauthorizedAccessException)
+                {
+                    EventsManager.Log(Job_EventType.Error, this.configuration, "Could not access " + resource.Path);
+                }
+                else
+                {
+                    if (await CompatibilityManager.IsAvailableWebResource(resource.Path))
+                    {
+                        accessable = true;
+                    }
                 }
             }
-            else if (CompatibilityManager.IsCompatibleVideo(resource))
+
+            if (accessable)
             {
-                if (this.OnVideoDisplayRequested != null)
+                if (CompatibilityManager.IsCompatibleImage(resource))
                 {
-                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    if (this.OnImageDisplayRequested != null)
                     {
-                        this.OnVideoDisplayRequested(new Uri(resource.Path));
-                    });
+                        await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            BitmapImage img = new BitmapImage(new Uri(resource.Path));
+
+                            this.OnImageDisplayRequested(img);
+                        });
+                    }
+                }
+                else if (CompatibilityManager.IsCompatibleVideo(resource))
+                {
+                    if (this.OnVideoDisplayRequested != null)
+                    {
+                        await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            this.OnVideoDisplayRequested(new Uri(resource.Path));
+                        });
+                    }
                 }
             }
             else
@@ -290,9 +333,9 @@ namespace DisplayClient
             }
             else
             {
-                Debug.WriteLine("Found agent for job " + job.Resource.Name);
+                Debug.WriteLine("--> Found agent for job " + job.Resource.Name);
 
-                if (worker.Configuration.JobToDo.OrderingNumber == this.currentlyTreatedJob.OrderingNumber)
+                if (this.currentlyTreatedJob != null && worker.Configuration.JobToDo.OrderingNumber == this.currentlyTreatedJob.OrderingNumber)
                 {
                     worker.OnResultReceived += Worker_OnResultReceived;
                     worker.OnMessageReceived += Worker_OnMessageReceived;
@@ -346,7 +389,10 @@ namespace DisplayClient
 
         private void Worker_OnResultReceived(WorkingAgent agent, RCS_Render_Job_Result result)
         {
-            this.HandleImageResult(result.ConcernedRenderJobID, result.Picture);
+            if (this.workingAgents.Exists(x => x.Configuration.RenderJobID.Equals(result.ConcernedRenderJobID)))
+            {
+                this.HandleImageResult(result.ConcernedRenderJobID, result.Picture);
+            }
         }
 
         private async void HandleImageResult(Guid renderID, byte[] bytes)
@@ -362,12 +408,9 @@ namespace DisplayClient
                     await image.SetSourceAsync(ms.AsRandomAccessStream());
                 }
 
-                if (this.workingAgents.Exists(x => x.Configuration.RenderJobID.Equals(renderID)))
+                if (this.OnJobResultDisplayRequested != null)
                 {
-                    if (this.OnJobResultDisplayRequested != null)
-                    {
-                        this.OnJobResultDisplayRequested(image);
-                    }
+                    this.OnJobResultDisplayRequested(image);
                 }
             });
         } 
@@ -376,7 +419,7 @@ namespace DisplayClient
         {
             RenderConfiguration config = new RenderConfiguration();
             config.RenderJobID = Guid.NewGuid();
-            config.JobID = this.jobID;
+            config.JobID = this.configuration.JobID;
             config.JobToDo = jobToDo;
             config.RenderWidth = (int)this.renderSize.Width;
             config.RenderHeight = (int)this.renderSize.Height;

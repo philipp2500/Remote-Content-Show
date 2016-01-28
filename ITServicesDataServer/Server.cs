@@ -28,9 +28,15 @@ namespace ITServicesDataServer
 
         public void Stop()
         {
-            this.run = false;
-            this.listener.Stop();
-        }
+            try
+            {
+                this.run = false;
+                this.listener.Stop();
+            }
+            catch
+            {
+            }
+        } 
 
         protected void FireOnRequest(RequestHandler request)
         {
@@ -42,12 +48,19 @@ namespace ITServicesDataServer
 
         private void WaitForConnection()
         {
-            this.listener.Start();
-            while (this.run)
+            try
             {
-                Client client = new Client(this.listener.AcceptTcpClient());
-                client.OnRequest += Client_OnRequest;
+                this.listener.Start();
+                while (this.run)
+                {
+                    Client client = new Client(this.listener.AcceptTcpClient());
+                    client.OnRequest += Client_OnRequest;
+                }
             }
+            catch
+            {
+            }
+            
         }
 
         private void Client_OnRequest(object sender, RequestHandler e)

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +40,20 @@ namespace DisplayClient
             }
 
             return compatible;
+        }
+
+        public static async Task<bool> IsAvailableWebResource(string url)
+        {
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+                HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync());
+
+                return response.StatusCode == HttpStatusCode.OK;
+            }
+
+            return false;
         }
     }
 }
