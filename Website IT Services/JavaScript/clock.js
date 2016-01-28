@@ -1,13 +1,21 @@
 ﻿$(document).ready(function ()
     {
-        startTime();        insertDate();    });function insertDate()
+        startTime();
+        insertDate();
+    }
+);
+
+function insertDate()
 {
     var today = new Date();
     var t = today.getUTCDate();
     var m = today.getMonth() + 1;
     var j = today.getFullYear();
     document.getElementById('datum').innerHTML = t + "." + m + "." + j;
-}function startTime() {
+    var t = setTimeout(startTime, 8000000);
+}
+
+function startTime() {
     var today = new Date();
     var h = today.getHours();
     var m = today.getMinutes();
@@ -16,7 +24,9 @@
     s = checkTime(s);
     document.getElementById('uhrzeit').innerHTML = h + ":" + m + ":" + s;
     var t = setTimeout(startTime, 500);
-}function checkTime(i)
+}
+
+function checkTime(i)
 {
     if (i < 10)
     {

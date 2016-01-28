@@ -235,7 +235,7 @@ namespace DisplayClient
             }
             catch (Exception ex)
             {
-                // It is a file, but it could not be accessed
+                // It is a file, but it could not be found or accessed
                 if (ex is FileNotFoundException)
                 {
                     if (this.OnResourceNotAvailable != null)
@@ -249,6 +249,7 @@ namespace DisplayClient
                 }
                 else
                 {
+                    // non html web resources are also file resources
                     if (await CompatibilityManager.IsAvailableWebResource(resource.Path))
                     {
                         accessable = true;
@@ -293,12 +294,19 @@ namespace DisplayClient
 
         private async void HandleWebResource(WebResource resource)
         {
-            if (this.OnWebsiteDisplayRequested != null)
+            if (await CompatibilityManager.IsAvailableWebResource(resource.Path))
             {
-                await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                if (this.OnWebsiteDisplayRequested != null)
                 {
-                    this.OnWebsiteDisplayRequested(new Uri(resource.Path));
-                });
+                    await this.displayDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        this.OnWebsiteDisplayRequested(new Uri(resource.Path));
+                    });
+                }
+            }
+            else
+            {
+                // give it to the agent?
             }
         }        
         
