@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,12 +47,18 @@ namespace DisplayClient
         {
             if (url.StartsWith("http://") || url.StartsWith("https://"))
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                /*HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
                 HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync());
 
-                return response.StatusCode == HttpStatusCode.OK;
-            }
+                return response.StatusCode == HttpStatusCode.OK;*/
+
+                using (HttpClient client = new HttpClient())
+                using (HttpResponseMessage response = await client.GetAsync(url))
+                {
+                    return response.StatusCode == HttpStatusCode.OK;
+                }
+            }            
 
             return false;
         }
