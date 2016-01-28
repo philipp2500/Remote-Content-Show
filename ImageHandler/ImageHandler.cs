@@ -53,7 +53,9 @@
                     data = m.ToArray();
                 }
 
-                return md5.ComputeHash(data);
+                return data;
+
+                //return md5.ComputeHash(data);
             }
         }
         
