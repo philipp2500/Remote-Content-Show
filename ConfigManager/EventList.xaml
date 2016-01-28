@@ -31,7 +31,7 @@
                     <GridViewColumn Header="Datum" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Label Content="{Binding Time}"></Label>
+                                <Label Content="{Binding Time}" ContentStringFormat="{}{0:dd.MM.yyyy HH:mm}"></Label>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -49,7 +49,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Beschreibung">
+                    <GridViewColumn Header="Event Typ">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Content="{Binding Type}"></Label>
