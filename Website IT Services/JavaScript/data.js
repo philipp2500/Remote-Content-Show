@@ -36,7 +36,41 @@ function DisplayResult(data)
         if (count == 0)
         {
             document.getElementById('saalbezeichnung').innerHTML = data[i]["Bezeichnung"];
-            if ()
+            if (isCurrent(data[i]))
+            {
+                html += '<tr> \
+                        <td> \
+                            <div class="currenLecture"> \
+                                <table class="lectureTable"> \
+                                    <tr> \
+                                        <td class="currenLecturelvbezeichnung" colspan="2">' + data[i]["LVBezeichnung"] + '</td> \
+                                    </tr> \
+                                    <tr> \
+                                        <td class="currenLectureVonBis">Von: ' + getTime(data[i]["Von"]) + "<br />Bis: " + getTime(data[i]["Von"]) + '</td> \
+                                        <td class="currenLecturelvart">' + data[i]["LVArt"] + '</td> \
+                                    </tr> \
+                                </table> \
+                            </div> \
+                        </td> \
+                    </tr>';
+            }
+            else
+            {
+                html += '<tr> \
+                        <td> \
+                            <div class="nextLecture"> \
+                                <table class="lectureTable"> \
+                                    <tr> \
+                                        <td class="nextLecturebezeichnung">' + data[i]["LVBezeichnung"] + '</td> \
+                                        <td class="nextLecturelvart">' + data[i]["LVArt"] + '</td> \
+                                        <td class="nextLectureDateum">' + getDate(data[i]["Datum"]) + '</td> \
+                                        <td class="nextLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Bis"]) + '</td> \
+                                    </tr> \
+                                </table> \
+                            </div> \
+                        </td> \
+                    </tr>';
+            }
         }
         else
         {
@@ -48,7 +82,7 @@ function DisplayResult(data)
                                     <td class="nextLecturebezeichnung">' + data[i]["LVBezeichnung"] + '</td> \
                                     <td class="nextLecturelvart">' + data[i]["LVArt"] + '</td> \
                                     <td class="nextLectureDateum">' + getDate(data[i]["Datum"]) + '</td> \
-                                    <td class="nextLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Von"]) + '</td> \
+                                    <td class="nextLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Bis"]) + '</td> \
                                 </tr> \
                             </table> \
                         </div> \
@@ -59,6 +93,20 @@ function DisplayResult(data)
     }
 
     document.getElementById('contentTable').innerHTML = html;
+}
+
+function isCurrent(data)
+{
+    var now = new Date();
+    var start = new Date(data["Datum"].substring(0, 4), data["Datum"].substring(5, 7) - 1, data["Datum"].substring(8, 10), data["Von"].substring(0, 2), data["Von"].substring(3, 5), "00");
+    var end = new Date(data["Datum"].substring(0, 4), data["Datum"].substring(5, 7) - 1, data["Datum"].substring(8, 10), data["Bis"].substring(0, 2), data["Bis"].substring(3, 5), "00");
+
+    if (start <= now && now <= end)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 function getTime(sParam)
