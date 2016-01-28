@@ -8,6 +8,10 @@ $(document).ready(function ()
             document.getElementById('saal').innerHTML = paramether;
             getData(paramether);
         }
+
+        setInterval(function () {
+            window.location.reload();
+        }, 5 * 60000);
     });function getData(sParam){
     $.ajax({
         type: 'GET',
@@ -20,7 +24,7 @@ $(document).ready(function ()
         error:
         function(data)
         {
-            alert("dsErrad");
+
         },
         contentType: "application/json",
         dataType: 'json'

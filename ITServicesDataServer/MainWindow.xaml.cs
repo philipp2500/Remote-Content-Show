@@ -42,7 +42,7 @@ namespace ITServicesDataServer
         }
 
         private void Server_OnRequest(object sender, RequestHandler e)
-        {
+        {            
             this.Dispatcher.Invoke(() =>
                 {
                     this.requests.Add(e);
@@ -52,6 +52,7 @@ namespace ITServicesDataServer
 
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
+            this.Stop.IsEnabled = false;
             if (this.server != null)
             {
                 this.server.Stop();
