@@ -11,11 +11,16 @@ $(document).ready(function ()
     });function getData(sParam){
     $.ajax({
         type: 'GET',
-        url: '127.0.0.1:1053/room=' + sParam,
+        url: 'http://127.0.0.1:1053/room=' + sParam,
         success: 
         function(data)
-        { 
+        {
             DisplayResult(data);
+        },
+        error:
+        function(data)
+        {
+            alert("dsErrad");
         },
         contentType: "application/json",
         dataType: 'json'
@@ -24,7 +29,46 @@ $(document).ready(function ()
 
 function DisplayResult(data)
 {
+    var count = 0;
+    var html = "";
+    for (i in data)
+    {
+        if (count == 0)
+        {
+            document.getElementById('saalbezeichnung').innerHTML = data[i]["Bezeichnung"];
+            if ()
+        }
+        else
+        {
+            html += '<tr> \
+                    <td> \
+                        <div class="nextLecture"> \
+                            <table class="lectureTable"> \
+                                <tr> \
+                                    <td class="nextLecturebezeichnung">' + data[i]["LVBezeichnung"] + '</td> \
+                                    <td class="nextLecturelvart">' + data[i]["LVArt"] + '</td> \
+                                    <td class="nextLectureDateum">' + getDate(data[i]["Datum"]) + '</td> \
+                                    <td class="nextLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Von"]) + '</td> \
+                                </tr> \
+                            </table> \
+                        </div> \
+                    </td> \
+                </tr>';
+        }
+        count++;
+    }
 
+    document.getElementById('contentTable').innerHTML = html;
+}
+
+function getTime(sParam)
+{
+    return sParam.substring(0, 5);
+}
+
+function getDate(sParam)
+{
+   return sParam.substring(8, 10) + "." + sParam.substring(5, 7)  + "." + sParam.substring(0, 4);
 }
 
 function getUrlParameter(sParam)

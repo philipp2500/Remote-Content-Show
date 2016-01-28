@@ -3,8 +3,8 @@
         startTime();        insertDate();    });function insertDate()
 {
     var today = new Date();
-    var t = today.getDay();
-    var m = today.getMonth();
+    var t = today.getUTCDate();
+    var m = today.getMonth() + 1;
     var j = today.getFullYear();
     document.getElementById('datum').innerHTML = t + "." + m + "." + j;
 }function startTime() {

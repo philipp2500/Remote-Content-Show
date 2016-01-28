@@ -52,15 +52,15 @@ namespace ITServicesDataServer
                     string[] input = line.Split(' ');
                     if (input.Length == 3)
                     {
-                        if (input[0] == "GET" && input[1].StartsWith("/room="))
+                        if ((input[0] == "GET" || input[0] == "OPTIONS") && input[1].StartsWith("/room="))
                         {
                             this.FireOnRequest(line, IPAddress.Parse(((IPEndPoint)this.client.Client.RemoteEndPoint).Address.ToString()));
                             string paramether = input[1].Remove(0, 6);
-                            SqlCommand command = new SqlCommand("SELECT TOP(3) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM " +
+                            SqlCommand command = new SqlCommand("SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM " +
                                 "(" +
-                                    "SELECT TOP(3) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM = GETDATE() AND SAAL = '" + paramether + "'  AND CONVERT(TIME, GETDATE())BETWEEN VON AND BIS" +
+                                    "SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM = GETDATE() AND SAAL = '" + paramether + "'  AND CONVERT(TIME, GETDATE())BETWEEN VON AND BIS" +
                                     " UNION " +
-                                    "SELECT TOP(3) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM > GETDATE() AND SAAL = '" + paramether + "' " +
+                                    "SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM > GETDATE() AND SAAL = '" + paramether + "' " +
                                 ") RESULT ORDER BY DATUM, VON", connetion);
                             this.connetion.Open();
                             SqlDataReader sqlResult = command.ExecuteReader();
@@ -80,6 +80,9 @@ namespace ITServicesDataServer
 
                             List<byte> response = new List<byte>();
                             response.AddRange(Encoding.UTF8.GetBytes("HTTP/1.1 200 OK\r\n"));
+                            response.AddRange(Encoding.UTF8.GetBytes("Access-Control-Allow-Origin: *\r\n"));
+                            response.AddRange(Encoding.UTF8.GetBytes("Access-Control-Allow-Methods: GET\r\n"));
+                            response.AddRange(Encoding.UTF8.GetBytes("Access-Control-Allow-Headers: accept, content-type\r\n"));
                             response.AddRange(Encoding.UTF8.GetBytes("Content-Type: application/json; charset=UTF-8\r\n\r\n"));
                             response.AddRange(Remote_Content_Show_MessageGenerator.GetMessageAsByte(erg));
                             byte[] data = response.ToArray();
