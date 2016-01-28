@@ -38,6 +38,15 @@ namespace DisplayClient
             this.currentDisplayControl = null;
             this.DataContext = this;
             this.Loaded += ContentDisplay_Loaded;
+            this.SizeChanged += ContentDisplay_SizeChanged;
+        }
+
+        private void ContentDisplay_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (this.manager != null)
+            {
+                this.manager.SetRenderSize(new Size(this.ActualWidth, this.ActualHeight));
+            }
         }
 
         public ContentDisplayManager DisplayManager

@@ -306,7 +306,7 @@ namespace DisplayClient
         {
             List<Agent> foundAgents = this.agentSelectors[job].AvailableAgents.Where(x => x.IP.Equals(resource.ProcessAgent.IP)).ToList();
 
-            if (foundAgents.Count == 1)
+            if (foundAgents.Count >= 1)
             {
                 RenderConfiguration config = this.GetNewRenderConfiguration(job);
                 WorkingAgent worker = await this.agentSelectors[job].GetCompatibleAgentFromList(config, foundAgents);
@@ -410,7 +410,10 @@ namespace DisplayClient
 
                 if (this.OnJobResultDisplayRequested != null)
                 {
-                    this.OnJobResultDisplayRequested(image);
+                    if (this.workingAgents.Exists(x => x.Configuration.RenderJobID.Equals(renderID)))
+                    {
+                        this.OnJobResultDisplayRequested(image);
+                    }
                 }
             });
         } 
