@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
 
@@ -141,9 +142,9 @@ namespace DisplayClient
             this.socketHandler.OnConnectionLost -= this.SocketHandler_OnConnectionLost;
         }
         
-        private void KeepAlive()
+        private async void KeepAlive()
         {
-            Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(async () =>
             {
                 while (this.Working)
                 {
@@ -151,15 +152,15 @@ namespace DisplayClient
 
                     this.socketHandler.SendMessage(MessageCode.MC_Alive, Remote_Content_Show_MessageGenerator.GetMessageAsByte(alive));
 
-                    Task.Delay(1000 * 5);
+                    await Task.Delay(1000 * 5);
                 }
             });
 
-            Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(async () =>
             {
                 while (this.Working)
                 {
-                    Task.Delay(1000 * 10);
+                    await Task.Delay(1000 * 10);
 
                     if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - this.lastKeepAlive > 10000)
                     {

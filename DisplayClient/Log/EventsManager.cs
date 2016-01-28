@@ -107,8 +107,14 @@ namespace DisplayClient.Log
             try
             {
                 // begin
+                string path = Path.Combine(PersistenceManager.GetWriteablePath(), LoggedEventsFilename);
 
-                using (FileStream fs = new FileStream(Path.Combine(PersistenceManager.GetWriteablePath(), LoggedEventsFilename), FileMode.Open, FileAccess.Read))
+                if (!File.Exists(path))
+                {
+                    return new List<LoggedEvent>() { };
+                }
+
+                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
                 {
                     DataContractSerializer dcs = new DataContractSerializer(typeof(List<LoggedEvent>));
                     List<LoggedEvent> events;
