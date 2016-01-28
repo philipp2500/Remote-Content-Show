@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
+using System.Windows.Forms;
 
 namespace ITServicesDataServer
 {
@@ -23,14 +12,21 @@ namespace ITServicesDataServer
     public partial class MainWindow : Window
     {
         private Server server;
+        private NotifyIcon notifyIcon = null;
         private ObservableCollection<RequestHandler> requests = new ObservableCollection<RequestHandler>();
-
+        
         public MainWindow()
         {
             InitializeComponent();
             this.Requests.ItemsSource = requests;
-        }
 
+            this.notifyIcon = new NotifyIcon();
+            this.notifyIcon.Icon = Properties.Resources.icon1;
+            this.notifyIcon.Text = "IT Services Data Server";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += this.NotifyIcon_MouseDoubleClick;
+        }
+        
         private void Start_Click(object sender, RoutedEventArgs e)
         {
             this.server = new Server(1053);
@@ -50,6 +46,39 @@ namespace ITServicesDataServer
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+        
+        /// <summary>
+        /// Restores the window from the taskbar.
+        /// </summary>
+        private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            this.WindowState = WindowState.Normal;
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.ShowInTaskbar = false;
+            }
+            else if (this.WindowState == WindowState.Normal)
+            {
+                this.ShowInTaskbar = true;
+            }
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            // make the notify icon disappear from taskbar
+            this.notifyIcon.Visible = false;
+            this.notifyIcon.Icon = null;
+            this.notifyIcon.Dispose();
+
+            if (this.server != null)
+            {
+                this.server.Stop();
+            }
         }
     }
 }
