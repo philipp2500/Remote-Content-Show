@@ -82,7 +82,7 @@ namespace DisplayClient
             foreach (int windowLayoutID in this.Configuration.JobLists.Keys)
             {
                 JobWindowList windowJob = this.Configuration.JobLists[windowLayoutID];
-                ContentDisplayManager manager = new ContentDisplayManager(windowJob, this.Configuration.Agents, this.Configuration.JobID);
+                ContentDisplayManager manager = new ContentDisplayManager(windowJob, this.Configuration.Agents, this.Configuration);
 
                 ContentDisplay display = new ContentDisplay();
 

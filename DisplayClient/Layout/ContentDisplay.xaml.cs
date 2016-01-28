@@ -90,7 +90,7 @@ namespace DisplayClient
                 this.currentDisplayControl = this.DisplayingJobResult;
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
-                Debug.WriteLine("Display job result");
+                Debug.WriteLine("--> Display job result");
             }
 
             this.DisplayingJobResult.Source = image;
@@ -108,7 +108,7 @@ namespace DisplayClient
                 this.currentDisplayControl = this.DisplayingVideo;
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
-                Debug.WriteLine("Displaying video");
+                Debug.WriteLine("--> Displaying video");
             }
 
             this.DisplayingVideo.Source = videoPath;
@@ -137,7 +137,7 @@ namespace DisplayClient
                 this.currentDisplayControl = null;
             }
 
-            Debug.WriteLine("abort display");
+            Debug.WriteLine("--> Aborting display");
         }
 
         private void Manager_OnWebsiteDisplayRequested(Uri uri)
@@ -152,7 +152,7 @@ namespace DisplayClient
                 this.currentDisplayControl = this.DisplayingWebView;
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
-                Debug.WriteLine("Displaying web view");
+                Debug.WriteLine("--> Displaying web view");
             }
 
             this.DisplayingWebView.Navigate(uri);
@@ -172,7 +172,7 @@ namespace DisplayClient
                 this.currentDisplayControl = this.DisplayingImage;
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
-                Debug.WriteLine("Displaying image");
+                Debug.WriteLine("--> Displaying image");
             }
 
             this.DisplayingImage.Source = image;
