@@ -54,7 +54,7 @@ function DisplayResult(data)
                                         <td class="currenLecturelvbezeichnung" colspan="2">' + data[i]["LVBezeichnung"] + '</td> \
                                     </tr> \
                                     <tr> \
-                                        <td class="currenLectureVonBis">Von: ' + getTime(data[i]["Von"]) + "<br />Bis: " + getTime(data[i]["Von"]) + '</td> \
+                                        <td class="currenLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Von"]) + '</td> \
                                         <td class="currenLecturelvart">' + data[i]["LVArt"] + '</td> \
                                     </tr> \
                                 </table> \
