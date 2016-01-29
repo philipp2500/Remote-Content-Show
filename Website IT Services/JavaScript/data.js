@@ -15,6 +15,7 @@ $(document).ready(function ()
     }
 );
 
+// change the url to the ip where the IT services Server is running!!!
 function getData(sParam)
 {
     $.ajax({
@@ -54,7 +55,7 @@ function DisplayResult(data)
                                         <td class="currenLecturelvbezeichnung" colspan="2">' + data[i]["LVBezeichnung"] + '</td> \
                                     </tr> \
                                     <tr> \
-                                        <td class="currenLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Von"]) + '</td> \
+                                        <td class="currenLectureVonBis">' + getTime(data[i]["Von"]) + "<br />" + getTime(data[i]["Bis"]) + '</td> \
                                         <td class="currenLecturelvart">' + data[i]["LVArt"] + '</td> \
                                     </tr> \
                                 </table> \
