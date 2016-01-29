@@ -15,6 +15,7 @@ $(document).ready(function ()
     }
 );
 
+// change the url to the ip where the IT services Server is running!!!
 function getData(sParam)
 {
     $.ajax({
