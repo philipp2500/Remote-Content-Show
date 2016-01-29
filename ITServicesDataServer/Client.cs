@@ -58,9 +58,9 @@ namespace ITServicesDataServer
                             string paramether = input[1].Remove(0, 6);
                             SqlCommand command = new SqlCommand("SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM " +
                                 "(" +
-                                    "SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM = GETDATE() AND SAAL = '" + paramether + "'  AND (CONVERT(TIME, GETDATE())BETWEEN VON AND BIS) OR VON >= CONVERT(TIME, GETDATE())" +
+                                    "SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM = CONVERT(DATE, GETDATE()) AND SAAL = '" + paramether + "'  AND (CONVERT(TIME, GETDATE()) BETWEEN VON AND BIS OR VON >= CONVERT(TIME, GETDATE()))" +
                                     " UNION " +
-                                    "SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM > GETDATE() AND SAAL = '" + paramether + "' " +
+                                    "SELECT TOP(4) DATUM, VON, BIS, SAAL, BEZEICHNUNG, LVART, LVBEZEICHNUNG, PRÜFUNGSTERMIN FROM v_stuplan WHERE DATUM > CONVERT(DATE, GETDATE()) AND SAAL = '" + paramether + "' " +
                                 ") RESULT ORDER BY DATUM, VON", connetion);
                             this.connetion.Open();
                             SqlDataReader sqlResult = command.ExecuteReader();
