@@ -432,8 +432,8 @@ namespace DisplayClient
             config.RenderJobID = Guid.NewGuid();
             config.JobID = this.configuration.JobID;
             config.JobToDo = jobToDo;
-            config.RenderWidth = (int)this.renderSize.Width;
-            config.RenderHeight = (int)this.renderSize.Height;
+            config.RenderWidth = (int)this.renderSize.Width / 2;
+            config.RenderHeight = (int)this.renderSize.Height / 2;
 
             config.UpdateInterval = 30;
             config.IgnoreEqualImages = true;

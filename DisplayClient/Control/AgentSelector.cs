@@ -14,7 +14,7 @@ namespace DisplayClient
         public AgentSelector(Job jobToDo, List<Agent> availableAgents)
         {
             this.JobToDo = jobToDo;
-            this.AvailableAgents = availableAgents;
+            this.AvailableAgents = availableAgents.ToList();
         }
 
         public delegate void AgentNotReachable(AgentSelector sender, Agent agent);

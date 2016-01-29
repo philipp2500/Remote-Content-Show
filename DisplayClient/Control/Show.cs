@@ -78,11 +78,19 @@ namespace DisplayClient
         public void Start()
         {
             this.displays.Clear();
+            List<Agent> copy = this.Configuration.Agents.ToList();
 
             foreach (int windowLayoutID in this.Configuration.JobLists.Keys)
             {
                 JobWindowList windowJob = this.Configuration.JobLists[windowLayoutID];
-                ContentDisplayManager manager = new ContentDisplayManager(windowJob, this.Configuration.Agents, this.Configuration);
+                ContentDisplayManager manager = new ContentDisplayManager(windowJob, copy, this.Configuration);
+
+                if (copy.Count > 0)
+                {
+                    Agent temp = copy[0];
+                    copy.RemoveAt(0);
+                    copy.Add(temp);
+                }
 
                 ContentDisplay display = new ContentDisplay();
 

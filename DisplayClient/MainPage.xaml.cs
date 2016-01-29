@@ -76,18 +76,18 @@ namespace DisplayClient
             Job_Configuration config = new Job_Configuration();
             config.Name = "testconfig1";
             config.Layout = CustomWindow.GetTestLayout(); // WindowLayout.DoubleWindowVertikalSplitted;
-            config.Agents.Add(new Agent() { IP = "10.101.150.19" });
-            config.Agents.Add(new Agent() { IP = "10.101.150.11" });
+            config.Agents.Add(new Agent() { IP = "10.101.100.30" });
+            config.Agents.Add(new Agent() { IP = "10.101.100.22" });
 
             List<Job> jobs1 = new List<Job>();
-            jobs1.Add(new Job() { Duration = 30, OrderingNumber = 3, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
-            jobs1.Add(new Job() { Duration = 30, OrderingNumber = 1, Resource = new FileResource() { Name = "test.pptx", Path = @"C:\Temp\test.pptx" } });
-            jobs1.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.google.at" } });
+            //jobs1.Add(new Job() { Duration = 30, OrderingNumber = 3, Resource = new FileResource() { Path = "http://www.w3schools.com/html/mov_bbb.mp4" } });
+            jobs1.Add(new Job() { Duration = 30, OrderingNumber = 1, Resource = new FileResource() { Name = "test.pptx", Path = @"C:\Temp\test.pptx" } }); // @"\\floppy2.itgeo.fhwn.ac.at\PW_2_Team1\test\test1.pptx" } });
+            //jobs1.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.google.at" } });
 
             List<Job> jobs2 = new List<Job>();
-            jobs2.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
-            jobs2.Add(new Job() { Duration = 30, OrderingNumber = 3, Resource = new FileResource() { Name = "excel.xlsx", Path = @"C:\Temp\excel.xlsx" } });
-            jobs2.Add(new Job() { Duration = 30, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
+            //jobs2.Add(new Job() { Duration = 15, OrderingNumber = 2, Resource = new WebResource() { Path = "http://www.fhwn.ac.at" } });
+            jobs2.Add(new Job() { Duration = 30, OrderingNumber = 3, Resource = new FileResource() { Name = "excel.xlsx", Path = @"\\floppy2.itgeo.fhwn.ac.at\PW_2_Team1\test\test1.xlsx" } });
+            //jobs2.Add(new Job() { Duration = 30, OrderingNumber = 1, Resource = new FileResource() { Path = "http://img.pr0gramm.com/2016/01/22/ef07ff94fd3236d1.jpg" } });
             //jobs2.Add(new Job() { Duration = 15, OrderingNumber = 1, Resource = new FileResource() { Local = true, Path = "jellyfish2d.jpg" } });
 
             config.JobLists.Add(1, new JobWindowList() { Looping = true, WindowLayoutNumber = 1, Jobs = jobs1 });
@@ -127,7 +127,7 @@ namespace DisplayClient
             this.adminListener.Start();
 
             // check saved configuration
-            Job_Configuration configuration = PersistenceManager.GetJobConfiguration();
+            Job_Configuration configuration = null; // PersistenceManager.GetJobConfiguration();
 
             if (configuration != null)
             {

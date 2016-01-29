@@ -103,6 +103,7 @@ namespace DisplayClient
             }
 
             this.DisplayingJobResult.Source = image;
+            this.rootGrid.Background = null;
         }
 
         private void Manager_OnVideoDisplayRequested(Uri videoPath)
@@ -118,13 +119,15 @@ namespace DisplayClient
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
                 Debug.WriteLine("--> Displaying video");
+
+                this.rootGrid.Background = null;
             }
 
             this.DisplayingVideo.Source = videoPath;
             this.DisplayingVideo.Play();
         }
 
-        private void Manager_OnDisplayAbortRequested()
+        private async void Manager_OnDisplayAbortRequested()
         {
             if (this.currentDisplayControl != null)
             {
@@ -144,6 +147,7 @@ namespace DisplayClient
 
                 this.currentDisplayControl.Visibility = Visibility.Collapsed;
                 this.currentDisplayControl = null;
+                this.rootGrid.Background = new ImageBrush() { ImageSource = await PersistenceManager.GetConfigurationImage() };
             }
 
             Debug.WriteLine("--> Aborting display");
@@ -162,6 +166,7 @@ namespace DisplayClient
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
                 Debug.WriteLine("--> Displaying web view");
+                this.rootGrid.Background = null;
             }
 
             this.DisplayingWebView.Navigate(uri);
@@ -182,6 +187,7 @@ namespace DisplayClient
                 this.currentDisplayControl.Visibility = Visibility.Visible;
 
                 Debug.WriteLine("--> Displaying image");
+                this.rootGrid.Background = null;
             }
 
             this.DisplayingImage.Source = image;
